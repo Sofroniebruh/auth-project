@@ -1,5 +1,5 @@
 export default function ProfilePage() {
     return (
-        <p>heh</p>
+        <p>our profile</p>
     )
 }

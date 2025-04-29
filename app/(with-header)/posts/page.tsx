@@ -1,5 +1,9 @@
+"use client"
+
+import {PostsComponent} from "@/components/posts";
+
 export default function PostsPage() {
     return (
-        <p>huh</p>
+        <PostsComponent></PostsComponent>
     )
 }

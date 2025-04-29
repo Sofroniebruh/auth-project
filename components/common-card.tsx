@@ -21,12 +21,12 @@ export const CommonCard = ({children, className, isForAuth, step, setStep}: Prop
                 {isForAuth && (
                     <div className={"flex w-full items-start"}>
                         {step === 2 ? (
-                            <Button onClick={() => setStep!(1)} className={"cursor-pointer"}
+                            <Button onClick={() => setStep!(1)} className={"cursor-pointer text-blue-600"}
                                     variant={"ghost"}><ArrowLeftIcon></ArrowLeftIcon> Go
                                 Back</Button>
                         ) : (
                             <Link href={"/"}>
-                                <Button className={"cursor-pointer"}
+                                <Button className={"cursor-pointer text-blue-600"}
                                         variant={"ghost"}><ArrowLeftIcon></ArrowLeftIcon> Go
                                     Back</Button>
                             </Link>

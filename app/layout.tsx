@@ -2,8 +2,6 @@ import type {Metadata} from "next";
 import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import React from "react";
-import {cn} from "@/lib/utils";
-import {AnimatedGridPattern} from "@/components/magicui/animated-grid-pattern";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -28,13 +26,7 @@ export default function RootLayout(
     }>) {
     return (
         <html lang="en">
-        <body className={"overflow-hidden"}>
-        <AnimatedGridPattern
-            maxOpacity={0.1}
-            className={cn(
-                "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12 z-0",
-            )}
-        />
+        <body className={"h-full"}>
         {children}
         </body>
         </html>

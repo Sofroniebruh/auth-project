@@ -1,4 +1,5 @@
 import React from "react";
+import {HeaderComponent} from "@/components/header";
 
 export default function ChildLayout(
     {
@@ -7,9 +8,11 @@ export default function ChildLayout(
         children: React.ReactNode;
     }>) {
     return (
-        <>
-            <div>You can see me!</div>
-            {children}
-        </>
+        <main className={"relative min-h-screen"}>
+            <HeaderComponent></HeaderComponent>
+            <div className={"min-h-screen mt-[80px]"}>
+                {children}
+            </div>
+        </main>
     );
 }

@@ -43,13 +43,14 @@ export const SignUpComponent = () => {
                             <div className={"flex flex-col gap-1"}>
                                 <Input
                                     {...form.register("email")}
+                                    className={"outline-none"}
                                     placeholder="Enter your email"
                                 />
                                 {form.formState.errors.email && (
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.email.message}</p>
                                 )}
                             </div>
-                            <Button onClick={handleNext} className="text-base cursor-pointer">
+                            <Button onClick={handleNext} className="bg-blue-600 text-base cursor-pointer">
                                 Next <LogInIcon></LogInIcon>
                             </Button>
                         </div>
@@ -61,6 +62,7 @@ export const SignUpComponent = () => {
                             <div className={"flex flex-col gap-1"}>
                                 <Input
                                     placeholder="Enter your password"
+                                    className={"outline-none"}
                                     type="password"
                                     {...form.register("password")}
                                 />
@@ -71,6 +73,7 @@ export const SignUpComponent = () => {
                             <div className={"flex flex-col gap-1"}>
                                 <Input
                                     placeholder="Repeat your password"
+                                    className={"outline-none"}
                                     type="password"
                                     {...form.register("confirmPassword")}
                                 />
@@ -78,7 +81,7 @@ export const SignUpComponent = () => {
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.confirmPassword.message}</p>
                                 )}
                             </div>
-                            <Button type={"submit"} className="text-base mt-7 cursor-pointer">
+                            <Button type={"submit"} className="text-base mt-7 cursor-pointer bg-blue-600">
                                 Sign Up <LogInIcon/>
                             </Button>
                         </div>

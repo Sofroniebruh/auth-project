@@ -40,12 +40,12 @@ export const SignInComponent = () => {
                     <form className={"flex flex-col gap-6"}>
                         <div className={"flex flex-col gap-3 w-[255px]"}>
                             <div className={"flex flex-col gap-1"}>
-                                <Input {...form.register("email")} placeholder={"Enter your email"}></Input>
+                                <Input {...form.register("email")} className={"outline-none"} placeholder={"Enter your email"}></Input>
                                 {form.formState.errors.email &&
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.email.message}</p>}
                             </div>
                             <Button type={"button"} onClick={handleNext}
-                                    className={"cursor-pointer shadow-sm text-base"}>Sign
+                                    className={"bg-blue-600 cursor-pointer shadow-sm text-base"}>Sign
                                 In <LogInIcon></LogInIcon></Button>
                         </div>
                         <div className={"flex w-full items-center justify-center gap-2"}>
@@ -68,12 +68,12 @@ export const SignInComponent = () => {
                     <form className={"flex flex-col gap-6"} onSubmit={form.handleSubmit(onSubmit)}>
                         <div className={"flex flex-col gap-3 w-[255px]"}>
                             <div className={"flex flex-col gap-1"}>
-                                <Input {...form.register("password")} placeholder={"Enter your password"}
+                                <Input className={"outline-none"} {...form.register("password")} placeholder={"Enter your password"}
                                        type={"password"}></Input>
                                 {form.formState.errors.password &&
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.password.message}</p>}
                             </div>
-                            <Button type={"submit"} className={"cursor-pointer shadow-sm text-base"}>Sign
+                            <Button type={"submit"} className={"bg-blue-600 cursor-pointer shadow-sm text-base"}>Sign
                                 In <LogInIcon></LogInIcon></Button>
                         </div>
                         <p className={"text-sm text-gray-400 text-center"}>Forgot your password? <Link
