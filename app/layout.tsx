@@ -28,17 +28,14 @@ export default function RootLayout(
     }>) {
     return (
         <html lang="en">
-        <body
-            className={"relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background"}
-        >
+        <body className={"overflow-hidden"}>
         <AnimatedGridPattern
             maxOpacity={0.1}
             className={cn(
-                "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+                "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12 z-0",
             )}
-        >
-            {children}
-        </AnimatedGridPattern>
+        />
+        {children}
         </body>
         </html>
     );
