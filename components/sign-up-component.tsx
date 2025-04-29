@@ -34,7 +34,6 @@ export const SignUpComponent = () => {
                     </Button>
                 </div>
             )}
-
             {step === 2 && (
                 <div className="flex flex-col gap-3 w-full sm:w-[80%]">
                     <Input
@@ -54,7 +53,6 @@ export const SignUpComponent = () => {
                     </Button>
                 </div>
             )}
-
             <div>
                 <p className="text-sm text-gray-400 text-center">
                     By continuing you accept our <br/> privacy policy
