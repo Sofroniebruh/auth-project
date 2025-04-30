@@ -9,10 +9,13 @@ import {formRegisterSchema, RegisterFormType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {HandleNextStage} from "@/lib";
 import {CommonCard} from "@/components/common";
+import {API} from "@/lib/api-client/api";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export const SignUpComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);
-    const [data, setData] = useState<RegisterFormType>();
+    const router = useRouter();
     const form = useForm<RegisterFormType>({
         resolver: zodResolver(formRegisterSchema),
         defaultValues: {
@@ -29,9 +32,15 @@ export const SignUpComponent = () => {
         isValid && setStep(2);
     };
 
-    const onSubmit = (data: RegisterFormType) => {
-        setData(data)
-        console.log("Data", data)
+    const onSubmit = async (data: RegisterFormType) => {
+        if (await API.auth.register(data)) {
+            router.push("/posts");
+            toast.success("Register successful");
+
+            return;
+        }
+
+        toast.error("Register failed");
     }
 
     return (

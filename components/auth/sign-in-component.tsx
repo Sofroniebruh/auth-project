@@ -11,9 +11,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
 import {HandleNextStage} from "@/lib";
 import {CommonCard} from "@/components/common";
+import {API} from "@/lib/api-client/api";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export const SignInComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);
+    const router = useRouter();
     const form = useForm<LoginFormType>({
         resolver: zodResolver(formLoginSchema),
         defaultValues: {
@@ -29,8 +33,15 @@ export const SignInComponent = () => {
         isValid && setStep(2)
     }
 
-    const onSubmit = (data: LoginFormType) => {
-        console.log("Data", data)
+    const onSubmit = async (data: LoginFormType) => {
+        if (await API.auth.login(data)) {
+            router.push("/posts")
+            toast.success("Login successful")
+
+            return;
+        }
+
+        toast.error("Login failed")
     }
 
     return (
@@ -40,7 +51,8 @@ export const SignInComponent = () => {
                     <form className={"flex flex-col gap-6"}>
                         <div className={"flex flex-col gap-3 w-[255px]"}>
                             <div className={"flex flex-col gap-1"}>
-                                <Input {...form.register("email")} className={"outline-none"} placeholder={"Enter your email"}></Input>
+                                <Input {...form.register("email")} className={"outline-none"}
+                                       placeholder={"Enter your email"}></Input>
                                 {form.formState.errors.email &&
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.email.message}</p>}
                             </div>
@@ -68,7 +80,8 @@ export const SignInComponent = () => {
                     <form className={"flex flex-col gap-6"} onSubmit={form.handleSubmit(onSubmit)}>
                         <div className={"flex flex-col gap-3 w-[255px]"}>
                             <div className={"flex flex-col gap-1"}>
-                                <Input className={"outline-none"} {...form.register("password")} placeholder={"Enter your password"}
+                                <Input className={"outline-none"} {...form.register("password")}
+                                       placeholder={"Enter your password"}
                                        type={"password"}></Input>
                                 {form.formState.errors.password &&
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.password.message}</p>}

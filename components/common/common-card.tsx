@@ -25,7 +25,7 @@ export const CommonCard = ({children, className, isForAuth, step, setStep}: Prop
                                     variant={"ghost"}><ArrowLeftIcon></ArrowLeftIcon> Go
                                 Back</Button>
                         ) : (
-                            <Link href={"/public"}>
+                            <Link href={"/"}>
                                 <Button className={"cursor-pointer text-blue-600"}
                                         variant={"ghost"}><ArrowLeftIcon></ArrowLeftIcon> Go
                                     Back</Button>

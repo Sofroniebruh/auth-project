@@ -129,7 +129,8 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
-  userId: 'userId'
+  userId: 'userId',
+  postImageUrl: 'postImageUrl'
 };
 
 exports.Prisma.LikeScalarFieldEnum = {
