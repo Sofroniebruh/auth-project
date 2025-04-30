@@ -5,12 +5,12 @@ import {Button} from "@/components/ui/button";
 import {LogInIcon} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import {CommonCard} from "@/components/common-card";
 import {FormProvider, useForm} from "react-hook-form";
 import {formLoginSchema, LoginFormType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
 import {HandleNextStage} from "@/lib";
+import {CommonCard} from "@/components/common";
 
 export const SignInComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);

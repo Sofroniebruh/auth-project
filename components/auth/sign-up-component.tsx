@@ -1,6 +1,5 @@
 "use state"
 
-import {CommonCard} from "../common-card";
 import {Button} from "@/components/ui/button";
 import {LogInIcon} from "lucide-react";
 import {useState} from "react";
@@ -9,6 +8,7 @@ import {FormProvider, useForm} from "react-hook-form";
 import {formRegisterSchema, RegisterFormType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {HandleNextStage} from "@/lib";
+import {CommonCard} from "@/components/common";
 
 export const SignUpComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);

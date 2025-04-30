@@ -1,14 +1,14 @@
 "use client"
 
-import {SheetComponent} from "@/components/sheet-component";
-import {BellIcon, ImageIcon, MenuIcon, PlusIcon, SearchIcon, UserIcon} from "lucide-react";
+import {BellIcon, ImageIcon, MenuIcon, PlusIcon, UserIcon} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {DialogComponent} from "@/components/dialog-component";
+import {SheetComponent} from "@/components/common";
+import {HeaderSearchSmall} from "@/components/header-section/header-search-small";
+import {HeaderSearchBig} from "@/components/header-section/header-search-big";
 
 export const HeaderComponent = () => {
     const pathname = usePathname();
@@ -47,29 +47,8 @@ export const HeaderComponent = () => {
                         Image <PlusIcon/></Button>
                 </div>
             </SheetComponent>
-            <div className={"relative hidden sm:block sm:w-2/3"}>
-                <Input className={"w-full pl-[34px]"} placeholder={"Search..."}></Input>
-                <SearchIcon className={"text-blue-600 absolute top-[7px] left-[7px] opacity-50"}></SearchIcon>
-            </div>
-            <DialogComponent
-                triggerButton={<><SearchIcon className={"absolute top-2 left-2"}></SearchIcon> Search...</>}
-                title={"Search"}>
-                <div className={"flex flex-col gap-5"}>
-                    <div className={"relative w-full flex gap-2"}>
-                        <Input className={"w-full pl-[34px]"} placeholder={"Search..."}></Input>
-                        <SearchIcon className={"text-blue-600 absolute top-[7px] left-[7px] opacity-50"}></SearchIcon>
-                        <Button className={"bg-blue-600 cursor-pointer"}>Go</Button>
-                    </div>
-                    <div>
-                        <h1 className={"text-2xl text-blue-600"}>Categories you may like:</h1>
-                        <ul className={"text-xl mt-2.5"}>
-                            <li>#Nature</li>
-                            <li>#Anime</li>
-                            <li>#Cars</li>
-                        </ul>
-                    </div>
-                </div>
-            </DialogComponent>
+            <HeaderSearchBig/>
+            <HeaderSearchSmall/>
             <Link href={"/"}>
                 <Image src={"/main_logo.png"} width={40} height={40} alt={"main logo"}></Image>
             </Link>

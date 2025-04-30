@@ -1,8 +1,8 @@
 import {Button} from "@/components/ui/button";
 import {LogInIcon} from "lucide-react";
-import {CommonCard} from "@/components/common-card";
 import Link from "next/link";
 import React from "react";
+import {CommonCard} from "@/components/common";
 
 export default function Home() {
     return (

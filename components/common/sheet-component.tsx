@@ -6,7 +6,7 @@ interface Props {
     children: React.ReactNode,
     side?: "right" | "top" | "bottom" | "left",
     className?: string,
-    sheetTitle: string,
+    sheetTitle: string | React.ReactNode,
     sheetDescription?: string,
 }
 
@@ -21,7 +21,7 @@ export const SheetComponent = (
     }: Props) => {
     return (
         <Sheet>
-            <SheetTrigger>
+            <SheetTrigger className={className}>
                 {triggerElement}
             </SheetTrigger>
             <SheetContent side={side}>
