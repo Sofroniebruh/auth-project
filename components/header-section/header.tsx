@@ -1,6 +1,6 @@
 "use client"
 
-import {BellIcon, ImageIcon, MenuIcon, PlusIcon, UserIcon} from "lucide-react";
+import {ImageIcon, MenuIcon, PlusIcon, UserIcon} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
@@ -12,7 +12,6 @@ import {HeaderSearchBig} from "@/components/header-section/header-search-big";
 
 export const HeaderComponent = () => {
     const pathname = usePathname();
-    const notifications = 100
 
     return (
         <header
@@ -32,12 +31,6 @@ export const HeaderComponent = () => {
                         <Link href={"/profile"}>
                             <li className={cn("text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer", pathname === "/profile" && "text-blue-600")}>
                                 <UserIcon></UserIcon> Profile
-                            </li>
-                        </Link>
-                        <Link href={"/notifications"}>
-                            <li className={cn("text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer", pathname === "/notifications" && "text-blue-600")}>
-                                <BellIcon></BellIcon> Notifications <div
-                                className={cn("rounded-full bg-blue-600 text-white text-sm", notifications < 10 ? "px-[12px] py-[7px]" : notifications <= 99 && notifications >= 10 ? "px-[6px] py-[4px]" : notifications > 99 ? "px-[4px] py-[6px]" : "")}>99+</div>
                             </li>
                         </Link>
                     </ul>

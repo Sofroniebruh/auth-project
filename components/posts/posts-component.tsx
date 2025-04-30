@@ -11,6 +11,10 @@ export const PostsComponent = () => {
                 image={"https://i.pinimg.com/736x/d2/6e/c2/d26ec291b6da27ad015394bfdf902d1f.jpg"}></PostCardComponent>
             <PostCardComponent
                 image={"https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}></PostCardComponent>
+            <PostCardComponent
+                image={"https://i.pinimg.com/736x/2c/2b/1c/2c2b1ca4e0dd3d517ca70f9e0b618cbf.jpg"}></PostCardComponent>
         </div>
     )
 }
+
+
