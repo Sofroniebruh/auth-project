@@ -92,7 +92,7 @@ export const SignInComponent = () => {
                         </div>
                         <p className={"text-sm text-gray-400 text-center"}>Forgot your password? <Link
                             className={"text-blue-600"}
-                            href={"#"}>Click here</Link></p>
+                            href={"/request-password-change"}>Click here</Link></p>
                     </form>
                 )}
             </FormProvider>

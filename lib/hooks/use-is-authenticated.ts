@@ -5,11 +5,13 @@ import {API} from "@/lib/api-client/api";
 
 export const useIsAuthenticated = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function checkAuth() {
             const res = await API.tokenCheck.checkToken()
             setIsLoggedIn(res)
+            setLoading(false);
         }
 
         checkAuth();
@@ -17,5 +19,6 @@ export const useIsAuthenticated = () => {
 
     return {
         isLoggedIn,
+        loading,
     }
 }
