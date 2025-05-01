@@ -28,3 +28,9 @@ export function verifyJWT(token: string) {
     }
     return verifyJWTWithNode(token);
 }
+
+export function generateResetJWT(payload: object) {
+    return jwt.sign(payload, SECRET, {
+        expiresIn: '15m',
+    });
+}

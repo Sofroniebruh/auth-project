@@ -7,6 +7,7 @@ import {FormProvider, useForm} from "react-hook-form";
 import {emailSchema, EmailType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "sonner";
+import {API} from "@/lib/api-client/api";
 
 export default function RequestPasswordChangePage() {
     const form = useForm<EmailType>({
@@ -16,9 +17,14 @@ export default function RequestPasswordChangePage() {
         }
     });
 
-    const onSubmit = (data: EmailType) => {
-        console.log("Data", data);
-        toast.success("Email has been sent");
+    const onSubmit = async (data: EmailType) => {
+        if (await API.passwordActions.passwordReset(data)) {
+            toast.success("Email has been sent");
+
+            return;
+        }
+
+        toast.error("Error sending email");
     }
 
     return (
