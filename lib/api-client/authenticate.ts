@@ -9,7 +9,11 @@ export async function login(data: LoginFormType) {
         body: JSON.stringify(data),
     })
 
-    return response.ok;
+    if (!response.ok) {
+        return response.json()
+    }
+
+    return response.status
 }
 
 export async function register(data: RegisterFormType) {
@@ -24,5 +28,9 @@ export async function register(data: RegisterFormType) {
         }),
     })
 
-    return response.ok;
+    if (!response.ok) {
+        return response.json();
+    }
+
+    return response.status;
 }

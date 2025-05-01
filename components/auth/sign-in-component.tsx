@@ -34,18 +34,19 @@ export const SignInComponent = () => {
     }
 
     const onSubmit = async (data: LoginFormType) => {
-        if (await API.auth.login(data)) {
+        const res = await API.auth.login(data)
+        if (res === 200) {
             router.push("/posts")
             toast.success("Login successful")
 
             return;
         }
 
-        toast.error("Login failed")
+        toast.error(res.message)
     }
 
     return (
-        <CommonCard className={"gap-6"} isForAuth={true} setStep={setStep} step={step}>
+        <CommonCard isForAuth={true} setStep={setStep} step={step}>
             <FormProvider {...form}>
                 {step === 1 ? (
                     <form className={"flex flex-col gap-6"}>

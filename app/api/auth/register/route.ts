@@ -6,7 +6,7 @@ import {signJWT} from "@/lib/auth";
 export async function POST(req: NextRequest) {
     const {email, password} = (await req.json()) as { email: string; password: string };
 
-    const isEmailTaken = await prismaClient.User.findUnique({
+    const isEmailTaken = await prismaClient.user.findUnique({
         where: {email},
     })
 
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({message: "Email already taken"}, {status: 401})
     }
 
-    await prismaClient.User.create({
+    await prismaClient.user.create({
         data: {
             email,
             password: await hashPassword(password),

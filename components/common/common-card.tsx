@@ -33,7 +33,7 @@ export const CommonCard = ({children, className, isForAuth, step, setStep}: Prop
                         )}
                     </div>
                 )}
-                <div className={"flex items-center justify-center bg-white rounded-full my-10 z-50 p-10 shadow-sm"}>
+                <div className={"flex items-center justify-center bg-white rounded-full z-50 p-10 shadow-sm"}>
                     <Image src={"/main_logo.png"} alt={"main logo"} width={100} height={100}></Image>
                 </div>
                 {children}

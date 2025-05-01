@@ -6,12 +6,12 @@ import {prismaClient} from "@/prisma/prisma-client";
 export async function POST(req: NextRequest) {
     const {email, password} = (await req.json()) as { email: string, password: string };
 
-    const user = await prismaClient.User.findFirst({
+    const user = await prismaClient.user.findFirst({
         where: {email},
     })
 
     if (!user) {
-        return NextResponse.json({message: "Failed to find user"}, {status: 400})
+        return NextResponse.json({message: "Email not found"}, {status: 400})
     }
 
     const isValidPassword = await checkPassword(password, user.password)

@@ -33,18 +33,19 @@ export const SignUpComponent = () => {
     };
 
     const onSubmit = async (data: RegisterFormType) => {
-        if (await API.auth.register(data)) {
+        const res = await API.auth.register(data)
+        if (res === 200) {
             router.push("/posts");
             toast.success("Register successful");
 
             return;
         }
 
-        toast.error("Register failed");
+        toast.error(res.message);
     }
 
     return (
-        <CommonCard className="gap-6" isForAuth={true} setStep={setStep} step={step}>
+        <CommonCard isForAuth={true} setStep={setStep} step={step}>
             <FormProvider {...form}>
                 {step === 1 && (
                     <form className={"flex flex-col gap-6"} onSubmit={form.handleSubmit(handleNext)}>

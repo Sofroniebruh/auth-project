@@ -8,6 +8,8 @@ export const PostCardComponent = ({image}: { image: string }) => {
     const handleLike = () => {
         if (isLoggedIn) {
             console.log("like");
+
+            return;
         }
 
         toast("Log In to like")
