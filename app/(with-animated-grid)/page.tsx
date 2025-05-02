@@ -9,7 +9,6 @@ import {useIsAuthenticated} from "@/lib/hooks";
 
 export default function Home() {
     const {isLoggedIn, loading} = useIsAuthenticated()
-    console.log(loading)
 
     return (
         <CommonCard>

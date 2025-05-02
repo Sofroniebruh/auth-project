@@ -1,15 +1,18 @@
 "use client"
 
-import {notFound, useSearchParams} from "next/navigation";
+import {notFound, useRouter, useSearchParams} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {CommonCard} from "@/components/common";
 import {Button} from "@/components/ui/button";
 import {FormProvider, useForm} from "react-hook-form";
 import {twoPasswordsSchema, TwoPasswordsSchemaType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {API} from "@/lib/api-client/api";
+import {toast} from "sonner";
 
 export default function ForgotPasswordPage() {
     const searchParams = useSearchParams()
+    const router = useRouter()
     const token = searchParams.get("token")
     const form = useForm<TwoPasswordsSchemaType>({
         resolver: zodResolver(twoPasswordsSchema),
@@ -24,8 +27,15 @@ export default function ForgotPasswordPage() {
         return notFound()
     }
 
-    const onSubmit = (data: TwoPasswordsSchemaType) => {
-        console.log(data)
+    const onSubmit = async (data: TwoPasswordsSchemaType) => {
+        if (await API.passwordActions.passwordReset(data.password, token)) {
+            toast.success("Password has been reset successfully");
+            router.push("/profile")
+
+            return;
+        }
+
+        toast.error("Error resetting password");
     }
 
     return (
