@@ -18,20 +18,20 @@ export default function Home() {
                 {isLoggedIn ? (
                     <Link href="/profile" className={"w-full flex items-center justify-center"}>
                         <Button loading={loading}
-                                className={"w-2/3 shadow-sm bg-linear-to-r/decreasing from-gray-50 to-white text-black border text-base sm:text-lg py-5 cursor-pointer rounded-lg"}>
+                                className={"w-2/3 shadow-sm bg-linear-to-r/decreasing from-gray-50 to-white text-black border text-base sm:text-lg py-5 rounded-lg"}>
                             Profile <UserIcon></UserIcon>
                         </Button>
                     </Link>
                 ) : (
                     <Link href="/sign-in" className={"w-full flex items-center justify-center"}>
                         <Button loading={loading}
-                                className={"w-2/3 shadow-sm bg-linear-to-r/decreasing from-gray-50 to-white text-black border text-base sm:text-lg py-5 cursor-pointer rounded-lg"}>Sign
+                                className={"w-2/3 shadow-sm bg-linear-to-r/decreasing from-gray-50 to-white text-black border text-base sm:text-lg py-5 rounded-lg"}>Sign
                             in <LogInIcon></LogInIcon></Button>
                     </Link>
                 )}
                 <Link href="/posts" className={"w-full flex items-center justify-center"}>
                     <Button
-                        className={"w-2/3 shadow-sm bg-linear-to-r/decreasing from-blue-50 to-white text-black border text-base sm:text-lg py-5 cursor-pointer rounded-lg"}>Browse...</Button>
+                        className={"w-2/3 shadow-sm bg-linear-to-r/decreasing from-blue-50 to-white text-black border text-base sm:text-lg py-5 rounded-lg"}>Browse...</Button>
                 </Link>
             </div>
         </CommonCard>

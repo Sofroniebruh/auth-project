@@ -49,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         return (
             <Comp
                 disabled={disabled || loading}
-                className={cn(buttonVariants({variant, size, className}))}
+                className={cn(buttonVariants({variant, size, className}), "cursor-pointer")}
                 ref={ref}
                 {...props}>
                 {!loading ? children : <LoaderCircleIcon className="w-5 h-5 animate-spin"/>}

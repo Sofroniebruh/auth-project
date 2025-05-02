@@ -1,5 +1,7 @@
+import {ProfileComponent} from "@/components/general";
+
 export default function ProfilePage() {
     return (
-        <p>our profile</p>
+        <ProfileComponent></ProfileComponent>
     )
 }

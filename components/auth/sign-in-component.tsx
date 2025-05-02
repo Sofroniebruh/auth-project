@@ -58,7 +58,7 @@ export const SignInComponent = () => {
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.email.message}</p>}
                             </div>
                             <Button type={"button"} onClick={handleNext}
-                                    className={"bg-blue-600 cursor-pointer shadow-sm text-base"}>Sign
+                                    className={"bg-blue-600 shadow-sm text-base"}>Sign
                                 In <LogInIcon></LogInIcon></Button>
                         </div>
                         <div className={"flex w-full items-center justify-center gap-2"}>
@@ -67,7 +67,7 @@ export const SignInComponent = () => {
                             <span className={"h-0.5 w-full bg-gray-200"}></span>
                         </div>
                         <div className={"flex flex-col gap-3 w-full"}>
-                            <Button type={"button"} className={"shadow-sm cursor-pointer w-full text-base"}
+                            <Button type={"button"} className={"shadow-sm w-full text-base"}
                                     variant={"outline"}>Sign In with <Image
                                 src={"/google-icon.png"}
                                 alt={"google icon"} width={20} height={20}></Image></Button>
@@ -87,7 +87,7 @@ export const SignInComponent = () => {
                                 {form.formState.errors.password &&
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.password.message}</p>}
                             </div>
-                            <Button type={"submit"} className={"bg-blue-600 cursor-pointer shadow-sm text-base"}>Sign
+                            <Button type={"submit"} className={"bg-blue-600 shadow-sm text-base"}>Sign
                                 In <LogInIcon></LogInIcon></Button>
                         </div>
                         <p className={"text-sm text-gray-400 text-center"}>Forgot your password? <Link

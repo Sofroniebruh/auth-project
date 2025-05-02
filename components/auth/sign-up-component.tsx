@@ -60,7 +60,7 @@ export const SignUpComponent = () => {
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.email.message}</p>
                                 )}
                             </div>
-                            <Button onClick={handleNext} className="bg-blue-600 text-base cursor-pointer">
+                            <Button onClick={handleNext} className="bg-blue-600 text-base">
                                 Next <LogInIcon></LogInIcon>
                             </Button>
                         </div>
@@ -91,7 +91,7 @@ export const SignUpComponent = () => {
                                     <p className={"text-sm text-red-500"}>{form.formState.errors.confirmPassword.message}</p>
                                 )}
                             </div>
-                            <Button type={"submit"} className="text-base mt-7 cursor-pointer bg-blue-600">
+                            <Button type={"submit"} className="text-base mt-7 bg-blue-600">
                                 Sign Up <LogInIcon/>
                             </Button>
                         </div>

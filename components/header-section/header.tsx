@@ -15,6 +15,7 @@ import React from "react";
 export const HeaderComponent = () => {
     const pathname = usePathname();
     const {isLoggedIn} = useIsAuthenticated()
+    const isProfilePage = pathname.startsWith("/profile");
 
     return (
         <header
@@ -40,22 +41,28 @@ export const HeaderComponent = () => {
                         ) : (
                             <Link href="/sign-in" className={"w-full flex items-center mt-4"}>
                                 <Button
-                                    className={"w-full shadow-sm bg-linear-to-r/decreasing from-gray-50 to-white text-black border text-base sm:text-lg py-5 cursor-pointer rounded-lg"}>Sign
+                                    className={"w-full shadow-sm bg-linear-to-r/decreasing from-gray-50 to-white text-black border text-base sm:text-lg py-5 rounded-lg"}>Sign
                                     in <LogInIcon></LogInIcon></Button>
                             </Link>
                         )
                         }
                     </ul>
                     {isLoggedIn && (
-                        <Button size={"lg"}
-                                className={"w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center"}>Add
-                            new
-                            Image <PlusIcon/></Button>
+                        <Link href={"/profile/new-post"}>
+                            <Button size={"lg"}
+                                    className={"w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center"}>Add
+                                new
+                                Image <PlusIcon/></Button>
+                        </Link>
                     )}
                 </div>
             </SheetComponent>
-            <HeaderSearchBig/>
-            <HeaderSearchSmall/>
+            {!isProfilePage && (
+                <>
+                    <HeaderSearchBig/>
+                    <HeaderSearchSmall/>
+                </>
+            )}
             <Link href={"/"}>
                 <Image src={"/main_logo.png"} width={40} height={40} alt={"main logo"}></Image>
             </Link>

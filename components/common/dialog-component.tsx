@@ -13,13 +13,13 @@ interface Props {
     title: string,
     description?: string,
     children: React.ReactNode,
+    className?: string,
 }
 
-export const DialogComponent = ({triggerButton, title, description, children}: Props) => {
+export const DialogComponent = ({triggerButton, title, description, children, className}: Props) => {
     return (
         <Dialog>
-            <DialogTrigger
-                className={"sm:hidden relative pl-14 pr-7 bg-blue-600 text-center flex cursor-pointer text-base px-4 py-2 rounded-2xl text-white"}>
+            <DialogTrigger className={className}>
                 {triggerButton}
             </DialogTrigger>
             <DialogContent>

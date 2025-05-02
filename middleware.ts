@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {verifyJWT} from "@/lib/auth";
 
-const protectedPaths = ['/profile'];
+const protectedPaths = ['/profile', "/new-post"];
 
 export function middleware(request: NextRequest) {
     const {pathname} = request.nextUrl;
@@ -24,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/profile/:path*'],
+    matcher: ['/profile/:path*', "/new-post/:path*"],
 };
