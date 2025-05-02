@@ -6,6 +6,7 @@ import {DialogComponent, SheetComponent} from "@/components/common";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
+import {ProfileTabsComponent} from "@/components/general/profile-tabs";
 
 export const ProfileComponent = () => {
     const [usernameValue, setUsernameValue] = useState("Username");
@@ -71,8 +72,8 @@ export const ProfileComponent = () => {
                     </SheetComponent>
                 </div>
             </div>
-            <div>
-                q
+            <div className={"w-full mt-10"}>
+                <ProfileTabsComponent></ProfileTabsComponent>
             </div>
         </div>
     )
