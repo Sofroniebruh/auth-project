@@ -4,7 +4,9 @@ import {jwtVerify} from "jose";
 const SECRET = process.env.SECRET!
 
 export function signJWT(payload: object) {
-    return jwt.sign(payload, SECRET)
+    return jwt.sign(payload, SECRET, {
+        expiresIn: "1d"
+    })
 }
 
 export async function verifyJWT(token: string) {

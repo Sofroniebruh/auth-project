@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({message: 'Invalid token'}, {status: 400});
     }
 
+    // @ts-ignore
     const email = payload.email.email as string;
-    console.log("Email", email)
 
     if (!email) {
         return NextResponse.json({message: "Internal server error"}, {status: 500})
