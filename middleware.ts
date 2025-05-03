@@ -3,7 +3,7 @@ import {verifyJWT} from "@/lib/auth";
 
 const protectedPaths = ['/profile', "/new-post"];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const {pathname} = request.nextUrl;
 
     if (protectedPaths.some(path => pathname.startsWith(path))) {
@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/sign-in", request.url));
         }
 
-        const decoded = verifyJWT(token);
+        const decoded = await verifyJWT(token);
 
         if (!decoded) {
             return NextResponse.redirect(new URL("/sign-in", request.url));
