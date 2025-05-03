@@ -1,8 +1,7 @@
 "use client"
 
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {LogOutIcon, SettingsIcon} from "lucide-react";
-import {DialogComponent, SheetComponent} from "@/components/common";
+import {ChangableAvatarComponent, DialogComponent, SheetComponent} from "@/components/common";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
@@ -17,10 +16,7 @@ export const ProfileComponent = () => {
     return (
         <div className={"w-full min-h-screen p-5 flex flex-col"}>
             <div className={"flex flex-col items-center justify-center gap-5"}>
-                <Avatar className={"w-[70px] h-[70px] sm:w-[110px] sm:h-[110px] bg-gray-400"}>
-                    <AvatarImage src="#"/>
-                    <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
+                <ChangableAvatarComponent className={"sm:w-[110px] sm:h-[110px]"}></ChangableAvatarComponent>
                 <div className={"flex flex-col items-center justify-center gap-1"}>
                     <h1 className={"text-2xl sm:text-5xl"}>Your username</h1>
                     <p className={"text-gray-700 text-base sm:text-lg"}>Your email</p>
@@ -38,10 +34,7 @@ export const ProfileComponent = () => {
                         <div className={"w-full flex items-center justify-center"}>
                             <div className={"flex-col flex gap-2 w-3/4"}>
                                 <div className={"w-full flex items-center justify-center mb-4"}>
-                                    <Avatar className={"w-[70px] h-[70px] bg-gray-400"}>
-                                        <AvatarImage src="#"/>
-                                        <AvatarFallback>CN</AvatarFallback>
-                                    </Avatar>
+                                    <ChangableAvatarComponent></ChangableAvatarComponent>
                                 </div>
                                 <div>
                                     <label className={"text-sm text-gray-500"} htmlFor={"username"}>Your
