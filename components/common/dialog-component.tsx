@@ -14,11 +14,12 @@ interface Props {
     description?: string,
     children: React.ReactNode,
     className?: string,
+    openState?: boolean,
 }
 
-export const DialogComponent = ({triggerButton, title, description, children, className}: Props) => {
+export const DialogComponent = ({triggerButton, title, description, children, className, openState}: Props) => {
     return (
-        <Dialog>
+        <Dialog open={openState}>
             <DialogTrigger className={className}>
                 {triggerButton}
             </DialogTrigger>
