@@ -9,9 +9,10 @@ import {useHandleImageDropZone} from "@/lib/hooks/useHandleImageDropZone";
 
 interface Props {
     className?: string;
+    email?: string;
 }
 
-export const ChangableAvatarComponent = ({className}: Props) => {
+export const ChangableAvatarComponent = ({className, email}: Props) => {
     const {
         isLoading,
         profilePicture,
@@ -27,7 +28,7 @@ export const ChangableAvatarComponent = ({className}: Props) => {
             <Avatar className={cn("w-[70px] h-[70px] bg-gray-400", className)}>
                 <AvatarImage onError={() => setIsLoading(false)} onLoad={() => setIsLoading(false)}
                              src={profilePicture}/>
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>{email ? email.slice(0, 2) : <p>C</p>}</AvatarFallback>
             </Avatar>
             <div
                 className={cn(

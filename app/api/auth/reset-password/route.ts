@@ -1,28 +1,15 @@
 import {NextRequest, NextResponse} from "next/server";
-import {signJWT, verifyJWT} from "@/lib/auth";
+import {signJWT} from "@/lib/auth";
 import {prismaClient} from "@/prisma/prisma-client";
 import {hashPassword} from "@/lib/hash";
+import {tokenCheck} from "@/lib";
 
 export async function POST(req: NextRequest) {
-    const {searchParams} = new URL(req.url);
-    const token = searchParams.get('token');
-
-    if (!token) {
-        return NextResponse.json({error: 'token is required'}, {status: 500});
-    }
-
     const {password} = (await req.json()) as { password: string };
-    const payload = await verifyJWT(token);
-
-    if (!payload || typeof payload !== 'object' || !('email' in payload)) {
-        return NextResponse.json({message: 'Invalid token'}, {status: 400});
-    }
-
-    // @ts-ignore
-    const email = payload.email.email as string;
+    const email = await tokenCheck(req)
 
     if (!email) {
-        return NextResponse.json({message: "Internal server error"}, {status: 500})
+        return NextResponse.json({message: "Not authenticated"}, {status: 401})
     }
 
     const user = await prismaClient.user.findUnique(

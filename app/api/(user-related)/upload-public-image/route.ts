@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {uploadPublicImage} from "@/lib/aws/upload/upload-public-image";
-import {verifyJWT} from "@/lib/auth";
 import {prismaClient} from "@/prisma/prisma-client";
+import {tokenCheck} from "@/lib";
 
 export async function POST(req: NextRequest) {
     const formData = await req.formData()
@@ -12,15 +12,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({message: "Upload failed."}, {status: 500})
     }
 
-    const token = req.cookies.get("jwt")?.value as string;
-    const payload = await verifyJWT(token);
+    const email = await tokenCheck(req)
 
-    if (!payload) {
-        return NextResponse.json({message: "Token is invalid"}, {status: 500})
+    if (!email) {
+        return NextResponse.json({message: "Not authenticated"}, {status: 401})
     }
-
-    // @ts-ignore
-    const email = payload.email as string;
 
     const user = await prismaClient.user.findUnique({
         where: {

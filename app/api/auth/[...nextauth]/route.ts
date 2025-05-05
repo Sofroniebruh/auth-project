@@ -27,14 +27,6 @@ export const authOptions: NextAuthOptions = {
                         pfpUrl: user.image,
                     },
                 });
-            } else {
-                await prismaClient.user.update({
-                    where: {email: user.email!},
-                    data: {
-                        username: user.name!,
-                        pfpUrl: user.image,
-                    },
-                });
             }
 
             const customToken = signJWT({email: user.email});

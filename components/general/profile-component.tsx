@@ -1,7 +1,7 @@
 "use client"
 
 import {LogOutIcon, SettingsIcon} from "lucide-react";
-import {ChangableAvatarComponent, DialogComponent, SheetComponent} from "@/components/common";
+import {ChangableAvatarComponent, DialogComponent, HoverCardComponent, SheetComponent} from "@/components/common";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {ProfileTabsComponent} from "@/components/general/profile-tabs";
@@ -17,7 +17,7 @@ import {useState} from "react";
 import Link from "next/link";
 
 export const ProfileComponent = () => {
-    const {email, username, isInfoLoading, setUsername} = useUserData()
+    const {email, username, isInfoLoading, setUsername, changedUsername, setChangedUsername} = useUserData()
     const [saveDisabled, setSaveDisabled] = useState(true)
 
     const router = useRouter();
@@ -31,12 +31,23 @@ export const ProfileComponent = () => {
     const handleUsernameSubmit = async (value: UsernameSchemaType) => {
         if (await API.changeUserInfo.changeUserName(value.username)) {
             setUsername(value.username);
+            setChangedUsername(value.username);
 
             toast.success("Username was updated successfully.");
 
             return;
         }
         toast.error("Error updating your username.");
+    }
+
+    const handleDelete = async () => {
+        if (await API.changeUserInfo.deleteUser()) {
+            router.push("/")
+
+            return;
+        }
+
+        toast.error("Error deleting the user");
     }
 
     const handleLogout = async () => {
@@ -52,7 +63,8 @@ export const ProfileComponent = () => {
     return (
         <div className={"w-full min-h-screen p-5 flex flex-col"}>
             <div className={"flex flex-col items-center justify-center gap-5"}>
-                <ChangableAvatarComponent className={"sm:w-[110px] sm:h-[110px]"}></ChangableAvatarComponent>
+                <ChangableAvatarComponent email={email}
+                                          className={"sm:w-[110px] sm:h-[110px]"}></ChangableAvatarComponent>
                 {isInfoLoading ? (
                     <div className={"flex flex-col items-center justify-center gap-1"}>
 
@@ -61,7 +73,9 @@ export const ProfileComponent = () => {
                     </div>
                 ) : (
                     <div className={"flex flex-col items-center justify-center gap-1"}>
-                        <h1 className={"text-2xl sm:text-5xl"}>{username}</h1>
+                        <HoverCardComponent trigger={
+                            <h1 className={"text-2xl sm:text-5xl"}>{changedUsername}</h1>
+                        } content={username}/>
                         <p className={"text-gray-700 text-base sm:text-lg"}>{email}</p>
                     </div>
                 )}
@@ -102,24 +116,26 @@ export const ProfileComponent = () => {
                                             <Input className={"mt-1"} name={"email"} value={email} readOnly={true}
                                                    disabled={true}></Input>
                                         </div>
-                                        <div className={"flex gap-2"}>
+                                        <div className={"mt-10 sm:mt-0 flex gap-2 flex-col sm:flex-row"}>
                                             <Link href={"/request-password-change"}>
-                                                <Button type={"button"} variant={"outline"} className={"mt-4 text-sm"}>Change
+                                                <Button type={"button"} variant={"outline"}
+                                                        className={"mt-4 w-full text-sm"}>Change
                                                     your
                                                     password</Button>
                                             </Link>
                                             <Button type={"submit"} disabled={saveDisabled} variant={"outline"}
-                                                    className={"mt-4 text-sm flex-1"}>Save</Button>
+                                                    className={"sm:mt-4 text-sm sm:flex-1"}>Save</Button>
                                         </div>
                                     </form>
                                 </FormProvider>
                                 <DialogComponent triggerButton={
                                     <div
-                                        className={"cursor-pointer bg-red-500 text-sm text-white p-2 rounded-md"}>Delete
+                                        className={"cursor-pointer mt-10 bg-red-500 text-sm text-white p-2 rounded-md"}>Delete
                                         account</div>
                                 } title={"Are you sure?"} description={"This action can not be undone"}>
                                     <div className={"w-full flex items-center justify-center gap-5"}>
-                                        <Button size={"lg"} variant={"destructive"}>Delete My Account</Button>
+                                        <Button onClick={handleDelete} size={"lg"} variant={"destructive"}>Delete My
+                                            Account</Button>
                                         <Button size={"lg"} variant={"outline"}>Cancel</Button>
                                     </div>
                                 </DialogComponent>

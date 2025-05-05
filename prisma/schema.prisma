@@ -26,7 +26,7 @@ model User {
 
 model Post {
   id           Int       @id @default(autoincrement())
-  createdBy    User      @relation(fields: [userId], references: [id])
+  createdBy    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
   likes        Like[]
   comments     Comment[]
@@ -34,7 +34,7 @@ model Post {
 }
 
 model Like {
-  userLiked User @relation(fields: [userId], references: [id])
+  userLiked User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   postLiked Post @relation(fields: [postId], references: [id])
   postId    Int
@@ -44,7 +44,7 @@ model Like {
 
 model Comment {
   id             Int    @id @default(autoincrement())
-  commentOwner   User   @relation(fields: [userId], references: [id])
+  commentOwner   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   commentContent String
   postCommented  Post   @relation(fields: [postId], references: [id])

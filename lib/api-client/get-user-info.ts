@@ -1,7 +1,7 @@
 import {User} from "@/generated/prisma";
 
 export const GetProfileImage = async (): Promise<string | null> => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/get-user-info`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/user-action`, {
         method: "GET",
     })
 
@@ -14,7 +14,7 @@ export const GetProfileImage = async (): Promise<string | null> => {
 }
 
 export const GetUserEmailAndUsername = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/get-user-info`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/user-action`, {
         method: "GET",
     })
 

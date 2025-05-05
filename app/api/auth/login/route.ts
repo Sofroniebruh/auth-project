@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({message: "Email not found"}, {status: 400})
     }
 
-    const isValidPassword = await checkPassword(password, user.password)
+    const isValidPassword = await checkPassword(password, user.password!)
 
     if (!isValidPassword) {
         return NextResponse.json({message: "Password does not match"}, {status: 400})
