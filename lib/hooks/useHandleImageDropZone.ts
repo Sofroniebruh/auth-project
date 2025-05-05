@@ -15,7 +15,6 @@ export const useHandleImageDropZone = () => {
         if (image) {
             setProfilePicture(image)
         }
-        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -35,7 +34,6 @@ export const useHandleImageDropZone = () => {
         if (link) {
             setProfilePicture(link)
             toast("Image uploaded successfully")
-            setIsLoading(false);
 
             return
         }
@@ -49,6 +47,7 @@ export const useHandleImageDropZone = () => {
     return {
         getRootProps,
         getInputProps,
+        setIsLoading,
         isDragActive,
         openState,
         isLoading,

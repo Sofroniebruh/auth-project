@@ -3,7 +3,6 @@
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {cn} from "@/lib/utils";
 import {EditIcon, LoaderCircleIcon} from "lucide-react";
-import {useState} from "react";
 import {DialogComponent} from "@/components/common/dialog-component";
 import {DragAndDropPfpComponent} from "@/components/common/drag-and-drop-pfp-component";
 import {useHandleImageDropZone} from "@/lib/hooks/useHandleImageDropZone";
@@ -13,35 +12,27 @@ interface Props {
 }
 
 export const ChangableAvatarComponent = ({className}: Props) => {
-    const {isLoading, profilePicture, openState, getInputProps, isDragActive, getRootProps} = useHandleImageDropZone();
-    const [isHovered, setIsHovered] = useState(false);
-
-    const handleHoverIn = () => {
-        setIsHovered(true);
-    }
-
-    const handleHoverOut = () => {
-        setIsHovered(false);
-    }
+    const {
+        isLoading,
+        profilePicture,
+        openState,
+        getInputProps,
+        isDragActive,
+        getRootProps,
+        setIsLoading
+    } = useHandleImageDropZone();
 
     return (
-        <div onMouseEnter={handleHoverIn} onMouseLeave={handleHoverOut}
-             className={"w-fit relative rounded-full overflow-hidden"}>
+        <div className={"w-fit relative rounded-full overflow-hidden group"}>
             <Avatar className={cn("w-[70px] h-[70px] bg-gray-400", className)}>
-                <AvatarImage src={profilePicture}/>
-                <AvatarFallback>
-                    {isLoading ? (
-                        <LoaderCircleIcon className={"animate-spin"}></LoaderCircleIcon>
-                    ) : (<p>CN</p>)
-                    }
-                </AvatarFallback>
+                <AvatarImage onLoad={() => setIsLoading(false)} src={profilePicture}/>
+                <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div
                 className={cn(
-                    "w-full h-full bg-gray-200 flex items-center justify-center cursor-pointer top-0 left-0",
+                    "w-full h-full bg-gray-200 absolute flex items-center justify-center cursor-pointer top-0 left-0 ", "opacity-0 group-hover:opacity-100",
                     {
-                        "absolute": isHovered,
-                        "hidden": !isHovered || isLoading,
+                        "hidden": isLoading,
                     }
                 )}
             >
