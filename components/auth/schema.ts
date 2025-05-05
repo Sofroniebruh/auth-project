@@ -7,6 +7,10 @@ export const emailSchema = z.object({
     email: email,
 })
 
+export const usernameSchema = z.object({
+    username: z.string().min(1, {message: "Username is required"}),
+})
+
 export const formLoginSchema = emailSchema.merge(z.object({
     password: password,
 }))
@@ -31,6 +35,7 @@ export const formRegisterSchema = formLoginSchema.merge(z.object({
     }
 )
 
+export type UsernameSchemaType = z.infer<typeof usernameSchema>
 export type TwoPasswordsSchemaType = z.infer<typeof twoPasswordsSchema>
 export type EmailType = z.infer<typeof emailSchema>
 export type LoginFormType = z.infer<typeof formLoginSchema>

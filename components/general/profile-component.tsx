@@ -4,17 +4,39 @@ import {LogOutIcon, SettingsIcon} from "lucide-react";
 import {ChangableAvatarComponent, DialogComponent, SheetComponent} from "@/components/common";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {useState} from "react";
 import {ProfileTabsComponent} from "@/components/general/profile-tabs";
 import {API} from "@/lib/api-client/api";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
+import {useUserData} from "@/lib/hooks";
+import {Skeleton} from "@/components/ui/skeleton";
+import {FormProvider, useForm} from "react-hook-form";
+import {usernameSchema, UsernameSchemaType} from "@/components/auth/schema";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useState} from "react";
+import Link from "next/link";
 
 export const ProfileComponent = () => {
-    const [usernameValue, setUsernameValue] = useState("Username");
+    const {email, username, isInfoLoading, setUsername} = useUserData()
+    const [saveDisabled, setSaveDisabled] = useState(true)
+
     const router = useRouter();
-    const handleChange = (value: string) => {
-        setUsernameValue(value);
+    const form = useForm<UsernameSchemaType>({
+        resolver: zodResolver(usernameSchema),
+        defaultValues: {
+            username: "",
+        }
+    })
+
+    const handleUsernameSubmit = async (value: UsernameSchemaType) => {
+        if (await API.changeUserInfo.changeUserName(value.username)) {
+            setUsername(value.username);
+
+            toast.success("Username was updated successfully.");
+
+            return;
+        }
+        toast.error("Error updating your username.");
     }
 
     const handleLogout = async () => {
@@ -31,10 +53,18 @@ export const ProfileComponent = () => {
         <div className={"w-full min-h-screen p-5 flex flex-col"}>
             <div className={"flex flex-col items-center justify-center gap-5"}>
                 <ChangableAvatarComponent className={"sm:w-[110px] sm:h-[110px]"}></ChangableAvatarComponent>
-                <div className={"flex flex-col items-center justify-center gap-1"}>
-                    <h1 className={"text-2xl sm:text-5xl"}>Your username</h1>
-                    <p className={"text-gray-700 text-base sm:text-lg"}>Your email</p>
-                </div>
+                {isInfoLoading ? (
+                    <div className={"flex flex-col items-center justify-center gap-1"}>
+
+                        <Skeleton className={"w-[174px] h-[32px] sm:w-[174px] sm:h-[48px]"}></Skeleton>
+                        <Skeleton className={"w-[174px] h-[24px] sm:w-[174px] sm:h-[28px]"}></Skeleton>
+                    </div>
+                ) : (
+                    <div className={"flex flex-col items-center justify-center gap-1"}>
+                        <h1 className={"text-2xl sm:text-5xl"}>{username}</h1>
+                        <p className={"text-gray-700 text-base sm:text-lg"}>{email}</p>
+                    </div>
+                )}
                 <div className={"flex gap-2.5"}>
                     <div onClick={handleLogout}
                          className={"bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4"}>
@@ -50,20 +80,39 @@ export const ProfileComponent = () => {
                                 <div className={"w-full flex items-center justify-center mb-4"}>
                                     <ChangableAvatarComponent></ChangableAvatarComponent>
                                 </div>
-                                <div>
-                                    <label className={"text-sm text-gray-500"} htmlFor={"username"}>Your
-                                        username</label>
-                                    <Input className={"mt-1"} name={"username"}
-                                           onChange={(e) => handleChange(e.target.value)}
-                                           value={usernameValue}></Input>
-                                </div>
-                                <div>
-                                    <label className={"text-sm text-gray-500"} htmlFor={"email"}>Your email</label>
-                                    <Input className={"mt-1"} name={"email"} value={"Your email"} readOnly={true}
-                                           disabled={true}></Input>
-                                </div>
-                                <Button variant={"outline"} className={"mt-4 text-sm"}>Change your
-                                    password</Button>
+                                <FormProvider {...form}>
+                                    <form onSubmit={form.handleSubmit(handleUsernameSubmit)}>
+                                        <label className={"text-sm text-gray-500"} htmlFor={"username"}>Your
+                                            username</label>
+                                        <div>
+                                            <div className={"relative"}>
+                                                <Input {...form.register("username")}
+                                                       onChange={() => setSaveDisabled(false)} className={"mt-1"}
+                                                       name={"username"}
+                                                       placeholder={username}></Input>
+                                            </div>
+                                            {form.formState.errors.username && (
+                                                <p className={"text-sm text-red-500"}>{form.formState.errors.username.message}</p>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label className={"text-sm text-gray-500"} htmlFor={"email"}>Your
+                                                email</label>
+                                            <Input className={"mt-1"} name={"email"} value={email} readOnly={true}
+                                                   disabled={true}></Input>
+                                        </div>
+                                        <div className={"flex gap-2"}>
+                                            <Link href={"/request-password-change"}>
+                                                <Button type={"button"} variant={"outline"} className={"mt-4 text-sm"}>Change
+                                                    your
+                                                    password</Button>
+                                            </Link>
+                                            <Button type={"submit"} disabled={saveDisabled} variant={"outline"}
+                                                    className={"mt-4 text-sm flex-1"}>Save</Button>
+                                        </div>
+                                    </form>
+                                </FormProvider>
                                 <DialogComponent triggerButton={
                                     <div
                                         className={"cursor-pointer bg-red-500 text-sm text-white p-2 rounded-md"}>Delete

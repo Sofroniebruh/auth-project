@@ -1,2 +1,2 @@
-export {useIsAuthenticated} from "./use-is-authenticated"
-export {useUserProfilePicture} from "./useUserProfilePicture"
+export {useIsAuthenticated} from "./useIsAuthenticated"
+export {useUserData} from "./useUserData"

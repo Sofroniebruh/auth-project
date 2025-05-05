@@ -27,5 +27,5 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({message: "No user was found"}, {status: 500})
     }
 
-    return NextResponse.json({link: user.pfpUrl}, {status: 200})
+    return NextResponse.json({user: user}, {status: 200})
 }

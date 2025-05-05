@@ -10,7 +10,7 @@ export const useHandleImageDropZone = () => {
 
     const fetchUserImage = async () => {
         setIsLoading(true)
-        const image = await API.getImages.GetProfileImage()
+        const image = await API.getUserInfo.GetProfileImage()
 
         if (image == null || image == "") {
             setIsLoading(false)
