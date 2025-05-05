@@ -14,6 +14,7 @@ import {CommonCard} from "@/components/common";
 import {API} from "@/lib/api-client/api";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
+import {signIn} from "next-auth/react";
 
 export const SignInComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);
@@ -31,6 +32,10 @@ export const SignInComponent = () => {
         const isValid = await HandleNextStage({loginForm})
 
         isValid && setStep(2)
+    }
+
+    const handleSignInWithGoogle = async () => {
+        await signIn("google", {callbackUrl: "/posts"});
     }
 
     const onSubmit = async (data: LoginFormType) => {
@@ -67,7 +72,8 @@ export const SignInComponent = () => {
                             <span className={"h-0.5 w-full bg-gray-200"}></span>
                         </div>
                         <div className={"flex flex-col gap-3 w-full"}>
-                            <Button type={"button"} className={"shadow-sm w-full text-base"}
+                            <Button onClick={handleSignInWithGoogle} type={"button"}
+                                    className={"shadow-sm w-full text-base"}
                                     variant={"outline"}>Sign In with <Image
                                 src={"/google-icon.png"}
                                 alt={"google icon"} width={20} height={20}></Image></Button>
