@@ -12,9 +12,13 @@ export const useHandleImageDropZone = () => {
         setIsLoading(true)
         const image = await API.getImages.GetProfileImage()
 
-        if (image) {
-            setProfilePicture(image)
+        if (image == null || image == "") {
+            setIsLoading(false)
+
+            return;
         }
+
+        setProfilePicture(image)
     }
 
     useEffect(() => {

@@ -25,7 +25,8 @@ export const ChangableAvatarComponent = ({className}: Props) => {
     return (
         <div className={"w-fit relative rounded-full overflow-hidden group"}>
             <Avatar className={cn("w-[70px] h-[70px] bg-gray-400", className)}>
-                <AvatarImage onLoad={() => setIsLoading(false)} src={profilePicture}/>
+                <AvatarImage onError={() => setIsLoading(false)} onLoad={() => setIsLoading(false)}
+                             src={profilePicture}/>
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div
