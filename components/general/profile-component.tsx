@@ -6,11 +6,25 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import {ProfileTabsComponent} from "@/components/general/profile-tabs";
+import {API} from "@/lib/api-client/api";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export const ProfileComponent = () => {
     const [usernameValue, setUsernameValue] = useState("Username");
+    const router = useRouter();
     const handleChange = (value: string) => {
         setUsernameValue(value);
+    }
+
+    const handleLogout = async () => {
+        if (await API.auth.logout()) {
+            router.push("/");
+
+            return;
+        }
+
+        toast.error("Error while logging out")
     }
 
     return (
@@ -22,8 +36,8 @@ export const ProfileComponent = () => {
                     <p className={"text-gray-700 text-base sm:text-lg"}>Your email</p>
                 </div>
                 <div className={"flex gap-2.5"}>
-                    <div
-                        className={"bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4"}>
+                    <div onClick={handleLogout}
+                         className={"bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4"}>
                         Log Out <LogOutIcon></LogOutIcon>
                     </div>
                     <SheetComponent triggerElement={

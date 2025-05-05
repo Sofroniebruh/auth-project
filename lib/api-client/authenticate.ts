@@ -34,3 +34,11 @@ export async function register(data: RegisterFormType) {
 
     return response.status;
 }
+
+export async function logout() {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/auth/logout`, {
+        method: 'POST',
+    })
+
+    return response.ok
+}
