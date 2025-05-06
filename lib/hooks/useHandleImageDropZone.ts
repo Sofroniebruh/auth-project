@@ -1,16 +1,24 @@
+"use client"
+
 import {useCallback, useEffect, useState} from "react";
 import {API} from "@/lib/api-client/api";
 import {toast} from "sonner";
 import {useDropzone} from "react-dropzone";
 
-export const useHandleImageDropZone = () => {
+interface Props {
+    isPfp: boolean;
+}
+
+export const useHandleImageDropZone = ({isPfp}: Props) => {
     const [openState, setOpenState] = useState<boolean>();
     const [isLoading, setIsLoading] = useState(true);
     const [profilePicture, setProfilePicture] = useState("");
+    const [uploadedFile, setUploadedFile] = useState<File | null>();
 
     const fetchUserImage = async () => {
         setIsLoading(true)
         const image = await API.getUserInfo.GetProfileImage()
+        console.log("Image", image)
 
         if (image == null || image == "") {
             setIsLoading(false)
@@ -29,17 +37,18 @@ export const useHandleImageDropZone = () => {
         setOpenState(false);
         setIsLoading(true);
         const file: File = acceptedFile[0];
-
-        handleImage(file)
+        isPfp ? handleImage(file) : setUploadedFile(file);
     }, [])
 
     const handleImage = async (file: File) => {
-        const link = await API.uploadImage.UploadPublicImagePfp(file)
+        const link = await API.uploadImage.UploadPublicImage(file)
         if (link) {
-            setProfilePicture(link)
-            toast("Image uploaded successfully")
+            if (await API.changeUserInfo.changeUserPfp(link)) {
+                setProfilePicture(link)
+                toast("Image uploaded successfully")
 
-            return
+                return
+            }
         }
 
         toast("Image upload failed")
@@ -52,6 +61,8 @@ export const useHandleImageDropZone = () => {
         getRootProps,
         getInputProps,
         setIsLoading,
+        setUploadedFile,
+        uploadedFile,
         isDragActive,
         openState,
         isLoading,

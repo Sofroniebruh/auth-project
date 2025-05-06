@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         data: {
             email,
             password: await hashPassword(password),
-            username: email,
+            name: email,
         }
     })
 

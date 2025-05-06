@@ -52,7 +52,7 @@ export const HeaderComponent = () => {
                             <Button size={"lg"}
                                     className={"w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center"}>Add
                                 new
-                                Image <PlusIcon/></Button>
+                                Post <PlusIcon/></Button>
                         </Link>
                     )}
                 </div>

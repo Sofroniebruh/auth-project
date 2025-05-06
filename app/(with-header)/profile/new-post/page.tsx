@@ -1,5 +1,7 @@
+import {NewPostComponent} from "@/components/posts";
+
 export default function NewPostPage() {
     return (
-        <p>New Post Page</p>
+        <NewPostComponent></NewPostComponent>
     )
 }

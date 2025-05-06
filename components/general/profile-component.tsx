@@ -11,7 +11,7 @@ import {toast} from "sonner";
 import {useUserData} from "@/lib/hooks";
 import {Skeleton} from "@/components/ui/skeleton";
 import {FormProvider, useForm} from "react-hook-form";
-import {usernameSchema, UsernameSchemaType} from "@/components/auth/schema";
+import {DefaultNamingSchemaType, nameSchema} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
 import Link from "next/link";
@@ -21,17 +21,17 @@ export const ProfileComponent = () => {
     const [saveDisabled, setSaveDisabled] = useState(true)
 
     const router = useRouter();
-    const form = useForm<UsernameSchemaType>({
-        resolver: zodResolver(usernameSchema),
+    const form = useForm<DefaultNamingSchemaType>({
+        resolver: zodResolver(nameSchema),
         defaultValues: {
-            username: "",
+            name: "",
         }
     })
 
-    const handleUsernameSubmit = async (value: UsernameSchemaType) => {
-        if (await API.changeUserInfo.changeUserName(value.username)) {
-            setUsername(value.username);
-            setChangedUsername(value.username);
+    const handleUsernameSubmit = async (value: DefaultNamingSchemaType) => {
+        if (await API.changeUserInfo.changeUserName(value.name)) {
+            setUsername(value.name);
+            setChangedUsername(value.name);
 
             toast.success("Username was updated successfully.");
 
@@ -100,13 +100,13 @@ export const ProfileComponent = () => {
                                             username</label>
                                         <div>
                                             <div className={"relative"}>
-                                                <Input {...form.register("username")}
+                                                <Input {...form.register("name")}
                                                        onChange={() => setSaveDisabled(false)} className={"mt-1"}
                                                        name={"username"}
                                                        placeholder={username}></Input>
                                             </div>
-                                            {form.formState.errors.username && (
-                                                <p className={"text-sm text-red-500"}>{form.formState.errors.username.message}</p>
+                                            {form.formState.errors.name && (
+                                                <p className={"text-sm text-red-500"}>{form.formState.errors.name.message}</p>
                                             )}
                                         </div>
 

@@ -6,15 +6,12 @@ interface Props {
 }
 
 const s3 = new S3Client({
-    region: process.env.AWS_REGION!,
+    region: process.env.NEXT_PUBLIC_AWS_REGION!,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_KEY!,
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY!,
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_KEY!,
     },
 });
-
-console.log("AWS KEY:", process.env.AWS_ACCESS_KEY); // should print a value
-;
 
 export const uploadPublicImage = async ({formData}: Props) => {
     const file = formData.get("file") as File;
@@ -29,14 +26,12 @@ export const uploadPublicImage = async ({formData}: Props) => {
 
     await s3.send(
         new PutObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME!,
+            Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
             Key: key,
             Body: buffer,
             ContentType: file.type,
         })
     );
 
-
-
-    return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
 }

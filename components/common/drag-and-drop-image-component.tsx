@@ -6,7 +6,7 @@ interface Props {
     isDragActive: boolean,
 }
 
-export const DragAndDropPfpComponent = ({getRootProps, getInputProps, isDragActive}: Props) => {
+export const DragAndDropImageComponent = ({getRootProps, getInputProps, isDragActive}: Props) => {
     return (
         <div className={"h-[300px] bg-gray-200 flex justify-center items-center p-5 rounded-md"} {...getRootProps()}>
             <input {...getInputProps()} />

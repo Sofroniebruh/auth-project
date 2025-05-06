@@ -4,7 +4,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {cn} from "@/lib/utils";
 import {EditIcon, LoaderCircleIcon} from "lucide-react";
 import {DialogComponent} from "@/components/common/dialog-component";
-import {DragAndDropPfpComponent} from "@/components/common/drag-and-drop-pfp-component";
+import {DragAndDropImageComponent} from "@/components/common/drag-and-drop-image-component";
 import {useHandleImageDropZone} from "@/lib/hooks/useHandleImageDropZone";
 
 interface Props {
@@ -21,12 +21,13 @@ export const ChangableAvatarComponent = ({className, email}: Props) => {
         isDragActive,
         getRootProps,
         setIsLoading
-    } = useHandleImageDropZone();
+    } = useHandleImageDropZone({isPfp: true});
 
     return (
         <div className={"w-fit relative rounded-full overflow-hidden group"}>
-            <Avatar className={cn("w-[70px] h-[70px] bg-gray-400", className)}>
-                <AvatarImage onError={() => setIsLoading(false)} onLoad={() => setIsLoading(false)}
+            <Avatar className={cn("w-[70px] h-[70px] bg-gray-400 overflow-hidden", className)}>
+                <AvatarImage className={"object-cover w-full h-full"} onError={() => setIsLoading(false)}
+                             onLoad={() => setIsLoading(false)}
                              src={profilePicture}/>
                 <AvatarFallback>{email ? email.slice(0, 2) : <p>C</p>}</AvatarFallback>
             </Avatar>
@@ -41,8 +42,8 @@ export const ChangableAvatarComponent = ({className, email}: Props) => {
                 <DialogComponent openState={openState} triggerButton={
                     <EditIcon className={"cursor-pointer"}></EditIcon>
                 } title={"Change profile picture"}>
-                    <DragAndDropPfpComponent isDragActive={isDragActive} getInputProps={getInputProps}
-                                             getRootProps={getRootProps}></DragAndDropPfpComponent>
+                    <DragAndDropImageComponent isDragActive={isDragActive} getInputProps={getInputProps}
+                                               getRootProps={getRootProps}></DragAndDropImageComponent>
                 </DialogComponent>
             </div>
             {isLoading && (
