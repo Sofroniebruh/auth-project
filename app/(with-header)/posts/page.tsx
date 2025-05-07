@@ -1,6 +1,6 @@
 "use client"
 
-import {PostsComponent} from "@/components/posts";
+import {PostsComponent} from "../../../components/posts-related";
 
 export default function PostsPage() {
     return (

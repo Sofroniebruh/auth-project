@@ -1,8 +1,8 @@
 "use client"
 
 import {CommonCard} from "@/components/common";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui-components/ui/input";
+import {Button} from "@/components/ui-components/ui/button";
 import {FormProvider, useForm} from "react-hook-form";
 import {emailSchema, EmailType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";

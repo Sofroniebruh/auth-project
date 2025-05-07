@@ -1,4 +1,4 @@
-export async function UploadPublicImage(file: File) {
+export async function uploadPublicImage(file: File) {
     const formData = new FormData();
     formData.append("file", file);
 

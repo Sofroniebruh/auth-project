@@ -2,11 +2,6 @@
 
 import {useEffect, useState} from "react";
 import {API} from "@/lib/api-client/api";
-import {User} from "@prisma/client";
-
-export type GetUserInfo = {
-    user: User;
-}
 
 export const useUserData = () => {
     const [email, setEmail] = useState("")
@@ -22,7 +17,7 @@ export const useUserData = () => {
         const getUser = async () => {
             setIsInfoLoading(true)
 
-            const {user} = (await API.getUserInfo.GetUserEmailAndUsername()) as GetUserInfo
+            const user = await API.getUserInfo.getUserInfo()
 
             const validatedUsername = truncate(user.username!, 10)
             setChangedUsername(validatedUsername)

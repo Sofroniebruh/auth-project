@@ -1,4 +1,4 @@
-import {HoverCard, HoverCardContent, HoverCardTrigger,} from "@/components/ui/hover-card"
+import {HoverCard, HoverCardContent, HoverCardTrigger,} from "@/components/ui-components/ui/hover-card"
 import React from "react";
 
 interface Props {

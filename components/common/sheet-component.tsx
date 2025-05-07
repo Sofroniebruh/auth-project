@@ -1,4 +1,4 @@
-import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,} from "@/components/ui/sheet"
+import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,} from "@/components/ui-components/ui/sheet"
 import React from "react";
 
 interface Props {

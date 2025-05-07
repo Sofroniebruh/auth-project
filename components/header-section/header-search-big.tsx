@@ -1,6 +1,6 @@
 "use client"
 
-import {Input} from "@/components/ui/input";
+import {Input} from "@/components/ui-components/ui/input";
 import {SheetComponent} from "@/components/common";
 import {SearchIcon} from "lucide-react";
 import Image from "next/image";

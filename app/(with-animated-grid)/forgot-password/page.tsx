@@ -1,9 +1,9 @@
 "use client"
 
 import {notFound, useRouter, useSearchParams} from "next/navigation";
-import {Input} from "@/components/ui/input";
+import {Input} from "@/components/ui-components/ui/input";
 import {CommonCard} from "@/components/common";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui-components/ui/button";
 import {FormProvider, useForm} from "react-hook-form";
 import {twoPasswordsSchema, TwoPasswordsSchemaType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";

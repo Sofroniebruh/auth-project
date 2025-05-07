@@ -3,17 +3,20 @@ import {z} from "zod";
 export const password = z.string().min(6, {message: "Password must be at least 6 characters"});
 export const email = z.string().min(1, {message: "Email is required"}).email({message: 'Email is invalid'})
 
+// FOR POSTS
+export const newPostSchema = z.object({
+    name: z.string().min(1, {message: "Post name is required"}),
+    description: z.string().optional(),
+})
+
+// FOR PROFILES
 export const emailSchema = z.object({
     email: email,
 })
 
-export const nameSchema = z.object({
-    name: z.string().min(1, {message: "Name is required"}),
+export const usernameSchema = z.object({
+    username: z.string().min(1, {message: "Username is required"}),
 })
-
-export const newPostSchema = nameSchema.merge(z.object({
-    description: z.string().optional(),
-}))
 
 export const formLoginSchema = emailSchema.merge(z.object({
     password: password,
@@ -39,8 +42,15 @@ export const formRegisterSchema = formLoginSchema.merge(z.object({
     }
 )
 
+// FOR API
+export const updateProfileUsernameOrProfilePictureSchemaForAPI = z.object({
+    username: z.string().optional(),
+    profilePicture: z.string().optional(),
+})
+
+export type UpdatedUserAPISchema = z.infer<typeof updateProfileUsernameOrProfilePictureSchemaForAPI>
 export type NewPostSchemaType = z.infer<typeof newPostSchema>
-export type DefaultNamingSchemaType = z.infer<typeof nameSchema>
+export type UsernameSchemaType = z.infer<typeof usernameSchema>
 export type TwoPasswordsSchemaType = z.infer<typeof twoPasswordsSchema>
 export type EmailType = z.infer<typeof emailSchema>
 export type LoginFormType = z.infer<typeof formLoginSchema>

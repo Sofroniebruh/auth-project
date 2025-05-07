@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {verifyJWT} from "@/lib/auth";
+import {verifyJWT} from "@/lib/auth/jwt-actions";
 
 const protectedPaths = ['/profile', "/new-post"];
 

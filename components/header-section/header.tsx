@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui-components/ui/button";
 import {SheetComponent} from "@/components/common";
 import {HeaderSearchSmall} from "@/components/header-section/header-search-small";
 import {HeaderSearchBig} from "@/components/header-section/header-search-big";
@@ -28,7 +28,7 @@ export const HeaderComponent = () => {
                     <div className={"w-full h-0.5 bg-black"}></div>
                     <ul>
                         <Link href={"/posts"}>
-                            <li className={cn("text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer", pathname === "/posts" && "text-blue-600")}>
+                            <li className={cn("text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer", pathname === "/posts-related" && "text-blue-600")}>
                                 <ImageIcon></ImageIcon> Posts
                             </li>
                         </Link>

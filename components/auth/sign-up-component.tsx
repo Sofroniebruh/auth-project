@@ -1,9 +1,9 @@
 "use state"
 
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui-components/ui/button";
 import {LogInIcon} from "lucide-react";
 import {useState} from "react";
-import {Input} from "@/components/ui/input";
+import {Input} from "@/components/ui-components/ui/input";
 import {FormProvider, useForm} from "react-hook-form";
 import {formRegisterSchema, RegisterFormType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";

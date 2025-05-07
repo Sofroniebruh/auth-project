@@ -4,8 +4,8 @@ export interface NewPostData extends NewPostSchemaType {
     imageUrl: string;
 }
 
-export const changeUserName = async (username: string) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/user-action/posts`, {
+export const changeUsername = async (username: string) => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export const changeUserName = async (username: string) => {
 }
 
 export async function deleteUser() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/user-action`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user`, {
         method: "DELETE"
     })
 
@@ -25,12 +25,12 @@ export async function deleteUser() {
 }
 
 export async function changeUserPfp(link: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/user-action/update-pfp`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({link: link}),
+        body: JSON.stringify({profilePicture: link}),
     })
 
     return res.ok

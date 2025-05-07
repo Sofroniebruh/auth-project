@@ -1,6 +1,6 @@
 export {CommonCard} from "./common-card"
 export {DialogComponent} from "./dialog-component"
 export {SheetComponent} from "./sheet-component"
-export {ChangableAvatarComponent} from "./changable-avatar"
+export {ChangableAvatarComponent} from "../profile-related/changable-avatar"
 export {DragAndDropImageComponent} from "./drag-and-drop-image-component"
 export {HoverCardComponent} from "./hover-card-component"

@@ -1,7 +1,7 @@
 "use client"
 
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui-components/ui/input";
+import {Button} from "@/components/ui-components/ui/button";
 import {LogInIcon} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,7 +35,7 @@ export const SignInComponent = () => {
     }
 
     const handleSignInWithGoogle = async () => {
-        await signIn("google", {callbackUrl: "/posts"});
+        await signIn("google", {callbackUrl: "/posts-related"});
     }
 
     const onSubmit = async (data: LoginFormType) => {

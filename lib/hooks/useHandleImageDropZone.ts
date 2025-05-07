@@ -17,16 +17,15 @@ export const useHandleImageDropZone = ({isPfp}: Props) => {
 
     const fetchUserImage = async () => {
         setIsLoading(true)
-        const image = await API.getUserInfo.GetProfileImage()
-        console.log("Image", image)
+        const user = await API.getUserInfo.getUserInfo()
 
-        if (image == null || image == "") {
+        if (user.pfpUrl == null || user.pfpUrl == "") {
             setIsLoading(false)
 
             return;
         }
 
-        setProfilePicture(image)
+        setProfilePicture(user.pfpUrl)
     }
 
     useEffect(() => {
@@ -41,7 +40,7 @@ export const useHandleImageDropZone = ({isPfp}: Props) => {
     }, [])
 
     const handleImage = async (file: File) => {
-        const link = await API.uploadImage.UploadPublicImage(file)
+        const link = await API.uploadImage.uploadPublicImage(file)
         if (link) {
             if (await API.changeUserInfo.changeUserPfp(link)) {
                 setProfilePicture(link)
