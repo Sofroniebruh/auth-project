@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
-import {tokenCheck} from "@/lib";
 import {prismaClient} from "@/prisma/prisma-client";
 import {NewPostData} from "@/lib/api-client/change-user-info";
+import {tokenCheck} from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
     const email = await tokenCheck(req)
@@ -37,6 +37,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({message: "Error creating new Post"}, {status: 500})
 }
 
-export async function DELETE(req: NextRequest) {
+export async function GET() {
 
 }

@@ -40,7 +40,7 @@ model Post {
 model Like {
   userLiked User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  postLiked Post @relation(fields: [postId], references: [id])
+  postLiked Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
 
   @@id([userId, postId])
@@ -51,7 +51,7 @@ model Comment {
   commentOwner   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   commentContent String
-  postCommented  Post     @relation(fields: [postId], references: [id])
+  postCommented  Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId         Int
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())

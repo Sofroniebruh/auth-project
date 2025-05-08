@@ -1,6 +1,7 @@
 import {TabsComponent, TabsContent, TabsTrigger} from "@/components/common/tabs-component";
 import {LikedPostsComponent} from "@/components/profile-related/liked-posts-component";
 import {CommentedPostsComponent} from "@/components/profile-related/commented-posts";
+import {CreatedPostsComponent} from "@/components/profile-related/created-posts";
 
 export const ProfileTabsComponent = () => {
     const tabs: TabsTrigger[] = [
@@ -11,6 +12,10 @@ export const ProfileTabsComponent = () => {
         {
             name: "Commented",
             value: "commented",
+        },
+        {
+            name: "Created",
+            value: "created",
         }
     ]
 
@@ -22,6 +27,10 @@ export const ProfileTabsComponent = () => {
         {
             value: "commented",
             content: <CommentedPostsComponent></CommentedPostsComponent>
+        },
+        {
+            value: "created",
+            content: <CreatedPostsComponent></CreatedPostsComponent>
         }
     ]
 

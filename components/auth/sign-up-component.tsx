@@ -7,11 +7,11 @@ import {Input} from "@/components/ui-components/ui/input";
 import {FormProvider, useForm} from "react-hook-form";
 import {formRegisterSchema, RegisterFormType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {HandleNextStage} from "@/lib";
 import {CommonCard} from "@/components/common";
 import {API} from "@/lib/api-client/api";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
+import {HandleNextStage} from "@/lib/helpers";
 
 export const SignUpComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);
@@ -26,8 +26,7 @@ export const SignUpComponent = () => {
     })
 
     const handleNext = async () => {
-        const registerForm = form
-        const isValid = await HandleNextStage({registerForm})
+        const isValid = await HandleNextStage({registerForm: form})
 
         isValid && setStep(2);
     };

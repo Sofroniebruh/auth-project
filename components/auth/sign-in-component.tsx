@@ -9,12 +9,12 @@ import {FormProvider, useForm} from "react-hook-form";
 import {formLoginSchema, LoginFormType} from "@/components/auth/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useState} from "react";
-import {HandleNextStage} from "@/lib";
 import {CommonCard} from "@/components/common";
 import {API} from "@/lib/api-client/api";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
 import {signIn} from "next-auth/react";
+import {HandleNextStage} from "@/lib/helpers";
 
 export const SignInComponent = () => {
     const [step, setStep] = useState<1 | 2>(1);
@@ -28,8 +28,7 @@ export const SignInComponent = () => {
     })
 
     const handleNext = async () => {
-        const loginForm = form
-        const isValid = await HandleNextStage({loginForm})
+        const isValid = await HandleNextStage({loginForm: form})
 
         isValid && setStep(2)
     }
