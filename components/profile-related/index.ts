@@ -1,5 +1,5 @@
 export {ProfileComponent} from "./profile-component"
 export {CommentedPostsComponent} from "./commented-posts"
-export {LikedPostsComponent} from "./liked-posts-component"
+export {LikedPosts} from "./liked-posts"
 export {ProfileTabsComponent} from "./profile-tabs"
 export {CreatedPostsComponent} from "./created-posts"

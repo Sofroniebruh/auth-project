@@ -1,13 +1,13 @@
 "use client"
 
-import * as React from "react";
 import {PostCardComponent} from "@/components/posts-related";
+import * as React from "react";
 import {MasonryLayout} from "@/components/common/masonry-layout";
 import {useTagPosts} from "@/lib/hooks/useTagPosts";
 import {Loading, NoPosts} from "@/components/profile-related/shared";
 
-export const CommentedPostsComponent = () => {
-    const {posts, loading} = useTagPosts("commented")
+export const LikedPosts = () => {
+    const {posts, loading} = useTagPosts("liked")
 
     if (loading) {
         return (
@@ -17,7 +17,7 @@ export const CommentedPostsComponent = () => {
 
     if (posts.length === 0 && !loading) {
         return (
-            <NoPosts text={"No comments..."}></NoPosts>
+            <NoPosts text={"Nothing is to your liking yet..."}></NoPosts>
         )
     }
 

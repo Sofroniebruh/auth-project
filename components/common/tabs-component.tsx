@@ -19,7 +19,7 @@ export type TabsContent = {
 
 export const TabsComponent = ({mainClassName, tabs, content}: Props) => {
     return (
-        <Tabs defaultValue="account" className={mainClassName}>
+        <Tabs defaultValue="created" className={mainClassName}>
             <TabsList className={"flex items-center justify-center w-full max-w-[320px]"}>
                 {tabs.map((tab, i) => (
                     <TabsTrigger className={"cursor-pointer"} key={i} value={tab.value}>{tab.name}</TabsTrigger>
