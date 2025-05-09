@@ -25,8 +25,6 @@ export const SignUpComponent = () => {
         }
     })
 
-    console.log("test")
-
     const handleNext = async () => {
         const isValid = await HandleNextStage({registerForm: form})
 

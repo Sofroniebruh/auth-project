@@ -37,7 +37,7 @@ export async function changeUserPfp(link: string) {
 }
 
 export async function createUserPost(data: NewPostData) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/user-action/posts`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
