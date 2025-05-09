@@ -59,7 +59,7 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({message: "Not authenticated"}, {status: 401})
     }
 
-    const user = await prismaClient.user.delete({
+    const user = await prismaClient.user.findUnique({
         where: {
             email
         }

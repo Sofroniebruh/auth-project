@@ -45,7 +45,7 @@ export const formRegisterSchema = formLoginSchema.merge(z.object({
 // FOR API
 export const updateProfileUsernameOrProfilePictureSchemaForAPI = z.object({
     username: z.string().optional(),
-    profilePicture: z.string().optional(),
+    pfpUrl: z.string().optional(),
 })
 
 export type UpdatedUserAPISchema = z.infer<typeof updateProfileUsernameOrProfilePictureSchemaForAPI>

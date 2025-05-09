@@ -25,6 +25,7 @@ export const authOptions: NextAuthOptions = {
                     data: {
                         email: user.email!,
                         pfpUrl: user.image,
+                        username: user.email,
                     },
                 });
             }
