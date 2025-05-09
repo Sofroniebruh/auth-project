@@ -174,7 +174,7 @@ export class PrismaClient<
     * Example usage:
     * ```ts
     * // Fetch zero or more Posts
-    * const posts-related = await prisma.post.findMany()
+    * const created-posts-related = await prisma.post.findMany()
     * ```
     */
   get post(): Prisma.PostDelegate<ExtArgs, ClientOptions>;
@@ -2692,10 +2692,10 @@ export namespace Prisma {
      * @param {PostFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
      * // Get all Posts
-     * const posts-related = await prisma.post.findMany()
+     * const created-posts-related = await prisma.post.findMany()
      * 
      * // Get first 10 Posts
-     * const posts-related = await prisma.post.findMany({ take: 10 })
+     * const created-posts-related = await prisma.post.findMany({ take: 10 })
      * 
      * // Only select the `id`
      * const postWithIdOnly = await prisma.post.findMany({ select: { id: true } })

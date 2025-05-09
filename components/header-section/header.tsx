@@ -28,7 +28,7 @@ export const HeaderComponent = () => {
                     <div className={"w-full h-0.5 bg-black"}></div>
                     <ul>
                         <Link href={"/posts"}>
-                            <li className={cn("text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer", pathname === "/posts-related" && "text-blue-600")}>
+                            <li className={cn("text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer", pathname === "/created-posts-related" && "text-blue-600")}>
                                 <ImageIcon></ImageIcon> Posts
                             </li>
                         </Link>

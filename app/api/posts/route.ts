@@ -38,5 +38,13 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
+    try {
+        const allPosts = await prismaClient.post.findMany();
 
+        return NextResponse.json({posts: allPosts}, {status: 200});
+    } catch (err) {
+        console.error(err)
+
+        return NextResponse.json({message: "Error fetching posts"}, {status: 500})
+    }
 }
