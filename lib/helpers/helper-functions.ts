@@ -6,15 +6,15 @@ export async function getUserByToken(req: NextRequest) {
     const email = await tokenCheck(req)
 
     if (!email) {
-        throw Error
+        throw new Error("No email from token");
     }
 
     const user = await prismaClient.user.findUnique({
         where: {email},
-    })
+    });
 
     if (!user) {
-        throw Error
+        throw new Error("No user found for this email");
     }
 
     return user

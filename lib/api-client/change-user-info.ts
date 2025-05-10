@@ -30,7 +30,7 @@ export async function changeUserPfp(link: string) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({profilePicture: link}),
+        body: JSON.stringify({pfpUrl: link}),
     })
 
     return res.ok
