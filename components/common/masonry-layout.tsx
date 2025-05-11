@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Masonry from "react-masonry-css";
 import {cn} from "@/lib/utils";
 
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const MasonryLayout = ({children, className}: Props) => {
-    const [isMounted, setIsMounted] = React.useState(false);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         setIsMounted(true);
