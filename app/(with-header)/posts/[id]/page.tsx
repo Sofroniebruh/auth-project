@@ -1,5 +1,9 @@
-export default function PostPage() {
+import {PostComponent} from "@/components/posts-related";
+
+export default function PostPage({params}: { params: { id: string } }) {
+    const {id} = params;
+
     return (
-        <p>hah</p>
+        <PostComponent id={id}></PostComponent>
     )
 }

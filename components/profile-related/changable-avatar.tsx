@@ -1,11 +1,11 @@
 "use client"
 
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui-components/ui/avatar";
 import {cn} from "@/lib/utils";
 import {EditIcon, LoaderCircleIcon} from "lucide-react";
 import {DialogComponent} from "@/components/common/dialog-component";
 import {DragAndDropImageComponent} from "@/components/common/drag-and-drop-image-component";
 import {useHandleImageDropZone} from "@/lib/hooks/useHandleImageDropZone";
+import {AvatarComponent} from "@/components/common";
 
 interface Props {
     className?: string;
@@ -25,12 +25,8 @@ export const ChangableAvatarComponent = ({className, email}: Props) => {
 
     return (
         <div className={"w-fit relative rounded-full overflow-hidden group"}>
-            <Avatar className={cn("w-[70px] h-[70px] bg-gray-400 overflow-hidden", className)}>
-                <AvatarImage className={"object-cover w-full h-full"} onError={() => setIsLoading(false)}
-                             onLoad={() => setIsLoading(false)}
-                             src={profilePicture}/>
-                <AvatarFallback>{email ? email.slice(0, 2) : <p>C</p>}</AvatarFallback>
-            </Avatar>
+            <AvatarComponent setProfileIsLoading={setIsLoading} isForProfile={true} profileIsLoading={isLoading}
+                             email={email} profilePicture={profilePicture} className={className}></AvatarComponent>
             <div
                 className={cn(
                     "w-full h-full bg-gray-200 absolute flex items-center justify-center cursor-pointer top-0 left-0 ", "opacity-0 group-hover:opacity-100",

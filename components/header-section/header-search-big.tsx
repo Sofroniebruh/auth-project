@@ -28,7 +28,7 @@ export const HeaderSearchBig = () => {
 
     return (
         <>
-            <div className={"relative hidden sm:block sm:w-2/3"}>
+            <div className={"relative hidden sm:block sm:w-full mx-10"}>
                 <SheetComponent className={"w-full"} triggerElement={
                     headerInput
                 } sheetTitle={
