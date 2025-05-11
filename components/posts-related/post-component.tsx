@@ -35,7 +35,7 @@ export const PostComponent = ({id}: Props) => {
                     <div className="flex flex-col w-full md:w-[400px] md:mt-0 gap-4 min-h-0">
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-3">
-                                <AvatarComponent email="qwqwqw" profilePicture="https://github.com/shadcn.png"/>
+                                <AvatarComponent className={"w-9 h-9"} email="qwqwqw" profilePicture="https://github.com/shadcn.png"/>
                                 <h1 className="font-semibold text-lg">User 123</h1>
                             </div>
                             <div className="flex items-center gap-3">

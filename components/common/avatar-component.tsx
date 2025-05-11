@@ -29,7 +29,7 @@ export const AvatarComponent = ({
     const [isLoading, setIsLoading] = useState(true);
 
     return (
-        <div className={cn("relative w-9 h-9", className)}>
+        <div className={cn("relative", className)}>
             <Avatar className="w-full h-full overflow-hidden">
                 <AvatarImage
                     className="object-cover w-full h-full"
