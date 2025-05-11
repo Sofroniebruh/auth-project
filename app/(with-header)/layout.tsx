@@ -10,7 +10,7 @@ export default function ChildLayout(
     return (
         <main className={"relative min-h-screen"}>
             <HeaderComponent></HeaderComponent>
-            <div className={"min-h-screen mt-[80px]"}>
+            <div className={"min-h-screen my-[80px]"}>
                 <div id="modal-root"></div>
                 {children}
             </div>

@@ -42,7 +42,8 @@ export const ChangableAvatarComponent = ({className, email}: Props) => {
                 <DialogComponent openState={openState} triggerButton={
                     <EditIcon className={"cursor-pointer"}></EditIcon>
                 } title={"Change profile picture"}>
-                    <DragAndDropImageComponent isDragActive={isDragActive} getInputProps={getInputProps}
+                    <DragAndDropImageComponent className={"flex-1"} isDragActive={isDragActive}
+                                               getInputProps={getInputProps}
                                                getRootProps={getRootProps}></DragAndDropImageComponent>
                 </DialogComponent>
             </div>

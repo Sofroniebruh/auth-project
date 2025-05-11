@@ -7,9 +7,9 @@ export const useTagPosts = (tagType: "created" | "commented" | "liked") => {
     const [loading, setLoading] = useState(true);
 
     const fetchers = {
-        created: () => API.getUserInfo.getAllPostsCreatedByUser(),
-        liked: () => API.getUserInfo.getAllPostsLikedByUser(),
-        commented: () => API.getUserInfo.getAllPostsCommentedByUser(),
+        created: API.getUserInfo.getAllPostsCreatedByUser,
+        liked: API.getUserInfo.getAllPostsLikedByUser,
+        commented: API.getUserInfo.getAllPostsCommentedByUser,
     }
 
     const fetchPosts = async () => {

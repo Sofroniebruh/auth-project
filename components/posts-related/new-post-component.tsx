@@ -12,6 +12,7 @@ import {API} from "@/lib/api-client/api";
 import {toast} from "sonner";
 import {NewPostData} from "@/lib/api-client/change-user-info";
 import {useRouter} from "next/navigation";
+import {useEffect, useMemo} from "react";
 
 export const NewPostComponent = () => {
     const {
@@ -30,6 +31,19 @@ export const NewPostComponent = () => {
     });
     const isFileEmpty = uploadedFile?.size == undefined
     const router = useRouter()
+
+    const previewImage = useMemo(() => {
+        if (!uploadedFile) return;
+        return URL.createObjectURL(uploadedFile);
+    }, [uploadedFile])
+
+    useEffect(() => {
+        return () => {
+            if (previewImage) {
+                return URL.revokeObjectURL(previewImage);
+            }
+        }
+    }, [previewImage])
 
     const onSubmit = async (data: NewPostSchemaType) => {
         const image = await API.uploadImage.uploadPublicImage(uploadedFile!);
@@ -64,10 +78,10 @@ export const NewPostComponent = () => {
             <h1 className="text-2xl sm:text-5xl mb-4 sm:mb-[40px]">Your new Post</h1>
             <FormProvider {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-center gap-4">
-                    {uploadedFile ? (
+                    {uploadedFile && previewImage ? (
                         <div className="flex flex-col items-center gap-2">
                             <Image
-                                src={URL.createObjectURL(uploadedFile)}
+                                src={previewImage}
                                 alt="Uploaded preview"
                                 width={400}
                                 height={300}
@@ -78,11 +92,14 @@ export const NewPostComponent = () => {
                             </Button>
                         </div>
                     ) : (
-                        <DragAndDropImageComponent
-                            getRootProps={getRootProps}
-                            getInputProps={getInputProps}
-                            isDragActive={isDragActive}
-                        />
+                        <div className={"h-[300px] w-[335px]"}>
+                            <DragAndDropImageComponent
+                                className={"flex-1"}
+                                getRootProps={getRootProps}
+                                getInputProps={getInputProps}
+                                isDragActive={isDragActive}
+                            />
+                        </div>
 
                     )}
                     <div className="w-full max-w-md space-y-2">

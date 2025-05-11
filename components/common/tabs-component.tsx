@@ -26,7 +26,7 @@ export const TabsComponent = ({mainClassName, tabs, content}: Props) => {
                 ))}
             </TabsList>
             {content.map((content, i) => (
-                <TabsContent className={"w-full mt-10"} key={i} value={content.value}>{content.content}</TabsContent>
+                <TabsContent className={"w-full mt-[80px]"} key={i} value={content.value}>{content.content}</TabsContent>
             ))}
         </Tabs>
     )
