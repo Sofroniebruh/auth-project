@@ -20,10 +20,10 @@ interface Props {
 export const DialogComponent = ({triggerButton, title, description, children, className, openState}: Props) => {
     return (
         <Dialog open={openState}>
-            <DialogTrigger className={className}>
+            <DialogTrigger>
                 {triggerButton}
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className={className}>
                 <DialogHeader>
                     <DialogTitle>
                         {title}
