@@ -29,8 +29,8 @@ export const PostCardOpenedVersion = ({image}: Props) => {
         <>
             {isLoaded ? (
                 <div className={"relative"}>
-                    <Button onClick={router.back} size={"lg"}
-                            className={"absolute top-5 left-5 bg-blue-600 text-white hover:bg-blue-500"}><ArrowLeftIcon/> Back</Button>
+                    {/*<Button onClick={router.back} size={"lg"}*/}
+                    {/*        className={"absolute top-5 left-5 bg-blue-600 text-white hover:bg-blue-500"}><ArrowLeftIcon/> Back</Button>*/}
                     <img
                         src={image}
                         alt={"cube image"}

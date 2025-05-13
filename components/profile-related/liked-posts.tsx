@@ -4,7 +4,7 @@ import {PostCardComponent} from "@/components/posts-related";
 import * as React from "react";
 import {MasonryLayout} from "@/components/common/masonry-layout";
 import {useTagPosts} from "@/lib/hooks/useTagPosts";
-import {Loading, NoPosts} from "@/components/profile-related/shared";
+import {Loading, NoPosts} from "../posts-related/shared";
 
 export const LikedPosts = () => {
     const {posts, loading} = useTagPosts("liked")

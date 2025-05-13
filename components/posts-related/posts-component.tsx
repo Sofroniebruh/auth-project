@@ -1,18 +1,57 @@
+"use client"
+
+import {Post} from "@prisma/client";
+import {useEffect, useState} from "react";
+import {API} from "@/lib/api-client/api";
+import {MasonryLayout} from "@/components/common";
+import {Loading, NoPosts} from "@/components/posts-related/shared";
 import {PostCardComponent} from "@/components/posts-related/post-card-component";
+import Link from "next/link";
 
 export const PostsComponent = () => {
+    const [posts, setPosts] = useState<Post[] | []>([]);
+    const [loading, setLoading] = useState(true);
+    const [hasMounted, setHasMounted] = useState(false);
+
+    useEffect(() => {
+        setHasMounted(true);
+        const fetchPosts = async () => {
+            const {posts} = await API.posts.getPosts()
+            console.log("Res", posts)
+            if (posts) setPosts(posts);
+            setLoading(false)
+        }
+
+        fetchPosts();
+    }, [])
+
+    if (!hasMounted) return null;
+
+    if (loading) {
+        return (
+            <div className={"px-5"}>
+                <Loading></Loading>
+            </div>)
+    }
+
+    if (!loading && posts.length == 0) {
+        return (
+            <NoPosts text={"No posts here yet..."}></NoPosts>
+        )
+    }
+
+
     return (
-        <div className={"columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 p-4"}>
-            <PostCardComponent
-                image={"https://i.pinimg.com/736x/19/23/12/19231243afa31f9a964f9526211e01d5.jpg"}></PostCardComponent>
-            <PostCardComponent
-                image={"https://i.pinimg.com/736x/19/23/12/19231243afa31f9a964f9526211e01d5.jpg"}></PostCardComponent>
-            <PostCardComponent
-                image={"https://i.pinimg.com/736x/d2/6e/c2/d26ec291b6da27ad015394bfdf902d1f.jpg"}></PostCardComponent>
-            <PostCardComponent
-                image={"https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}></PostCardComponent>
-            <PostCardComponent
-                image={"https://i.pinimg.com/736x/2c/2b/1c/2c2b1ca4e0dd3d517ca70f9e0b618cbf.jpg"}></PostCardComponent>
+        <div className={"px-5"}>
+            <MasonryLayout>
+                {
+                    posts.map((post, index) => (
+                        <Link key={index} className={"block"} href={`/posts/${post.id}`}>
+                            <PostCardComponent  image={post.postImageUrl}></PostCardComponent>
+                        </Link>
+                    ))
+                }
+            </MasonryLayout>
         </div>
     )
 }

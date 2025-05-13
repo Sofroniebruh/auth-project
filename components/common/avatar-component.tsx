@@ -1,12 +1,14 @@
+"use client"
+
 import {LoaderCircleIcon} from "lucide-react";
-import {Component, useState} from "react";
+import {useState} from "react";
 import {cn} from "@/lib/utils";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui-components/ui/avatar";
 
 interface Props {
     email: string | undefined;
     className?: string;
-    profilePicture: string;
+    profilePicture?: string | null;
     isForProfile?: boolean;
     profileIsLoading?: boolean;
     setProfileIsLoading?: (isLoading: boolean) => void;
@@ -33,7 +35,7 @@ export const AvatarComponent = ({
             <Avatar className="w-full h-full overflow-hidden">
                 <AvatarImage
                     className="object-cover w-full h-full"
-                    src={profilePicture}
+                    src={profilePicture!}
                     alt="Profile"
                     onLoad={() => isForProfile ? setProfileIsLoading!(false) : setIsLoading(false)}
                     onError={() => isForProfile ? setProfileIsLoading!(false) : setIsLoading(false)}

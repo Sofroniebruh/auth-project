@@ -1,22 +1,24 @@
 import {AvatarComponent} from "@/components/common/avatar-component";
 import {Separator} from "@/components/ui/separator";
+import {Comment} from "@/components/common/comments-component";
 
-export const CommentComponent = () => {
+interface Props {
+    comment: Comment;
+}
+
+export const CommentComponent = ({comment}: Props) => {
     return (
         <div className="flex items-start gap-3 w-full">
             <AvatarComponent
                 className="w-9 h-9 shrink-0"
-                email="qwqw"
-                profilePicture="https://github.com/shadcn.png"
+                email={comment.commentOwner.username}
+                profilePicture={comment.commentOwner.pfpUrl}
             />
 
             <div className="flex flex-col gap-1 w-full">
-                <p className="text-base font-semibold break-words">Username</p>
+                <p className="text-base font-semibold break-words">{comment.commentOwner.username}</p>
                 <Separator/>
-                <p className="break-words">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec
-                    elementum urna, nec vestibulum lorem.
-                </p>
+                <p className="break-words">{comment.commentContent}</p>
             </div>
         </div>
     );

@@ -1,37 +1,54 @@
 "use client"
 
-import {PostCardComponent} from "@/components/posts-related/post-card-component";
 import {PostCardOpenedVersion} from "@/components/posts-related/post-card-opened-version";
-import {HeartIcon} from "lucide-react";
+import {ArrowLeftIcon, HeartIcon, ShareIcon} from "lucide-react";
 import {Button} from "@/components/ui-components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {AvatarComponent, CommentInput, CommentsComponent, DialogComponent} from "@/components/common";
+import {PostsComponent} from "@/components/posts-related/posts-component";
+import {PostWithRelations} from "@/lib/helpers/helper-types-or-interfaces";
+import Link from "next/link";
+import {usePathname, useRouter} from "next/navigation";
+import {useEffect} from "react";
 
 interface Props {
-    id: string;
+    post: PostWithRelations;
 }
 
-export const PostComponent = ({id}: Props) => {
-    console.log(id)
+export const PostComponent = ({post}: Props) => {
+    const pathname = usePathname()
+    const router = useRouter()
+
+    useEffect(() => {
+        window.scroll(0, 0)
+    }, [pathname])
 
     return (
         <div className={"flex flex-col"}>
-            <div className="px-5 sm:px-[80px] py-10">
+            <div className="px-5 sm:px-[80px] pt-10 sm:py-10">
                 <div className="flex flex-col sm:flex-row justify-center gap-8">
-                    <div className="w-full sm:min-w-[240px] sm:max-w-[300px] md:max-w-[370px] xl:max-w-[400px]">
+                    <div
+                        className="w-full sm:min-w-[240px] sm:max-w-[300px] md:max-w-[370px] xl:max-w-[400px] flex items-center justify-center relative">
+                        <Button onClick={router.back} size={"lg"}
+                                className={"absolute top-5 left-5 lg:top-0 lg:left-0 bg-blue-600 text-white hover:bg-blue-500 z-20"}><ArrowLeftIcon/> Back</Button>
                         <PostCardOpenedVersion
-                            image="https://i.pinimg.com/736x/b1/aa/7f/b1aa7f695c69b85e8e45a79b14f5bdd8.jpg"/>
+                            image={post.postImageUrl}/>
                     </div>
                     <div className="flex flex-col w-full lg md:w-[400px] md:mt-0 gap-4 min-h-0 justify-between">
                         <div className="flex flex-col gap-4">
+                            <Link href={"#"}>
+                                <div className="flex items-center gap-3">
+                                    <AvatarComponent className={"w-9 h-9"} email={post.createdBy.email}
+                                                     profilePicture={post.createdBy.pfpUrl}/>
+                                    <h1 className="font-semibold text-lg">{post.createdBy.username}</h1>
+                                </div>
+                            </Link>
                             <div className="flex items-center gap-3">
-                                <AvatarComponent className={"w-9 h-9"} email="qwqwqw"
-                                                 profilePicture="https://github.com/shadcn.png"/>
-                                <h1 className="font-semibold text-lg">User 123</h1>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <p className="font-semibold">123</p>
+                                <p className="font-semibold">{post.likes.length}</p>
                                 <Button variant="outline">Like <HeartIcon/></Button>
+                                <div className="flex items-center gap-3">
+                                    <Button variant="outline">Save <ShareIcon/></Button>
+                                </div>
                             </div>
                             <Separator/>
                         </div>
@@ -42,27 +59,16 @@ export const PostComponent = ({id}: Props) => {
                                     className={"bg-blue-600 hover:bg-blue-500 text-white rounded-md p-2 text-sm px-3 cursor-pointer"}>Open
                                     comment section</div>
                             } title={""}>
-                                <CommentsComponent className={"flex"}></CommentsComponent>
+                                <CommentsComponent comments={post.comments} className={"flex"}></CommentsComponent>
                                 <CommentInput className={"block"}></CommentInput>
                             </DialogComponent>
                         </div>
-                        <CommentsComponent className={"lg:flex hidden"}></CommentsComponent>
+                        <CommentsComponent comments={post.comments} className={"lg:flex hidden"}></CommentsComponent>
                         <CommentInput className={"lg:block hidden"}></CommentInput>
                     </div>
                 </div>
             </div>
-            <div className={"columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 p-4"}>
-                <PostCardComponent
-                    image={"https://i.pinimg.com/736x/19/23/12/19231243afa31f9a964f9526211e01d5.jpg"}></PostCardComponent>
-                <PostCardComponent
-                    image={"https://i.pinimg.com/736x/19/23/12/19231243afa31f9a964f9526211e01d5.jpg"}></PostCardComponent>
-                <PostCardComponent
-                    image={"https://i.pinimg.com/736x/d2/6e/c2/d26ec291b6da27ad015394bfdf902d1f.jpg"}></PostCardComponent>
-                <PostCardComponent
-                    image={"https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}></PostCardComponent>
-                <PostCardComponent
-                    image={"https://i.pinimg.com/736x/2c/2b/1c/2c2b1ca4e0dd3d517ca70f9e0b618cbf.jpg"}></PostCardComponent>
-            </div>
+            <PostsComponent></PostsComponent>
         </div>
     )
 }
