@@ -19,6 +19,7 @@ export interface PostWithRelations extends Post {
             id: number,
             pfpUrl: string | null,
             username: string,
-        }
+        },
+        createdAt: Date,
     }[]
 }

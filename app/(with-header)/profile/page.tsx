@@ -1,4 +1,4 @@
-import {ProfileComponent} from "../../../components/profile-related";
+import {ProfileComponent} from "@/components/profile-related";
 
 export default function ProfilePage() {
     return (

@@ -10,7 +10,7 @@ interface Props {
 
 export const CommentInput = ({className}: Props) => {
     return (
-        <div className={"relative"}>
+        <div className={"relative w-full"}>
             <Input className={cn("mt-4 px-3 py-5 min-w-[300px]", className)}
                    placeholder="Add your comment..."/>
             <div
