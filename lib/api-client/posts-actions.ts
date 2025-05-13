@@ -18,8 +18,16 @@ export async function getPost(id: string) {
     })
 
     if (res.ok) {
-        return (await res.json()) as { post: PostWithRelations }
+        return (await res.json()) as { post: PostWithRelations, isOwner: boolean }
     }
 
     throw new Error(res.statusText)
+}
+
+export async function likePost(id: number) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
+        method: 'PUT',
+    })
+
+    return res.status
 }

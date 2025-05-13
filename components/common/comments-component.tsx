@@ -24,9 +24,10 @@ export type Comment = {
 interface Props {
     className?: string;
     comments: Comment[];
+    isOwner: boolean;
 }
 
-export const CommentsComponent = ({className, comments}: Props) => {
+export const CommentsComponent = ({className, comments, isOwner}: Props) => {
     return (
         <div className={cn("flex-col gap-4", className)}>
             <h2 className="text-xl font-semibold mb-4">Comments</h2>
@@ -40,7 +41,7 @@ export const CommentsComponent = ({className, comments}: Props) => {
                         </div>
                     ) : (
                         comments.map((comment, index) => (
-                            <CommentComponent key={index} comment={comment}/>
+                            <CommentComponent isOwner={isOwner} key={index} comment={comment}/>
                         ))
                     )}
                 </div>

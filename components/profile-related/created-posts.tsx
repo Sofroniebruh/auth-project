@@ -26,7 +26,7 @@ export const CreatedPostsComponent = () => {
             {
                 posts.length > 0 && (
                     posts.map((post, index) => (
-                        <PostCardComponent key={index} image={post.postImageUrl}/>
+                        <PostCardComponent id={post.id} key={index} image={post.postImageUrl}/>
                     ))
                 )
             }

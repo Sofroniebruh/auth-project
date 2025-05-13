@@ -1,7 +1,7 @@
 "use client"
 
 import {PostCardOpenedVersion} from "@/components/posts-related/post-card-opened-version";
-import {ArrowLeftIcon, HeartIcon, InfoIcon, MessageCircleIcon, ShareIcon} from "lucide-react";
+import {ArrowLeftIcon, EditIcon, HeartIcon, InfoIcon, MessageCircleIcon, ShareIcon, TrashIcon} from "lucide-react";
 import {Button} from "@/components/ui-components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {AvatarComponent, CommentInput, CommentsComponent, DialogComponent, PopoverComponent} from "@/components/common";
@@ -10,18 +10,43 @@ import {PostWithRelations} from "@/lib/helpers/helper-types-or-interfaces";
 import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {useEffect} from "react";
+import {API} from "@/lib/api-client/api";
+import {useIsAuthenticated} from "@/lib/hooks";
+import {toast} from "sonner";
 
 interface Props {
     post: PostWithRelations;
+    isOwner: boolean;
+    likesAmount: number;
+    setLikesAmount: (likesAmount: string) => void;
 }
 
-export const PostComponent = ({post}: Props) => {
+export const PostComponent = ({post, isOwner, likesAmount, setLikesAmount}: Props) => {
     const pathname = usePathname()
     const router = useRouter()
+    const {isLoggedIn} = useIsAuthenticated()
+
 
     useEffect(() => {
         window.scroll(0, 0)
     }, [pathname])
+
+    const handleLike = async (id: number) => {
+        if (!isLoggedIn) {
+            toast("Log In to like")
+            return;
+        }
+
+        const res = await API.posts.likePost(id)
+
+        if (res === 200) {
+            setLikesAmount((Number(likesAmount) - 1).toString())
+        } else if (res === 201) {
+            setLikesAmount((Number(likesAmount) + 1).toString())
+        } else {
+            toast("Failed to like post")
+        }
+    }
 
     return (
         <div className={"flex flex-col"}>
@@ -92,20 +117,34 @@ export const PostComponent = ({post}: Props) => {
                                 }></PopoverComponent>
                             </div>
                             <div className="flex items-center justify-between">
-                                <div className={"flex items-center gap-3"}>
-                                    <p className="font-semibold">{post.likes.length}</p>
-                                    <Button variant="outline">Like <HeartIcon/></Button>
-                                    <div className="flex items-center gap-3">
-                                        <Button variant="outline">Save <ShareIcon/></Button>
-                                    </div>
-                                </div>
+                                {
+                                    isOwner ? (
+                                        <div className={"flex gap-2"}>
+                                            <Button variant={"destructive"}>Delete Post <TrashIcon></TrashIcon></Button>
+                                            <Button
+                                                className={"bg-blue-600 hover:bg-blue-500"}>Edit <EditIcon></EditIcon></Button>
+                                        </div>
+                                    ) : (
+                                        <div className={"flex items-center gap-3"}>
+                                            <div className={"w-[65px] flex items-center justify-center"}>
+                                                <p className="font-semibold">{likesAmount}</p>
+                                            </div>
+                                            <Button onClick={() => handleLike(post.id)}
+                                                    variant="outline">Like <HeartIcon/></Button>
+                                            <div className="flex items-center gap-3">
+                                                <Button variant="outline">Save <ShareIcon/></Button>
+                                            </div>
+                                        </div>
+                                    )
+                                }
                                 <DialogComponent className={"flex flex-col justify-center items-center"} triggerButton={
                                     <div
                                         className={"sm:hidden rounded-full p-2.5 cursor-pointer bg-blue-600 text-white hover:bg-blue-500"}>
                                         <MessageCircleIcon className={"w-5 h-5"}></MessageCircleIcon>
                                     </div>
                                 } title={""}>
-                                    <CommentsComponent comments={post.comments} className={"flex"}></CommentsComponent>
+                                    <CommentsComponent isOwner={isOwner} comments={post.comments}
+                                                       className={"flex w-full"}></CommentsComponent>
                                     <CommentInput className={"block"}></CommentInput>
                                 </DialogComponent>
                             </div>
@@ -118,12 +157,12 @@ export const PostComponent = ({post}: Props) => {
                                     className={"bg-blue-600 hover:bg-blue-500 text-white rounded-md p-2 text-sm px-3 cursor-pointer"}>Open
                                     comment section</div>
                             } title={""}>
-                                <CommentsComponent comments={post.comments}
+                                <CommentsComponent isOwner={isOwner} comments={post.comments}
                                                    className={"flex w-full"}></CommentsComponent>
                                 <CommentInput className={"block"}></CommentInput>
                             </DialogComponent>
                         </div>
-                        <CommentsComponent comments={post.comments}
+                        <CommentsComponent isOwner={isOwner} comments={post.comments}
                                            className={"lg:flex hidden"}></CommentsComponent>
                         <CommentInput className={"lg:block hidden"}></CommentInput>
                     </div>

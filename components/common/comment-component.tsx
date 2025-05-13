@@ -5,11 +5,10 @@ import {formatDistanceToNow} from "date-fns";
 
 interface Props {
     comment: Comment;
+    isOwner: boolean;
 }
 
-export const CommentComponent = ({comment}: Props) => {
-    console.log("Huh", typeof comment.createdAt);
-
+export const CommentComponent = ({comment, isOwner}: Props) => {
     return (
         <div className="flex items-start gap-3 w-full">
             <AvatarComponent
@@ -19,7 +18,12 @@ export const CommentComponent = ({comment}: Props) => {
             />
 
             <div className="flex flex-col gap-1 w-full">
-                <p className="text-base font-semibold break-words">{comment.commentOwner.username}</p>
+                <div className={"flex gap-3"}>
+                    <p className="text-base font-semibold break-words">{comment.commentOwner.username}</p>
+                    {isOwner && (
+                        <div className={"bg-gray-200 rounded-sm px-1 flex items-center"}><p className={"text-sm text-center"}>Creator</p></div>
+                    )}
+                </div>
                 <p className="break-words">{comment.commentContent}</p>
                 <div className={"flex gap-5 items-center"}>
                     <p className={"text-sm text-gray-400"}>{formatDistanceToNow(new Date(comment.createdAt), {addSuffix: true})}</p>

@@ -6,7 +6,6 @@ import {API} from "@/lib/api-client/api";
 import {MasonryLayout} from "@/components/common";
 import {Loading, NoPosts} from "@/components/posts-related/shared";
 import {PostCardComponent} from "@/components/posts-related/post-card-component";
-import Link from "next/link";
 
 export const PostsComponent = () => {
     const [posts, setPosts] = useState<Post[] | []>([]);
@@ -17,7 +16,6 @@ export const PostsComponent = () => {
         setHasMounted(true);
         const fetchPosts = async () => {
             const {posts} = await API.posts.getPosts()
-            console.log("Res", posts)
             if (posts) setPosts(posts);
             setLoading(false)
         }
@@ -40,15 +38,12 @@ export const PostsComponent = () => {
         )
     }
 
-
     return (
         <div className={"px-5"}>
             <MasonryLayout>
                 {
                     posts.map((post, index) => (
-                        <Link key={index} className={"block"} href={`/posts/${post.id}`}>
-                            <PostCardComponent  image={post.postImageUrl}></PostCardComponent>
-                        </Link>
+                        <PostCardComponent key={index} id={post.id} image={post.postImageUrl}></PostCardComponent>
                     ))
                 }
             </MasonryLayout>
