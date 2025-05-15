@@ -15,7 +15,7 @@ import { PostsComponent } from '@/components/posts-related/posts-component';
 import { PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useIsAuthenticated, usePostDetails } from '@/lib/hooks';
 import { useLikeStore } from '@/lib/store/likeStore';
@@ -29,6 +29,7 @@ interface Props {
 export const PostComponent = ({ post, isOwner }: Props) => {
   const { isLoggedIn } = useIsAuthenticated();
   const { toggleLike, isLiked, getLikesPerPost } = useLikeStore();
+  const [liked, setIsLiked] = useState(post.isLikedByUser);
   const { totalLikesValidator } = usePostDetails(post.id.toString());
   const pathname = usePathname();
   const router = useRouter();
@@ -36,6 +37,17 @@ export const PostComponent = ({ post, isOwner }: Props) => {
   useEffect(() => {
     window.scroll(0, 0);
   }, [pathname]);
+
+  useEffect(() => {
+    if (isLiked(post.id) !== liked) {
+      setIsLiked(isLiked(post.id));
+    }
+  }, [isLiked(post.id)]);
+
+  const handleLike = (id: number) => {
+    toggleLike(id);
+    setIsLiked(isLiked(id));
+  };
 
   return (
     <div className={'flex flex-col'}>
@@ -101,6 +113,14 @@ export const PostComponent = ({ post, isOwner }: Props) => {
                           <p>#Bladerunner</p>
                         </div>
                       </div>
+                      {isOwner &&
+                        <div>
+                          <h1 className={'text-md font-semibold'}>Total likes:</h1>
+                          <span className={'flex items-center gap-1'}><HeartIcon size={20}
+                                                                                 className={'fill-red-600 text-red-600'}></HeartIcon> {totalLikesValidator(getLikesPerPost(post.id))}
+                          </span>
+                        </div>
+                      }
                     </div>
                   </div>
                 }></PopoverComponent>
@@ -119,9 +139,9 @@ export const PostComponent = ({ post, isOwner }: Props) => {
                         <p className="font-semibold">{totalLikesValidator(getLikesPerPost(post.id))}</p>
                       </div>
                       <Button
-                        onClick={() => isLoggedIn ? toggleLike(post.id) : toast('Log In to like')}
+                        onClick={() => isLoggedIn ? handleLike(post.id) : toast('Log In to like')}
                         variant="outline"
-                        className={cn(post.isLikedByUser || isLiked(post.id) ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
+                        className={cn(liked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
                       <div className="flex items-center gap-3">
                         <Button variant="outline">Save <ShareIcon /></Button>
                       </div>

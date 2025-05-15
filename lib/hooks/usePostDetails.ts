@@ -6,7 +6,7 @@ import { PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { useParams, useRouter } from 'next/navigation';
 import { useLikeStore } from '@/lib/store/likeStore';
 
-export const usePostDetails = (id?: string) => {
+export const usePostDetails = (postId?: string) => {
   const [likesAmount, setLikesAmount] = useState<string>('0');
   const [postWithRelations, setPostWithRelations] = useState<PostWithRelations>();
   const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -18,7 +18,7 @@ export const usePostDetails = (id?: string) => {
   const paramsId = params.id as string;
 
   useEffect(() => {
-    hydrateLikesForPost(Number(paramsId));
+    hydrateLikesForPost(Number(postId ? postId : paramsId));
   }, [hydrateLikesForPost]);
 
   const totalLikesValidator = (likes: number): string => {
@@ -35,7 +35,7 @@ export const usePostDetails = (id?: string) => {
       setIsMounted(true);
       try {
         const { post, isOwner } = await API.posts.getPost(id);
-
+        
         if (post) {
           const likes = post.likes.length;
 
@@ -56,7 +56,7 @@ export const usePostDetails = (id?: string) => {
       }
     };
 
-    fetchPost(id ? id : paramsId);
+    fetchPost(postId ? postId : paramsId);
   }, []);
 
   return {
