@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {prismaClient} from "@/prisma/prisma-client";
 import {NewPostData} from "@/lib/api-client/change-user-info";
 import {tokenCheck} from "@/lib/auth";
+import {Post} from "@prisma/client";
 
 export async function POST(req: NextRequest) {
     const email = await tokenCheck(req)
@@ -37,9 +38,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({message: "Error creating new Post"}, {status: 500})
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
-        const allPosts = await prismaClient.post.findMany();
+        const allPosts: Post[] = await prismaClient.post.findMany();
 
         return NextResponse.json({posts: allPosts}, {status: 200});
     } catch (err) {

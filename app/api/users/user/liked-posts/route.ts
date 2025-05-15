@@ -6,6 +6,14 @@ export async function GET(req: NextRequest) {
     try {
         const user = await getUserByToken(req)
 
+        if (!user) {
+            if (process.env.NODE_ENV === "development") {
+                console.log("User not authenticated. Returning empty posts.");
+            }
+            return NextResponse.json({posts: []}, {status: 200});
+        }
+
+
         const likedPosts = await prismaClient.post.findMany({
             where: {
                 likes: {

@@ -7,7 +7,7 @@ import {useTagPosts} from "@/lib/hooks/useTagPosts";
 import {Loading, NoPosts} from "../posts-related/shared";
 
 export const CreatedPostsComponent = () => {
-    const {posts, loading} = useTagPosts("created")
+    const {postsWithAction, loading} = useTagPosts("created")
 
     if (loading) {
         return (
@@ -15,7 +15,7 @@ export const CreatedPostsComponent = () => {
         )
     }
 
-    if (posts.length === 0 && !loading) {
+    if (postsWithAction.length === 0 && !loading) {
         return (
             <NoPosts text={"No posts created..."}></NoPosts>
         )
@@ -24,8 +24,8 @@ export const CreatedPostsComponent = () => {
     return (
         <MasonryLayout>
             {
-                posts.length > 0 && (
-                    posts.map((post, index) => (
+                postsWithAction.length > 0 && (
+                    postsWithAction.map((post, index) => (
                         <PostCardComponent id={post.id} key={index} image={post.postImageUrl}/>
                     ))
                 )

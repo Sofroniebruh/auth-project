@@ -2,12 +2,12 @@
 
 import {HeartIcon, ShareIcon} from "lucide-react";
 import {useIsAuthenticated} from "@/lib/hooks";
-import {toast} from "sonner";
 import {useEffect, useState} from "react";
 import {Skeleton} from "@/components/ui-components/ui/skeleton";
-import {API} from "@/lib/api-client/api";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
+import {toast} from "sonner";
+import {useLikeStore} from "@/lib/store/likeStore";
 
 interface Props {
     image: string,
@@ -16,9 +16,10 @@ interface Props {
 
 export const PostCardComponent = ({image, id}: Props) => {
     const {isLoggedIn} = useIsAuthenticated()
+    const {toggleLike, isLiked, likedPosts} = useLikeStore()
+
     const [isLoaded, setIsLoaded] = useState<boolean>();
     const [aspectRatio, setAspectRatio] = useState<number | null>(null);
-    const [isLiked, setIsLiked] = useState(false);
 
     useEffect(() => {
         const img = new Image();
@@ -29,23 +30,6 @@ export const PostCardComponent = ({image, id}: Props) => {
             setIsLoaded(true);
         };
     }, [image]);
-
-    const handleLike = async (id: number) => {
-        if (!isLoggedIn) {
-            toast("Log In to like")
-            return;
-        }
-
-        const res = await API.posts.likePost(id)
-
-        if (res === 200) {
-            setIsLiked(false)
-        } else if (res === 201) {
-            setIsLiked(true)
-        } else {
-            toast("Failed to like post")
-        }
-    }
 
     return (
         <div className={"break-inside-avoid rounded-lg shadow-sm overflow-hidden relative"}>
@@ -70,9 +54,9 @@ export const PostCardComponent = ({image, id}: Props) => {
                     <div className={"rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"}>
                         <ShareIcon size={20}></ShareIcon>
                     </div>
-                    <div onClick={() => handleLike(id)}
+                    <div onClick={() => isLoggedIn ? toggleLike(id) : toast("Log In to like")}
                          className={"rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"}>
-                        <HeartIcon size={20} className={cn(isLiked ? "fill-red-600 text-red-600" : "")}></HeartIcon>
+                        <HeartIcon size={20} className={cn(isLiked(id) ? "fill-red-600 text-red-600" : "")}></HeartIcon>
                     </div>
                 </div>
             </div>

@@ -10,43 +10,25 @@ import {PostWithRelations} from "@/lib/helpers/helper-types-or-interfaces";
 import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {useEffect} from "react";
-import {API} from "@/lib/api-client/api";
-import {useIsAuthenticated} from "@/lib/hooks";
 import {toast} from "sonner";
+import {useIsAuthenticated} from "@/lib/hooks";
+import {useLikeStore} from "@/lib/store/likeStore";
+import {cn} from "@/lib/utils";
 
 interface Props {
     post: PostWithRelations;
     isOwner: boolean;
-    likesAmount: number;
-    setLikesAmount: (likesAmount: string) => void;
 }
 
-export const PostComponent = ({post, isOwner, likesAmount, setLikesAmount}: Props) => {
+export const PostComponent = ({post, isOwner}: Props) => {
+    const {isLoggedIn} = useIsAuthenticated()
+    const {toggleLike, isLiked, likesAmount} = useLikeStore()
     const pathname = usePathname()
     const router = useRouter()
-    const {isLoggedIn} = useIsAuthenticated()
-
 
     useEffect(() => {
         window.scroll(0, 0)
     }, [pathname])
-
-    const handleLike = async (id: number) => {
-        if (!isLoggedIn) {
-            toast("Log In to like")
-            return;
-        }
-
-        const res = await API.posts.likePost(id)
-
-        if (res === 200) {
-            setLikesAmount((Number(likesAmount) - 1).toString())
-        } else if (res === 201) {
-            setLikesAmount((Number(likesAmount) + 1).toString())
-        } else {
-            toast("Failed to like post")
-        }
-    }
 
     return (
         <div className={"flex flex-col"}>
@@ -129,8 +111,10 @@ export const PostComponent = ({post, isOwner, likesAmount, setLikesAmount}: Prop
                                             <div className={"w-[65px] flex items-center justify-center"}>
                                                 <p className="font-semibold">{likesAmount}</p>
                                             </div>
-                                            <Button onClick={() => handleLike(post.id)}
-                                                    variant="outline">Like <HeartIcon/></Button>
+                                            <Button
+                                                onClick={() => isLoggedIn ? toggleLike(post.id) : toast("Log In to like")}
+                                                variant="outline"
+                                                className={cn(isLiked(post.id) ? "text-red-600 fill-red-600" : "")}>Like <HeartIcon/></Button>
                                             <div className="flex items-center gap-3">
                                                 <Button variant="outline">Save <ShareIcon/></Button>
                                             </div>

@@ -9,8 +9,8 @@ export const useIsAuthenticated = () => {
 
     useEffect(() => {
         async function checkAuth() {
-            const res = await API.tokenCheck.checkToken()
-            setIsLoggedIn(res)
+            const {loggedIn} = await API.tokenCheck.checkToken()
+            setIsLoggedIn(loggedIn)
             setLoading(false);
         }
 

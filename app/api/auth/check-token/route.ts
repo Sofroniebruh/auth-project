@@ -1,14 +1,16 @@
-import {cookies} from "next/headers";
 import {verifyJWT} from "@/lib/auth/jwt-actions";
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 
-export async function GET() {
-    const token = (await cookies()).get('jwt')?.value;
-    const user = token ? verifyJWT(token) : null;
+export async function GET(req: NextRequest) {
+    const token = req.cookies.get('jwt')?.value;
 
-    if (!user) {
-        return NextResponse.json({loggedIn: false}, {status: 401});
+    if (token) {
+        const user = token ? verifyJWT(token) : null;
+
+        if (user) {
+            return NextResponse.json({loggedIn: true, user}, {status: 200});
+        }
     }
 
-    return NextResponse.json({loggedIn: true, user}, {status: 200});
+    return NextResponse.json({loggedIn: false}, {status: 200});
 }

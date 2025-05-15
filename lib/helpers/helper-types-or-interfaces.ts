@@ -23,3 +23,20 @@ export interface PostWithRelations extends Post {
         createdAt: Date,
     }[]
 }
+
+export interface PostsWithLikes {
+    allPosts: ({
+        likes: {
+            userId: number
+            postId: number
+        }[]
+    } & {
+        id: number
+        userId: number
+        postName: string
+        description: string | null
+        postImageUrl: string
+        createdAt: Date
+        updatedAt: Date | null
+    })[]
+}

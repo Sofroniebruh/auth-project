@@ -3,5 +3,5 @@ export const checkToken = async () => {
         method: "GET",
     })
 
-    return response.ok;
+    return (await response.json()) as {loggedIn: boolean};
 }

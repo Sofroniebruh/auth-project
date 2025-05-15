@@ -1,4 +1,5 @@
 import {PostWithRelations} from "@/lib/helpers/helper-types-or-interfaces";
+import {Post} from "@prisma/client";
 
 export async function getPosts() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts`, {
@@ -6,7 +7,7 @@ export async function getPosts() {
     })
 
     if (res.ok) {
-        return res.json()
+        return (await res.json()) as { posts: Post[] }
     }
 
     throw new Error(res.statusText)
@@ -29,5 +30,5 @@ export async function likePost(id: number) {
         method: 'PUT',
     })
 
-    return res.status
+    return res.ok
 }

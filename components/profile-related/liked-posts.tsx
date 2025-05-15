@@ -7,7 +7,7 @@ import {useTagPosts} from "@/lib/hooks/useTagPosts";
 import {Loading, NoPosts} from "../posts-related/shared";
 
 export const LikedPosts = () => {
-    const {posts, loading} = useTagPosts("liked")
+    const {postsWithAction, loading} = useTagPosts("liked")
 
     if (loading) {
         return (
@@ -15,7 +15,7 @@ export const LikedPosts = () => {
         )
     }
 
-    if (posts.length === 0 && !loading) {
+    if (postsWithAction.length === 0 && !loading) {
         return (
             <NoPosts text={"Nothing is to your liking yet..."}></NoPosts>
         )
@@ -24,8 +24,8 @@ export const LikedPosts = () => {
     return (
         <MasonryLayout>
             {
-                posts.length > 0 && (
-                    posts.map((post, index) => (
+                postsWithAction.length > 0 && (
+                    postsWithAction.map((post, index) => (
                         <PostCardComponent id={post.id} key={index} image={post.postImageUrl}/>
                     ))
                 )

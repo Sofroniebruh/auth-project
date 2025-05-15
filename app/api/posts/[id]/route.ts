@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {prismaClient} from "@/prisma/prisma-client";
 import {tokenCheck} from "@/lib/auth";
 
-type Params = {
+export type Params = {
     params: {
         id: string;
     };

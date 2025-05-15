@@ -22,6 +22,10 @@ export const getAllPostsLikedByUser = async () => {
         return (await res.json()) as { posts: Post[] }
     }
 
+    if (res.status === 401 || res.status === 403) {
+        return { posts: [] };
+    }
+
     throw new Error(res.statusText);
 }
 

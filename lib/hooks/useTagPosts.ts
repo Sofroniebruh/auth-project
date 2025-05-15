@@ -26,6 +26,6 @@ export const useTagPosts = (tagType: "created" | "commented" | "liked") => {
 
     return {
         loading,
-        posts,
+        postsWithAction: posts,
     }
 }
