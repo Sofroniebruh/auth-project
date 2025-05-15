@@ -1,1 +1,1 @@
-export {HandleNextStage} from "./handle-next-stage"
+export { HandleNextStage } from './handle-next-stage';

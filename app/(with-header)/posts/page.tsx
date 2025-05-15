@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import {PostsComponent} from "@/components/posts-related";
+import { PostsComponent } from '@/components/posts-related';
 
 export default function PostsPage() {
-    return (
-        <PostsComponent></PostsComponent>
-    )
+  return (
+    <PostsComponent></PostsComponent>
+  );
 }

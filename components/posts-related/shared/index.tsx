@@ -1,2 +1,2 @@
-export {Loading} from "./loading"
-export {NoPosts} from "./no-posts"
+export { Loading } from './loading';
+export { NoPosts } from './no-posts';

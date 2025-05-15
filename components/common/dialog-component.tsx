@@ -5,37 +5,37 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui-components/ui/dialog"
-import React from "react";
+} from '@/components/ui-components/ui/dialog';
+import React from 'react';
 
 interface Props {
-    triggerButton: React.ReactNode,
-    title: string,
-    description?: string,
-    children: React.ReactNode,
-    className?: string,
-    openState?: boolean,
+  triggerButton: React.ReactNode,
+  title: string,
+  description?: string,
+  children: React.ReactNode,
+  className?: string,
+  openState?: boolean,
 }
 
-export const DialogComponent = ({triggerButton, title, description, children, className, openState}: Props) => {
-    return (
-        <Dialog open={openState}>
-            <DialogTrigger>
-                {triggerButton}
-            </DialogTrigger>
-            <DialogContent className={className}>
-                <DialogHeader>
-                    <DialogTitle>
-                        {title}
-                    </DialogTitle>
-                    {description && (
-                        <DialogDescription>
-                            {description}
-                        </DialogDescription>
-                    )}
-                </DialogHeader>
-                {children}
-            </DialogContent>
-        </Dialog>
-    )
-}
+export const DialogComponent = ({ triggerButton, title, description, children, className, openState }: Props) => {
+  return (
+    <Dialog open={openState}>
+      <DialogTrigger>
+        {triggerButton}
+      </DialogTrigger>
+      <DialogContent className={className}>
+        <DialogHeader>
+          <DialogTitle>
+            {title}
+          </DialogTitle>
+          {description && (
+            <DialogDescription>
+              {description}
+            </DialogDescription>
+          )}
+        </DialogHeader>
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+};

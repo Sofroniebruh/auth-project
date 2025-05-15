@@ -1,24 +1,19 @@
-"use client"
+'use client';
 
-import {useEffect, useState} from "react";
-import {API} from "@/lib/api-client/api";
+import { useEffect } from 'react';
+import { useAuthStore } from '@/lib/store/authStore';
 
 export const useIsAuthenticated = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(true);
+  const { isLoggedIn, checkLoggedIn, loading, logout, setIsLoggedIn } = useAuthStore((state) => state);
 
-    useEffect(() => {
-        async function checkAuth() {
-            const {loggedIn} = await API.tokenCheck.checkToken()
-            setIsLoggedIn(loggedIn)
-            setLoading(false);
-        }
+  useEffect(() => {
+    checkLoggedIn();
+  }, []);
 
-        checkAuth();
-    }, [])
-
-    return {
-        isLoggedIn,
-        loading,
-    }
-}
+  return {
+    isLoggedIn,
+    loading,
+    logout,
+    setIsLoggedIn,
+  };
+};

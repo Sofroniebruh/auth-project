@@ -1,37 +1,37 @@
-import {NextRequest, NextResponse} from "next/server";
-import {prismaClient} from "@/prisma/prisma-client";
-import {hashPassword} from "@/lib/auth/password-actions";
-import {signJWT} from "@/lib/auth/jwt-actions";
+import { NextRequest, NextResponse } from 'next/server';
+import { prismaClient } from '@/prisma/prisma-client';
+import { hashPassword } from '@/lib/auth/password-actions';
+import { signJWT } from '@/lib/auth/jwt-actions';
 
 export async function POST(req: NextRequest) {
-    const {email, password} = (await req.json()) as { email: string; password: string };
+  const { email, password } = (await req.json()) as { email: string; password: string };
 
-    const isEmailTaken = await prismaClient.user.findUnique({
-        where: {email},
-    })
+  const isEmailTaken = await prismaClient.user.findUnique({
+    where: { email },
+  });
 
-    if (isEmailTaken) {
-        return NextResponse.json({message: "Email already taken"}, {status: 401})
-    }
+  if (isEmailTaken) {
+    return NextResponse.json({ message: 'Email already taken' }, { status: 401 });
+  }
 
-    await prismaClient.user.create({
-        data: {
-            email,
-            password: await hashPassword(password),
-            name: email,
-        }
-    })
+  await prismaClient.user.create({
+    data: {
+      email,
+      password: await hashPassword(password),
+      username: email,
+    },
+  });
 
-    const token = signJWT({email});
-    const res = NextResponse.json({message: "Registered"});
+  const token = signJWT({ email });
+  const res = NextResponse.json({ message: 'Registered' });
 
-    res.cookies.set('jwt', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
+  res.cookies.set('jwt', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 60 * 60 * 24,
+  });
 
-    return res;
+  return res;
 }

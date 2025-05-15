@@ -1,7 +1,7 @@
 export const checkToken = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/auth/check-token`, {
-        method: "GET",
-    })
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/auth/check-token`, {
+    method: 'GET',
+  });
 
-    return (await response.json()) as {loggedIn: boolean};
-}
+  return (await response.json()) as { loggedIn: boolean };
+};
