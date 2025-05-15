@@ -65,5 +65,6 @@ export const usePostDetails = (id?: string) => {
     isMounted,
     isOwnerOfPost,
     setLikesAmount,
+    totalLikesValidator,
   };
 };

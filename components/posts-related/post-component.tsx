@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { useIsAuthenticated } from '@/lib/hooks';
+import { useIsAuthenticated, usePostDetails } from '@/lib/hooks';
 import { useLikeStore } from '@/lib/store/likeStore';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +28,8 @@ interface Props {
 
 export const PostComponent = ({ post, isOwner }: Props) => {
   const { isLoggedIn } = useIsAuthenticated();
-  const { toggleLike, likesAmount, isLiked } = useLikeStore();
+  const { toggleLike, isLiked, getLikesPerPost } = useLikeStore();
+  const { totalLikesValidator } = usePostDetails(post.id.toString());
   const pathname = usePathname();
   const router = useRouter();
 
@@ -115,12 +116,12 @@ export const PostComponent = ({ post, isOwner }: Props) => {
                   ) : (
                     <div className={'flex items-center gap-3'}>
                       <div className={'w-[65px] flex items-center justify-center'}>
-                        <p className="font-semibold">{likesAmount}</p>
+                        <p className="font-semibold">{totalLikesValidator(getLikesPerPost(post.id))}</p>
                       </div>
                       <Button
                         onClick={() => isLoggedIn ? toggleLike(post.id) : toast('Log In to like')}
                         variant="outline"
-                        className={cn(isLiked(post.id) ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
+                        className={cn(post.isLikedByUser || isLiked(post.id) ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
                       <div className="flex items-center gap-3">
                         <Button variant="outline">Save <ShareIcon /></Button>
                       </div>

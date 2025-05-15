@@ -39,19 +39,40 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
             createdAt: true,
           },
         },
-        likes: true,
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
       },
     });
 
-    if (postWithRelations) {
-      if (email) {
-        isOwner = postWithRelations.createdBy.email === email;
-      }
-
-      return NextResponse.json({ post: postWithRelations, isOwner: isOwner }, { status: 200 });
+    if (!postWithRelations) {
+      return NextResponse.json({ message: 'Not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ message: 'Not found' }, { status: 404 });
+    if (!email) {
+      return NextResponse.json({ post: postWithRelations, isOwner }, { status: 200 });
+    }
+
+    const user = await prismaClient.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ posts: postWithRelations, isOwner }, { status: 200 });
+    }
+
+    isOwner = postWithRelations.createdBy.email === email;
+
+    const postWithUserLikedOrNo = {
+      ...postWithRelations,
+      isLikedByUser: postWithRelations.likes.some((like) => like.userId === user.id),
+    };
+
+    return NextResponse.json({ post: postWithUserLikedOrNo, isOwner: isOwner }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

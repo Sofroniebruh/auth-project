@@ -41,10 +41,6 @@ export async function GET(req: NextRequest) {
   try {
     const email = await tokenCheck(req);
 
-    if (!email) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
     const allPosts = await prismaClient.post.findMany({
       include: {
         likes: {
@@ -54,6 +50,10 @@ export async function GET(req: NextRequest) {
         },
       },
     });
+
+    if (!email) {
+      return NextResponse.json({ posts: allPosts }, { status: 200 });
+    }
 
     const user = await prismaClient.user.findUnique({
       where: {
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
 
     const postsWithLikedBySelectedUser = allPosts.map((post) => ({
       ...post,
-      isLikedByCurrentUser: post.likes.map((like) => like.userId === user.id),
+      isLikedByCurrentUser: post.likes.some((like) => like.userId === user.id),
     }));
 
     return NextResponse.json({ posts: postsWithLikedBySelectedUser }, { status: 200 });

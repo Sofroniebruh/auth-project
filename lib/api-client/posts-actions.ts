@@ -1,5 +1,4 @@
-import { PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
-import { Post } from '@prisma/client';
+import { PostsWithLikedByCurrentUser, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 
 export async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts`, {
@@ -7,7 +6,7 @@ export async function getPosts() {
   });
 
   if (res.ok) {
-    return (await res.json()) as { posts: Post[] };
+    return (await res.json()) as { posts: PostsWithLikedByCurrentUser[] };
   }
 
   throw new Error(res.statusText);
@@ -18,8 +17,10 @@ export async function getPost(id: string) {
     method: 'GET',
   });
 
-  if (res.ok) {
-    return (await res.json()) as { post: PostWithRelations, isOwner: boolean };
+  const data = await res.json();
+
+  if (data) {
+    return data as { post: PostWithRelations, isOwner: boolean };
   }
 
   throw new Error(res.statusText);

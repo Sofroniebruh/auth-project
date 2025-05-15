@@ -1,6 +1,7 @@
 import { Post } from '@prisma/client';
 
 export interface PostWithRelations extends Post {
+  isLikedByUser?: boolean;
   createdBy: {
     id: number
     email: string
@@ -24,19 +25,17 @@ export interface PostWithRelations extends Post {
   }[];
 }
 
-export interface PostsWithLikes {
-  allPosts: ({
-    likes: {
-      userId: number
-      postId: number
-    }[]
-  } & {
-    id: number
+export interface PostsWithLikedByCurrentUser {
+  isLikedByCurrentUser: boolean;
+  likes: {
     userId: number
-    postName: string
-    description: string | null
-    postImageUrl: string
-    createdAt: Date
-    updatedAt: Date | null
-  })[];
+  }[];
+  id: number;
+  userId: number;
+  postName: string;
+  description: string | null;
+  postImageUrl: string;
+  createdAt: Date;
+  updatedAt: Date | null;
 }
+

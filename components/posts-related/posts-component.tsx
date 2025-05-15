@@ -1,31 +1,33 @@
 'use client';
 
-import { Post } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { API } from '@/lib/api-client/api';
 import { MasonryLayout } from '@/components/common';
 import { Loading, NoPosts } from '@/components/posts-related/shared';
 import { PostCardComponent } from '@/components/posts-related/post-card-component';
-import { useTagPosts } from '@/lib/hooks/useTagPosts';
+import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
 import { useLikeStore } from '@/lib/store/likeStore';
 
 export const PostsComponent = () => {
-  const [allPosts, setPosts] = useState<Post[] | []>([]);
-  const { postsWithAction } = useTagPosts('liked');
-  const { isLiked } = useLikeStore();
+  const [posts, setPosts] = useState<PostsWithLikedByCurrentUser[] | []>([]);
   const [loading, setLoading] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
+  const { toggleLike, setLikedPosts } = useLikeStore();
 
   useEffect(() => {
     setHasMounted(true);
     const fetchPosts = async () => {
       const { posts } = await API.posts.getPosts();
-      if (posts) setPosts(posts);
+      if (posts) {
+        const likedPosts = posts.filter((post) => post.isLikedByCurrentUser);
+        setPosts(posts);
+        setLikedPosts(new Set<number>(likedPosts.map(post => post.id)));
+      }
       setLoading(false);
     };
 
     fetchPosts();
-  }, []);
+  }, [toggleLike]);
 
   if (!hasMounted) return null;
 
@@ -36,7 +38,7 @@ export const PostsComponent = () => {
       </div>);
   }
 
-  if (!loading && allPosts.length == 0) {
+  if (!loading && posts.length == 0) {
     return (
       <NoPosts text={'No posts here yet...'}></NoPosts>
     );
@@ -46,8 +48,8 @@ export const PostsComponent = () => {
     <div className={'px-5'}>
       <MasonryLayout>
         {
-          allPosts.map((post, index) => (
-            <PostCardComponent isLiked={isLiked(post.id)} key={index} id={post.id}
+          posts.map((post, index) => (
+            <PostCardComponent isLikedByUser={post.isLikedByCurrentUser} key={index} id={post.id}
                                image={post.postImageUrl}></PostCardComponent>
           ))
         }

@@ -28,7 +28,7 @@ export const LikedPosts = () => {
       {
         postsWithAction.length > 0 && (
           postsWithAction.map((post, index) => (
-            <PostCardComponent isLiked={isLiked(post.id)} handleToggleLike={handleToggleLike} id={post.id} key={index}
+            <PostCardComponent isLikedByUser={isLiked(post.id)} handleToggleLike={handleToggleLike} id={post.id} key={index}
                                image={post.postImageUrl} />
           ))
         )

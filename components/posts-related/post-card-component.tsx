@@ -13,14 +13,21 @@ interface Props {
   image: string,
   id: number,
   handleToggleLike?: (postId: number) => Promise<void>,
-  isLiked?: boolean,
+  isLikedByUser?: boolean,
 }
 
-export const PostCardComponent = ({ image, id, handleToggleLike, isLiked }: Props) => {
+export const PostCardComponent = ({ image, id, handleToggleLike, isLikedByUser }: Props) => {
   const { isLoggedIn } = useIsAuthenticated();
-  const { toggleLike } = useLikeStore();
+  const [liked, setLiked] = useState(isLikedByUser);
+  const { toggleLike, isLiked } = useLikeStore();
   const [isLoaded, setIsLoaded] = useState<boolean>();
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (isLiked(id) !== liked) {
+      setLiked(isLiked(id));
+    }
+  }, [isLiked(id)]);
 
   useEffect(() => {
     const img = new Image();
@@ -31,6 +38,11 @@ export const PostCardComponent = ({ image, id, handleToggleLike, isLiked }: Prop
       setIsLoaded(true);
     };
   }, [image]);
+
+  const handleLike = (id: number) => {
+    handleToggleLike ? handleToggleLike(id) : toggleLike(id);
+    setLiked(isLiked(id));
+  };
 
   return (
     <div className={'break-inside-avoid rounded-lg shadow-sm overflow-hidden relative'}>
@@ -56,9 +68,10 @@ export const PostCardComponent = ({ image, id, handleToggleLike, isLiked }: Prop
             <ShareIcon size={20}></ShareIcon>
           </div>
           <div
-            onClick={() => isLoggedIn ? handleToggleLike ? handleToggleLike(id) : toggleLike(id) : toast('Log In to like')}
+            onClick={() => isLoggedIn ? handleLike(id) : toast('Log In to like')}
             className={'rounded-full bg-white p-2 cursor-pointer hover:bg-white/70'}>
-            <HeartIcon size={20} className={cn(isLiked ? 'fill-red-600 text-red-600' : '')}></HeartIcon>
+            <HeartIcon size={20}
+                       className={cn(liked ? 'fill-red-600 text-red-600' : '')}></HeartIcon>
           </div>
         </div>
       </div>
