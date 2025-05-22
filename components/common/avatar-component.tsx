@@ -1,7 +1,7 @@
 'use client';
 
 import { LoaderCircleIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui-components/ui/avatar';
 
@@ -30,19 +30,34 @@ export const AvatarComponent = ({
                                 }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    if (!profilePicture) {
+      isForProfile ? (setProfileIsLoading!(false)) : setIsLoading(false);
+
+      return;
+    }
+
+  }, [profilePicture, isForProfile, setProfileIsLoading]);
+
   return (
     <div className={cn('relative', className)}>
       <Avatar className="w-full h-full overflow-hidden">
-        <AvatarImage
-          className="object-cover w-full h-full"
-          src={profilePicture!}
-          alt="Profile"
-          onLoad={() => isForProfile ? setProfileIsLoading!(false) : setIsLoading(false)}
-          onError={() => isForProfile ? setProfileIsLoading!(false) : setIsLoading(false)}
-        />
-        <AvatarFallback>
-          {email ? email.slice(0, 2).toUpperCase() : 'C'}
-        </AvatarFallback>
+        {profilePicture ? (
+          <AvatarImage
+            className="object-cover w-full h-full"
+            src={profilePicture}
+            alt="Profile"
+            onLoad={() => isForProfile ? setProfileIsLoading!(false) : setIsLoading(false)}
+            onError={() => isForProfile ? setProfileIsLoading!(false) : setIsLoading(false)}
+          />
+        ) : (
+          <>
+            <AvatarFallback>
+              {email ? email.slice(0, 2).toUpperCase() : 'C'}
+            </AvatarFallback>
+          </>
+        )}
+
       </Avatar>
       {isForProfile ? (
         profileIsLoading && (

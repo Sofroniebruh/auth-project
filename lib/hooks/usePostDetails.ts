@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { API } from '@/lib/api-client/api';
-import { PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
+import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { useParams, useRouter } from 'next/navigation';
 import { useLikeStore } from '@/lib/store/likeStore';
 
@@ -10,7 +10,8 @@ export const usePostDetails = (postId?: string) => {
   const [likesAmount, setLikesAmount] = useState<string>('0');
   const [postWithRelations, setPostWithRelations] = useState<PostWithRelations>();
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const [isOwnerOfPost, setIsOwnerOfPost] = useState(false);
+  const [ownerOfPost, setOwnerOfPost] = useState<PostOwner>();
+  const [isOwner, setIsOwner] = useState<boolean>(false);
   const { hydrateLikesForPost } = useLikeStore();
 
   const router = useRouter();
@@ -34,14 +35,15 @@ export const usePostDetails = (postId?: string) => {
     const fetchPost = async (id: string) => {
       setIsMounted(true);
       try {
-        const { post, isOwner } = await API.posts.getPost(id);
-        
+        const { post, owner, isOwner } = await API.posts.getPost(id);
+
         if (post) {
           const likes = post.likes.length;
 
           setPostWithRelations(post);
           setLikesAmount(totalLikesValidator(likes));
-          setIsOwnerOfPost(isOwner);
+          setOwnerOfPost(owner);
+          setIsOwner(isOwner);
 
           return;
         }
@@ -63,8 +65,9 @@ export const usePostDetails = (postId?: string) => {
     likesAmount,
     postWithRelations,
     isMounted,
-    isOwnerOfPost,
+    ownerOfPost,
     setLikesAmount,
     totalLikesValidator,
+    isOwner,
   };
 };

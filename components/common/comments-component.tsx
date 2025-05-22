@@ -9,6 +9,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
+import { PostOwner } from '@/lib/helpers/helper-types-or-interfaces';
 
 export type Comment = {
   id: number
@@ -24,10 +25,10 @@ export type Comment = {
 interface Props {
   className?: string;
   comments: Comment[];
-  isOwner: boolean;
+  owner: PostOwner;
 }
 
-export const CommentsComponent = ({ className, comments, isOwner }: Props) => {
+export const CommentsComponent = ({ className, comments, owner }: Props) => {
   return (
     <div className={cn('flex-col gap-4', className)}>
       <h2 className="text-xl font-semibold mb-4">Comments</h2>
@@ -41,7 +42,7 @@ export const CommentsComponent = ({ className, comments, isOwner }: Props) => {
             </div>
           ) : (
             comments.map((comment, index) => (
-              <CommentComponent isOwner={isOwner} key={index} comment={comment} />
+              <CommentComponent isOwner={comment.commentOwner.id === owner.id} key={index} comment={comment} />
             ))
           )}
         </div>

@@ -12,7 +12,7 @@ import {
   PopoverComponent,
 } from '@/components/common';
 import { PostsComponent } from '@/components/posts-related/posts-component';
-import { PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
+import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -23,10 +23,11 @@ import { cn } from '@/lib/utils';
 
 interface Props {
   post: PostWithRelations;
+  owner: PostOwner;
   isOwner: boolean;
 }
 
-export const PostComponent = ({ post, isOwner }: Props) => {
+export const PostComponent = ({ post, owner, isOwner }: Props) => {
   const { isLoggedIn } = useIsAuthenticated();
   const { toggleLike, isLiked, getLikesPerPost } = useLikeStore();
   const [liked, setIsLiked] = useState(post.isLikedByUser);
@@ -154,7 +155,7 @@ export const PostComponent = ({ post, isOwner }: Props) => {
                     <MessageCircleIcon className={'w-5 h-5'}></MessageCircleIcon>
                   </div>
                 } title={''}>
-                  <CommentsComponent isOwner={isOwner} comments={post.comments}
+                  <CommentsComponent owner={owner} comments={post.comments}
                                      className={'flex w-full'}></CommentsComponent>
                   <CommentInput className={'block'}></CommentInput>
                 </DialogComponent>
@@ -168,12 +169,12 @@ export const PostComponent = ({ post, isOwner }: Props) => {
                   className={'bg-blue-600 hover:bg-blue-500 text-white rounded-md p-2 text-sm px-3 cursor-pointer'}>Open
                   comment section</div>
               } title={''}>
-                <CommentsComponent isOwner={isOwner} comments={post.comments}
+                <CommentsComponent owner={owner} comments={post.comments}
                                    className={'flex w-full'}></CommentsComponent>
                 <CommentInput className={'block'}></CommentInput>
               </DialogComponent>
             </div>
-            <CommentsComponent isOwner={isOwner} comments={post.comments}
+            <CommentsComponent owner={owner} comments={post.comments}
                                className={'lg:flex hidden'}></CommentsComponent>
             <CommentInput className={'lg:block hidden'}></CommentInput>
           </div>

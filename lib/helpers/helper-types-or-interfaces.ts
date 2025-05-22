@@ -39,3 +39,8 @@ export interface PostsWithLikedByCurrentUser {
   updatedAt: Date | null;
 }
 
+export interface PostOwner {
+  id: number;
+  email: string;
+}
+
