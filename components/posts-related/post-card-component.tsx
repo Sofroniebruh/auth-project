@@ -22,7 +22,7 @@ export const PostCardComponent = ({ image, id, handleToggleLike, isLikedByUser }
   const { toggleLike, isLiked } = useLikeStore();
   const [isLoaded, setIsLoaded] = useState<boolean>();
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
-  const { isOwnerOfPost } = usePostDetails(id.toString());
+  const { isOwner } = usePostDetails(id.toString());
 
   useEffect(() => {
     if (isLiked(id) !== liked) {
@@ -46,8 +46,8 @@ export const PostCardComponent = ({ image, id, handleToggleLike, isLikedByUser }
   };
 
   const handleEdit = (id: number) => {
-    console.log(id)
-  }
+    console.log(id);
+  };
 
   return (
     <div className={'break-inside-avoid rounded-lg shadow-sm overflow-hidden relative'}>
@@ -73,10 +73,10 @@ export const PostCardComponent = ({ image, id, handleToggleLike, isLikedByUser }
             <ShareIcon size={20}></ShareIcon>
           </div>
           <div
-            onClick={() => isOwnerOfPost ? handleEdit(id) : isLoggedIn ? handleLike(id) : toast('Log In to like')}
+            onClick={() => isOwner ? handleEdit(id) : isLoggedIn ? handleLike(id) : toast('Log In to like')}
             className={'rounded-full bg-white p-2 cursor-pointer hover:bg-white/70'}>
-            {isOwnerOfPost ? (<EditIcon size={20}></EditIcon>) : (<HeartIcon size={20}
-                                                                   className={cn(liked ? 'fill-red-600 text-red-600' : '')}></HeartIcon>)
+            {isOwner ? (<EditIcon size={20}></EditIcon>) : (<HeartIcon size={20}
+                                                                       className={cn(liked ? 'fill-red-600 text-red-600' : '')}></HeartIcon>)
             }
           </div>
         </div>
