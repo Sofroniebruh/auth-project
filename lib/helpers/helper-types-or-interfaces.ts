@@ -44,3 +44,8 @@ export interface PostOwner {
   email: string;
 }
 
+export interface CommentStructure {
+  message: string;
+  id: number;
+}
+

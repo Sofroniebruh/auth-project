@@ -18,6 +18,10 @@ export const usernameSchema = z.object({
   username: z.string().min(1, { message: 'Username is required' }),
 });
 
+export const inputSchema = z.object({
+  message: z.string().min(1, { message: 'Message is required' }),
+});
+
 export const formLoginSchema = emailSchema.merge(z.object({
   password: password,
 }));
@@ -48,6 +52,7 @@ export const updateProfileUsernameOrProfilePictureSchemaForAPI = z.object({
   pfpUrl: z.string().optional(),
 });
 
+export type InputSchemaType = z.infer<typeof inputSchema>
 export type UpdatedUserAPISchema = z.infer<typeof updateProfileUsernameOrProfilePictureSchemaForAPI>
 export type NewPostSchemaType = z.infer<typeof newPostSchema>
 export type UsernameSchemaType = z.infer<typeof usernameSchema>

@@ -5,6 +5,7 @@ import * as uploadImage from './upload-public-image';
 import * as getUserInfo from './get-user-info';
 import * as changeUserInfo from './change-user-info';
 import * as posts from './posts-actions';
+import * as comments from './comment-actions';
 
 export const API = {
   tokenCheck,
@@ -14,4 +15,5 @@ export const API = {
   getUserInfo,
   changeUserInfo,
   posts,
+  comments,
 };

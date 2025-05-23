@@ -13,8 +13,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { useIsAuthenticated, usePostDetails } from '@/lib/hooks';
-import { useEffect, useState } from 'react';
-import { useLikeStore } from '@/lib/store/likeStore';
+import { useCommentStore, useLikeStore } from '@/lib/store';
+import { useMemo } from 'react';
 
 interface Props {
   post: PostWithRelations;
@@ -25,18 +25,14 @@ interface Props {
 export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
   const { totalLikesValidator } = usePostDetails(post.id.toString());
   const { isLoggedIn } = useIsAuthenticated();
-  const { toggleLike, isLiked, getLikesPerPost } = useLikeStore();
-  const [liked, setIsLiked] = useState(post.isLikedByUser);
-
-  useEffect(() => {
-    if (isLiked(post.id) !== liked) {
-      setIsLiked(isLiked(post.id));
-    }
-  }, [isLiked(post.id)]);
+  const isLiked = useLikeStore((state) => state.isLiked(post.id));
+  const toggleLike = useLikeStore((state) => state.toggleLike);
+  const getLikesPerPost = useLikeStore((state) => state.getLikesPerPost);
+  const likesCount = useMemo(() => getLikesPerPost(post.id), [getLikesPerPost, post.id]);
+  const comments = useCommentStore((state) => state.comments);
 
   const handleLike = (id: number) => {
     toggleLike(id);
-    setIsLiked(isLiked(id));
   };
 
   return (
@@ -96,7 +92,7 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
                   <div>
                     <h1 className={'text-md font-semibold'}>Total likes:</h1>
                     <span className={'flex items-center gap-1'}><HeartIcon size={20}
-                                                                           className={'fill-red-600 text-red-600'}></HeartIcon> {totalLikesValidator(getLikesPerPost(post.id))}
+                                                                           className={'fill-red-600 text-red-600'}></HeartIcon> {totalLikesValidator(likesCount)}
                           </span>
                   </div>
                 }
@@ -115,12 +111,12 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
             ) : (
               <div className={'flex items-center gap-3'}>
                 <div className={'w-[65px] flex items-center justify-center'}>
-                  <p className="font-semibold">{totalLikesValidator(getLikesPerPost(post.id))}</p>
+                  <p className="font-semibold">{totalLikesValidator(likesCount)}</p>
                 </div>
                 <Button
                   onClick={() => isLoggedIn ? handleLike(post.id) : toast('Log In to like')}
                   variant="outline"
-                  className={cn(liked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
+                  className={cn(isLiked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
                 <div className="flex items-center gap-3">
                   <Button variant="outline">Save <ShareIcon /></Button>
                 </div>
@@ -133,9 +129,9 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
               <MessageCircleIcon className={'w-5 h-5'}></MessageCircleIcon>
             </div>
           } title={''}>
-            <CommentsComponent owner={owner} comments={post.comments}
+            <CommentsComponent owner={owner} comments={comments}
                                className={'flex w-full'}></CommentsComponent>
-            <CommentInput className={'block'}></CommentInput>
+            <CommentInput postId={post.id} className={'block'}></CommentInput>
           </DialogComponent>
         </div>
         <Separator />
@@ -146,14 +142,28 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
             className={'bg-blue-600 hover:bg-blue-500 text-white rounded-md p-2 text-sm px-3 cursor-pointer'}>Open
             comment section</div>
         } title={''}>
-          <CommentsComponent owner={owner} comments={post.comments}
+          <CommentsComponent owner={owner} comments={comments}
                              className={'flex w-full'}></CommentsComponent>
-          <CommentInput className={'block'}></CommentInput>
+          {isLoggedIn ? (
+            <CommentInput postId={post.id} className={'block'}></CommentInput>
+          ) : (
+            <Button className={'bg-blue-600 text-white'}>
+              <p>Log In to leave comments</p>
+            </Button>
+          )}
         </DialogComponent>
       </div>
-      <CommentsComponent owner={owner} comments={post.comments}
+      <CommentsComponent owner={owner} comments={comments}
                          className={'lg:flex hidden'}></CommentsComponent>
-      <CommentInput className={'lg:block hidden'}></CommentInput>
+      {isLoggedIn ? (
+        <CommentInput postId={post.id} className={'lg:block hidden'}></CommentInput>
+      ) : (
+        <Link href={'/sign-in'} className={' justify-center w-full lg:flex hidden'}>
+          <Button className={'bg-blue-600 text-white w-[200px]'}>
+            <p>Log In to leave comments</p>
+          </Button>
+        </Link>
+      )}
     </div>
   );
 };

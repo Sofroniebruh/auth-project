@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { API } from '@/lib/api-client/api';
 import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { useParams, useRouter } from 'next/navigation';
-import { useLikeStore } from '@/lib/store/likeStore';
+import { useCommentStore, useLikeStore } from '@/lib/store';
 
 export const usePostDetails = (postId?: string) => {
   const [likesAmount, setLikesAmount] = useState<string>('0');
@@ -12,7 +12,9 @@ export const usePostDetails = (postId?: string) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [ownerOfPost, setOwnerOfPost] = useState<PostOwner>();
   const [isOwner, setIsOwner] = useState<boolean>(false);
-  const { hydrateLikesForPost } = useLikeStore();
+  const hydrateLikesForPost = useLikeStore((state) => state.hydrateLikesForPost);
+  const hydrateComments = useCommentStore((state) => state.hydrateComments);
+  const clearComments = useCommentStore((state) => state.clearComments);
 
   const router = useRouter();
   const params = useParams();
@@ -20,7 +22,16 @@ export const usePostDetails = (postId?: string) => {
 
   useEffect(() => {
     hydrateLikesForPost(Number(postId ? postId : paramsId));
-  }, [hydrateLikesForPost]);
+  }, [hydrateLikesForPost, postId, paramsId]);
+
+  useEffect(() => {
+    const id = Number(postId ?? paramsId);
+
+    if (!isNaN(id)) {
+      clearComments();
+      hydrateComments(id);
+    }
+  }, [postId, paramsId]);
 
   const totalLikesValidator = (likes: number): string => {
     if (likes >= 1_000_000) {
