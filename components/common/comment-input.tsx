@@ -8,21 +8,51 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { inputSchema, InputSchemaType } from '@/components/auth/schema';
 import { CommentStructure } from '@/lib/helpers/helper-types-or-interfaces';
 import { API } from '@/lib/api-client/api';
-import { useCommentStore } from '@/lib/store/commentStore';
+import { usePaginatedComments } from '@/lib/hooks/usePaginatedComments';
+import { Comment } from '@/components/common/comments-component';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 interface Props {
   className?: string;
   postId: number;
+  page: number;
+  isUpdatingComment?: boolean;
+  comment?: Comment;
 }
 
-export const CommentInput = ({ className, postId }: Props) => {
-  const { addComment } = useCommentStore();
+export const CommentInput = ({ className, postId, page, isUpdatingComment, comment }: Props) => {
+  const { mutate } = usePaginatedComments(postId, page);
+
   const form = useForm<InputSchemaType>({
     resolver: zodResolver(inputSchema),
     defaultValues: {
       message: '',
     },
   });
+
+  useEffect(() => {
+    if (isUpdatingComment) {
+      form.setValue('message', comment!.commentContent);
+    }
+  }, [isUpdatingComment]);
+
+  const onUpdate = async (data: InputSchemaType) => {
+    const commentData = {
+      message: data.message,
+      commentId: comment!.id,
+    };
+
+    if (await API.comments.updateComment(commentData)) {
+      toast.success('Comment updated successfully');
+      await mutate();
+      form.reset();
+
+      return;
+    }
+
+    toast.error('Error updating your comment');
+  };
 
   const onSubmit = async (data: InputSchemaType) => {
     const commentData: CommentStructure = {
@@ -33,18 +63,19 @@ export const CommentInput = ({ className, postId }: Props) => {
     const { comment } = await API.comments.createComment(commentData);
 
     if (comment) {
-      addComment(comment);
-      console.log(comment);
+      await mutate();
+      form.reset();
     }
   };
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={'relative w-full'}>
-        <Input {...form.register('message')} className={cn('mt-4 px-3 py-5 min-w-[300px]', className)}
+      <form onSubmit={form.handleSubmit(isUpdatingComment ? onUpdate : onSubmit)} className={'relative w-full'}>
+        <Input {...form.register('message')}
+               className={cn('px-3 py-5 w-full', className)}
                placeholder="Add your comment..." />
         <button type={'submit'}
-                className={cn('absolute top-5.5 right-2 bg-blue-600 rounded-full p-2 text-white cursor-pointer text-sm', className)}>
+                className={cn('absolute top-[6px] right-2 bg-blue-600 rounded-full p-2 text-white cursor-pointer text-sm')}>
           <SendHorizonalIcon className={'w-4 h-4'}></SendHorizonalIcon></button>
         {form.formState.errors.message && (
           <p className={cn('text-sm text-red-600', className)}>{form.formState.errors.message.message}</p>)}

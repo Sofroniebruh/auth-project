@@ -3,34 +3,45 @@ import { Comment } from '@/components/common/comments-component';
 import { API } from '@/lib/api-client/api';
 
 type CommentStore = {
-  comments: Comment[],
-  addComment: (comment: Comment) => void,
-  setComments: (comments: Comment[]) => void,
-  hydrateComments: (postId: number) => Promise<void>,
-  _getComments: (postId: number) => Promise<Comment[]>,
-  clearComments: () => void,
+  commentsPerPost: Record<number, Comment[]>,
+  addComment: (comment: Comment, postId: number) => void,
+  hydrateCommentsForPost: (postId: number) => Promise<void>,
+  _comments: (postId: number) => void,
+  getCommentsPerPost: (postId: number) => Comment[],
 }
 
 export const useCommentStore = create<CommentStore>((set, get) => ({
-  comments: [],
-  addComment: (comment: Comment) => {
+  commentsPerPost: {},
+  addComment: (comment: Comment, postId: number) => {
     set((state) => ({
-      comments: [...state.comments, comment],
+      commentsPerPost: {
+        ...state.commentsPerPost,
+        [postId]: [...state.commentsPerPost[postId] ?? [], comment],
+      },
     }));
   },
-  setComments: (comments: Comment[]) => {
-    set({ comments });
+  getCommentsPerPost: (postId: number) => {
+    return get().commentsPerPost[postId];
   },
-  _getComments: async (postId: number): Promise<Comment[]> => {
-    const { post } = await API.posts.getPost(postId.toString());
-    return post.comments;
+  _comments: async (postId: number) => {
+    const { comments } = await API.posts.getCommentsPerPost(postId.toString());
+    console.log('Post', comments);
+    set((state) => ({
+      commentsPerPost: {
+        ...state.commentsPerPost,
+        [postId]: comments,
+      },
+    }));
   },
-  hydrateComments: async (postId: number) => {
+  hydrateCommentsForPost: async (postId: number) => {
     try {
-      set({ comments: await get()._getComments(postId) });
+      get()._comments(postId);
     } catch (error) {
       console.error('Failed to hydrate comments', error);
     }
   },
-  clearComments: () => set({ comments: [] }),
 }));
+
+export const useComments = (postId: number) => useCommentStore((state) => state.commentsPerPost[postId]);
+export const useAddComment = () => useCommentStore((state) => state.addComment);
+export const useHydrateComments = () => useCommentStore((state) => state.hydrateCommentsForPost);

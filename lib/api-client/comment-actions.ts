@@ -1,4 +1,4 @@
-import { CommentStructure } from '@/lib/helpers/helper-types-or-interfaces';
+import { CommentStructure, EditCommentStructure } from '@/lib/helpers/helper-types-or-interfaces';
 import { Comment } from '@/components/common/comments-component';
 
 export async function createComment(data: CommentStructure) {
@@ -18,4 +18,27 @@ export async function createComment(data: CommentStructure) {
   }
 
   throw new Error(res.statusText);
+}
+
+export async function updateComment(data: EditCommentStructure) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/comments/${data.commentId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      message: data.message,
+      commentId: data.commentId,
+    }),
+  });
+
+  return res.ok;
+}
+
+export async function deleteComment(commentId: number) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/comments/${commentId}`, {
+    method: 'DELETE',
+  });
+
+  return res.ok;
 }

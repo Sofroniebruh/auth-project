@@ -1,11 +1,5 @@
 import Link from 'next/link';
-import {
-  AvatarComponent,
-  CommentInput,
-  CommentsComponent,
-  DialogComponent,
-  PopoverComponent,
-} from '@/components/common';
+import { AvatarComponent, CommentsComponent, DialogComponent, PopoverComponent } from '@/components/common';
 import { EditIcon, HeartIcon, InfoIcon, MessageCircleIcon, ShareIcon, TrashIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui-components/ui/button';
@@ -13,8 +7,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { useIsAuthenticated, usePostDetails } from '@/lib/hooks';
-import { useCommentStore, useLikeStore } from '@/lib/store';
-import { useMemo } from 'react';
+import { memo } from 'react';
+import { useLikeStore } from '@/lib/store';
 
 interface Props {
   post: PostWithRelations;
@@ -22,17 +16,16 @@ interface Props {
   isOwner: boolean;
 }
 
-export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
+export const PostInteractableSection = memo(({ post, isOwner, owner }: Props) => {
   const { totalLikesValidator } = usePostDetails(post.id.toString());
   const { isLoggedIn } = useIsAuthenticated();
+
   const isLiked = useLikeStore((state) => state.isLiked(post.id));
   const toggleLike = useLikeStore((state) => state.toggleLike);
-  const getLikesPerPost = useLikeStore((state) => state.getLikesPerPost);
-  const likesCount = useMemo(() => getLikesPerPost(post.id), [getLikesPerPost, post.id]);
-  const comments = useCommentStore((state) => state.comments);
+  const likesCount = useLikeStore((state) => state.getLikesPerPost(post.id));
 
-  const handleLike = (id: number) => {
-    toggleLike(id);
+  const handleLike = async (id: number) => {
+    await toggleLike(id);
   };
 
   return (
@@ -41,7 +34,6 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
         <div className="flex justify-between items-center">
           <div className={'flex items-center gap-3'}>
             <Link href={'#'}>
-
               <AvatarComponent className={'w-9 h-9'} email={post.createdBy.email}
                                profilePicture={post.createdBy.pfpUrl} />
             </Link>
@@ -78,9 +70,6 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
                   </p>
                 </div>
                 <div>
-
-                  {/*// TODO: change to dynamic data*/}
-
                   <h1 className={'text-md font-semibold'}>Tags</h1>
                   <div className={'break-words w-full flex gap-x-2 flex-wrap'}>
                     <p>#Frieren</p>
@@ -129,9 +118,8 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
               <MessageCircleIcon className={'w-5 h-5'}></MessageCircleIcon>
             </div>
           } title={''}>
-            <CommentsComponent owner={owner} comments={comments}
+            <CommentsComponent id={post.id} owner={owner}
                                className={'flex w-full'}></CommentsComponent>
-            <CommentInput postId={post.id} className={'block'}></CommentInput>
           </DialogComponent>
         </div>
         <Separator />
@@ -142,28 +130,14 @@ export const PostInteractableSection = ({ post, isOwner, owner }: Props) => {
             className={'bg-blue-600 hover:bg-blue-500 text-white rounded-md p-2 text-sm px-3 cursor-pointer'}>Open
             comment section</div>
         } title={''}>
-          <CommentsComponent owner={owner} comments={comments}
+          <CommentsComponent id={post.id} owner={owner}
                              className={'flex w-full'}></CommentsComponent>
-          {isLoggedIn ? (
-            <CommentInput postId={post.id} className={'block'}></CommentInput>
-          ) : (
-            <Button className={'bg-blue-600 text-white'}>
-              <p>Log In to leave comments</p>
-            </Button>
-          )}
         </DialogComponent>
       </div>
-      <CommentsComponent owner={owner} comments={comments}
+      <CommentsComponent id={post.id} owner={owner}
                          className={'lg:flex hidden'}></CommentsComponent>
-      {isLoggedIn ? (
-        <CommentInput postId={post.id} className={'lg:block hidden'}></CommentInput>
-      ) : (
-        <Link href={'/sign-in'} className={' justify-center w-full lg:flex hidden'}>
-          <Button className={'bg-blue-600 text-white w-[200px]'}>
-            <p>Log In to leave comments</p>
-          </Button>
-        </Link>
-      )}
     </div>
   );
-};
+});
+
+PostInteractableSection.displayName = 'PostInteractableSection';

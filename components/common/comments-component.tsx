@@ -1,68 +1,106 @@
 import { CommentComponent } from '@/components/common/comment-component';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 import { PostOwner } from '@/lib/helpers/helper-types-or-interfaces';
+import { memo, useState } from 'react';
+import { usePaginatedComments } from '@/lib/hooks/usePaginatedComments';
+import { Button } from '@/components/ui/button';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { CommentInput } from '@/components/common/comment-input';
+import Link from 'next/link';
+import { useIsAuthenticated } from '@/lib/hooks';
 
 export type Comment = {
-  id: number
-  commentContent: string
+  id: number;
+  commentContent: string;
   commentOwner: {
-    id: number,
-    pfpUrl: string | null,
-    username: string,
-  },
-  createdAt: Date
-}
+    id: number;
+    pfpUrl: string | null;
+    username: string;
+  };
+  createdAt: Date;
+  isOwner?: boolean;
+};
 
 interface Props {
   className?: string;
-  comments: Comment[];
   owner: PostOwner;
+  id: number;
 }
 
-export const CommentsComponent = ({ className, comments, owner }: Props) => {
+export const CommentsComponent = memo(({ className, owner, id }: Props) => {
+  const [page, setPage] = useState(1);
+  const { isLoggedIn } = useIsAuthenticated();
+  const { isLoading, totalPages, isOwner, data, error } = usePaginatedComments(id, page);
+
   return (
     <div className={cn('flex-col gap-4', className)}>
       <h2 className="text-xl font-semibold mb-4">Comments</h2>
 
-      <div className={'flex flex-col h-[400px] w-full'}>
+      <div className="flex flex-col h-[400px] w-full">
         <div
-          className={cn('overflow-y-auto h-full flex flex-col gap-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100', comments.length == 0 && 'w-full')}>
-          {comments.length == 0 ? (
-            <div className={'w-full h-full flex justify-center items-center'}>
+          className={cn(
+            'overflow-y-auto h-full flex flex-col gap-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100',
+            data.length === 0 && 'w-full',
+          )}
+        >
+          {isLoading ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <p>Loading...</p>
+            </div>
+          ) : data && data.length === 0 ? (
+            <div className="w-full h-full flex justify-center items-center">
               <p>No comments here yet...</p>
             </div>
           ) : (
-            comments.map((comment, index) => (
-              <CommentComponent isOwner={comment.commentOwner.id === owner.id} key={index} comment={comment} />
+            data.map((comment: Comment) => (
+              <CommentComponent
+                page={page}
+                id={id}
+                isOwner={!isOwner ? comment.isOwner : isOwner}
+                isCreator={comment.commentOwner.id === owner.id}
+                key={comment.id}
+                comment={comment}
+              />
             ))
           )}
         </div>
-        <Pagination className={'mt-8'}>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+
+        {data.length > 0 && (
+          <div className="flex items-center justify-center mt-4">
+            <Button
+              disabled={page <= 1}
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => setPage(page > 1 ? page - 1 : 1)}
+            >
+              <ChevronLeftIcon />
+            </Button>
+            <div className="mx-2 text-sm">
+              {page} of {totalPages}
+            </div>
+            <Button
+              disabled={page >= totalPages}
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => setPage(page < totalPages ? page + 1 : totalPages)}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {isLoggedIn ? (
+        <CommentInput page={page} postId={id} className={className} />
+      ) : (
+        <Link href="/sign-in" className="justify-center w-full lg:flex hidden">
+          <Button className="bg-blue-600 text-white w-[200px]">
+            Log In to leave comments
+          </Button>
+        </Link>
+      )}
     </div>
   );
-};
+});
+
+CommentsComponent.displayName = 'CommentsComponent';

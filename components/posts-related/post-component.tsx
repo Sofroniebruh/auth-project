@@ -37,7 +37,7 @@ export const PostComponent = ({ post, owner, isOwner }: Props) => {
           <PostInteractableSection post={post} owner={owner} isOwner={isOwner} />
         </div>
       </div>
-      <PostsComponent></PostsComponent>
+      <PostsComponent postId={post.id.toString()} isPostPage={true}></PostsComponent>
     </div>
   );
 };

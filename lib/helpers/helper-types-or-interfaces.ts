@@ -49,3 +49,13 @@ export interface CommentStructure {
   id: number;
 }
 
+export interface EditCommentStructure {
+  message: string;
+  commentId: number;
+}
+
+export type Params = {
+  params: {
+    id: string;
+  };
+};

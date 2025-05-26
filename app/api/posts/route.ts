@@ -39,17 +39,33 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const postIdToSkip = req.nextUrl.searchParams.get('excluding');
     const email = await tokenCheck(req);
 
-    const allPosts = await prismaClient.post.findMany({
-      include: {
-        likes: {
-          select: {
-            userId: true,
+    const allPosts = postIdToSkip ?
+      await prismaClient.post.findMany({
+        where: {
+          NOT: {
+            id: Number(postIdToSkip),
           },
         },
-      },
-    });
+        include: {
+          likes: {
+            select: {
+              userId: true,
+            },
+          },
+        },
+      }) :
+      await prismaClient.post.findMany({
+        include: {
+          likes: {
+            select: {
+              userId: true,
+            },
+          },
+        },
+      });
 
     if (!email) {
       return NextResponse.json({ posts: allPosts }, { status: 200 });

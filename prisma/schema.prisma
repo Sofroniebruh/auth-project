@@ -48,10 +48,10 @@ model Like {
 
 model Comment {
   id             Int      @id @default(autoincrement())
-  commentOwner   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commentOwner   User     @relation(fields: [userId], references: [id])
   userId         Int
   commentContent String
-  postCommented  Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postCommented  Post     @relation(fields: [postId], references: [id])
   postId         Int
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())

@@ -8,7 +8,12 @@ import { PostCardComponent } from '@/components/posts-related/post-card-componen
 import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
 import { useLikeStore } from '@/lib/store/likeStore';
 
-export const PostsComponent = () => {
+interface Props {
+  isPostPage?: boolean;
+  postId?: string;
+}
+
+export const PostsComponent = ({ isPostPage, postId }: Props) => {
   const [posts, setPosts] = useState<PostsWithLikedByCurrentUser[] | []>([]);
   const [loading, setLoading] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
@@ -17,7 +22,7 @@ export const PostsComponent = () => {
   useEffect(() => {
     setHasMounted(true);
     const fetchPosts = async () => {
-      const { posts } = await API.posts.getPosts();
+      const { posts } = isPostPage ? await API.posts.getPostsWithoutOpenedPost(postId!) : await API.posts.getPosts();
       if (posts) {
         const likedPosts = posts.filter((post) => post.isLikedByCurrentUser);
         setPosts(posts);

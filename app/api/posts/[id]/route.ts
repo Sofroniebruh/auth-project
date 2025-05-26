@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { tokenCheck } from '@/lib/auth';
-
-export type Params = {
-  params: {
-    id: string;
-  };
-};
+import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
