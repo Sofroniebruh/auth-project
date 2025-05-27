@@ -95,7 +95,7 @@ export const ProfileComponent = () => {
             <div className={'w-full flex items-center justify-center'}>
               <div className={'flex-col flex gap-2 w-3/4'}>
                 <div className={'w-full flex items-center justify-center mb-4'}>
-                  <ChangableAvatarComponent></ChangableAvatarComponent>
+                  <ChangableAvatarComponent email={email}></ChangableAvatarComponent>
                 </div>
                 <FormProvider {...form}>
                   <form onSubmit={form.handleSubmit(handleUsernameSubmit)}>

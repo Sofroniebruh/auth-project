@@ -22,7 +22,6 @@ export const ChangableAvatarComponent = ({ className, email }: Props) => {
     getRootProps,
     setIsLoading,
   } = useHandleImageDropZone({ isPfp: true });
-
   return (
     <div className={'w-fit relative rounded-full overflow-hidden group'}>
       <AvatarComponent setProfileIsLoading={setIsLoading} isForProfile={true} profileIsLoading={isLoading}

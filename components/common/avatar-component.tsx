@@ -29,7 +29,7 @@ export const AvatarComponent = ({
                                   isForProfile,
                                 }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
-
+  
   useEffect(() => {
     if (!profilePicture) {
       isForProfile ? (setProfileIsLoading!(false)) : setIsLoading(false);
