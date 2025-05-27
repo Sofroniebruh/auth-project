@@ -12,12 +12,12 @@ import { API } from '@/lib/api-client/api';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { HandleNextStage } from '@/lib/helpers';
-import { useIsAuthenticated } from '@/lib/hooks';
+import { useAuth } from '@/components/contexts/auth-context';
 
 export const SignUpComponent = () => {
   const [step, setStep] = useState<1 | 2>(1);
+  const { setUser } = useAuth();
   const router = useRouter();
-  const { setIsLoggedIn } = useIsAuthenticated();
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(formRegisterSchema),
     defaultValues: {
@@ -35,15 +35,15 @@ export const SignUpComponent = () => {
 
   const onSubmit = async (data: RegisterFormType) => {
     const res = await API.auth.register(data);
-    if (res === 200) {
-      setIsLoggedIn(true);
+    if (res.status === 200) {
+      setUser(res.user);
       router.push('/posts');
       toast.success('Register successful');
 
       return;
     }
 
-    setIsLoggedIn(false);
+    setUser(null);
     toast.error(res.message);
   };
 

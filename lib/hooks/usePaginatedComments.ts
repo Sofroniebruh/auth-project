@@ -1,3 +1,5 @@
+'use client';
+
 import useSWR, { mutate as globalMutate } from 'swr';
 import { useEffect } from 'react';
 

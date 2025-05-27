@@ -8,18 +8,19 @@ import { ProfileTabsComponent } from '@/components/profile-related/profile-tabs'
 import { API } from '@/lib/api-client/api';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useIsAuthenticated, useUserData } from '@/lib/hooks';
+import { useUserData } from '@/lib/hooks';
 import { Skeleton } from '@/components/ui-components/ui/skeleton';
 import { FormProvider, useForm } from 'react-hook-form';
 import { usernameSchema, UsernameSchemaType } from '@/components/auth/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/components/contexts/auth-context';
 
 export const ProfileComponent = () => {
   const { email, username, isInfoLoading, setUsername, changedUsername, setChangedUsername } = useUserData();
   const [saveDisabled, setSaveDisabled] = useState(true);
-  const { logout } = useIsAuthenticated();
+  const { logout } = useAuth();
 
   const router = useRouter();
   const form = useForm<UsernameSchemaType>({
@@ -52,13 +53,14 @@ export const ProfileComponent = () => {
   };
 
   const handleLogout = async () => {
-    if (await logout()) {
+    try {
+      await logout();
       router.push('/');
-
       return;
+    } catch (error) {
+      console.log(error);
+      toast.error('Error while logging out');
     }
-
-    toast.error('Error while logging out');
   };
 
   return (

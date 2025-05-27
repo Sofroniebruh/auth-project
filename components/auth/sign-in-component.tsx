@@ -15,11 +15,11 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { signIn } from 'next-auth/react';
 import { HandleNextStage } from '@/lib/helpers';
-import { useIsAuthenticated } from '@/lib/hooks';
+import { useAuth } from '@/components/contexts/auth-context';
 
 export const SignInComponent = () => {
   const [step, setStep] = useState<1 | 2>(1);
-  const { setIsLoggedIn } = useIsAuthenticated();
+  const { setUser } = useAuth();
   const router = useRouter();
   const form = useForm<LoginFormType>({
     resolver: zodResolver(formLoginSchema),
@@ -41,15 +41,18 @@ export const SignInComponent = () => {
 
   const onSubmit = async (data: LoginFormType) => {
     const res = await API.auth.login(data);
-    if (res === 200) {
-      setIsLoggedIn(true);
+    console.log(res);
+
+    if (res.status === 200) {
+      console.log(res.user);
+      setUser(res.user);
       router.push('/posts');
       toast.success('Login successful');
 
       return;
     }
 
-    setIsLoggedIn(false);
+    setUser(null);
     toast.error(res.message);
   };
 

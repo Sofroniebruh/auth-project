@@ -1,18 +1,47 @@
-'use client';
-
 import { PostComponent } from '@/components/posts-related';
-import { usePostDetails } from '@/lib/hooks';
+import { API } from '@/lib/api-client/api';
+import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 
-export default function PostPage() {
-  const { postWithRelations, ownerOfPost, isOwner, isMounted } = usePostDetails();
+// @ts-ignore
+export default async function PostPage({ params }: Promise<Params>) {
+  const { id } = await params;
 
-  if (!isMounted) return null;
+  const totalLikesValidator = (likes: number): string => {
+    if (likes >= 1_000_000) {
+      return `${parseFloat((likes / 1_000_000).toFixed(2))}M`;
+    } else if (likes >= 1_000) {
+      return `${parseFloat((likes / 1_000).toFixed(2))}k`;
+    }
 
-  if (!postWithRelations) return null;
+    return likes.toString();
+  };
 
-  if (!ownerOfPost) return null;
+  try {
+    const { post, owner, isOwner } = await API.posts.getPost(id);
 
-  return (
-    <PostComponent isOwner={isOwner} owner={ownerOfPost} post={postWithRelations}></PostComponent>
-  );
+    if (post) {
+      const likes = post.likes.length;
+
+      return (
+        <PostComponent
+          post={post}
+          owner={owner}
+          isOwner={isOwner}
+          totalLikes={totalLikesValidator(likes)
+          }
+        />
+      );
+    } else {
+      return null;
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(e.message);
+
+      return null;
+    }
+    console.error(e);
+
+    return null;
+  }
 }

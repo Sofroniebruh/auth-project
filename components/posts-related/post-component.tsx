@@ -12,9 +12,10 @@ interface Props {
   post: PostWithRelations;
   owner: PostOwner;
   isOwner: boolean;
+  totalLikes: string;
 }
 
-export const PostComponent = ({ post, owner, isOwner }: Props) => {
+export const PostComponent = ({ post, owner, isOwner, totalLikes }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -34,7 +35,8 @@ export const PostComponent = ({ post, owner, isOwner }: Props) => {
             <PostCardOpenedVersion
               image={post.postImageUrl} />
           </div>
-          <PostInteractableSection post={post} owner={owner} isOwner={isOwner} />
+          <PostInteractableSection totalLikes={totalLikes} post={post} owner={owner}
+                                   isOwner={isOwner} />
         </div>
       </div>
       <PostsComponent postId={post.id.toString()} isPostPage={true}></PostsComponent>

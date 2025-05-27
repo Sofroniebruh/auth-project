@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { CommentInput } from '@/components/common/comment-input';
 import Link from 'next/link';
-import { useIsAuthenticated } from '@/lib/hooks';
+import { useAuth } from '@/components/contexts/auth-context';
 
 export type Comment = {
   id: number;
@@ -29,8 +29,8 @@ interface Props {
 
 export const CommentsComponent = memo(({ className, owner, id }: Props) => {
   const [page, setPage] = useState(1);
-  const { isLoggedIn } = useIsAuthenticated();
   const { isLoading, totalPages, isOwner, data, error } = usePaginatedComments(id, page);
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className={cn('flex-col gap-4', className)}>
@@ -90,7 +90,7 @@ export const CommentsComponent = memo(({ className, owner, id }: Props) => {
         )}
       </div>
 
-      {isLoggedIn ? (
+      {isAuthenticated ? (
         <CommentInput page={page} postId={id} className={className} />
       ) : (
         <Link href="/sign-in" className="justify-center w-full lg:flex hidden">

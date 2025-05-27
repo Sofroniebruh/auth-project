@@ -9,13 +9,13 @@ import { Button } from '@/components/ui-components/ui/button';
 import { SheetComponent } from '@/components/common';
 import { HeaderSearchSmall } from '@/components/header-section/header-search-small';
 import { HeaderSearchBig } from '@/components/header-section/header-search-big';
-import { useIsAuthenticated } from '@/lib/hooks';
 import React from 'react';
+import { useAuth } from '@/components/contexts/auth-context';
 
 export const HeaderComponent = () => {
   const pathname = usePathname();
-  const { isLoggedIn } = useIsAuthenticated();
   const isProfilePage = pathname.startsWith('/profile');
+  const { isAuthenticated } = useAuth();
 
   return (
     <header
@@ -33,7 +33,7 @@ export const HeaderComponent = () => {
                 <ImageIcon></ImageIcon> Posts
               </li>
             </Link>
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <Link href={'/profile'}>
                 <li
                   className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname === '/profile' && 'text-blue-600')}>
@@ -49,7 +49,7 @@ export const HeaderComponent = () => {
             )
             }
           </ul>
-          {isLoggedIn && (
+          {isAuthenticated && (
             <Link href={'/profile/new-post'}>
               <Button size={'lg'}
                       className={'w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center'}>Add

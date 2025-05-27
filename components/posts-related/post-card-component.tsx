@@ -1,13 +1,14 @@
 'use client';
 
 import { EditIcon, HeartIcon, ShareIcon } from 'lucide-react';
-import { useIsAuthenticated, usePostDetails } from '@/lib/hooks';
+import { usePostDetails } from '@/lib/hooks';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui-components/ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useLikeStore } from '@/lib/store/likeStore';
+import { useAuth } from '@/components/contexts/auth-context';
 
 interface Props {
   image: string,
@@ -17,12 +18,12 @@ interface Props {
 }
 
 export const PostCardComponent = ({ image, id, handleToggleLike, isLikedByUser }: Props) => {
-  const { isLoggedIn } = useIsAuthenticated();
   const [liked, setLiked] = useState(isLikedByUser);
   const { toggleLike, isLiked } = useLikeStore();
   const [isLoaded, setIsLoaded] = useState<boolean>();
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const { isOwner } = usePostDetails(id.toString());
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isLiked(id) !== liked) {
@@ -73,7 +74,7 @@ export const PostCardComponent = ({ image, id, handleToggleLike, isLikedByUser }
             <ShareIcon size={20}></ShareIcon>
           </div>
           <div
-            onClick={() => isOwner ? handleEdit(id) : isLoggedIn ? handleLike(id) : toast('Log In to like')}
+            onClick={() => isOwner ? handleEdit(id) : isAuthenticated ? handleLike(id) : toast('Log In to like')}
             className={'rounded-full bg-white p-2 cursor-pointer hover:bg-white/70'}>
             {isOwner ? (<EditIcon size={20}></EditIcon>) : (<HeartIcon size={20}
                                                                        className={cn(liked ? 'fill-red-600 text-red-600' : '')}></HeartIcon>)

@@ -1,4 +1,5 @@
 import { LoginFormType, RegisterFormType } from '@/components/auth/schema';
+import { User } from '@prisma/client';
 
 export async function login(data: LoginFormType) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/auth/login`, {
@@ -9,11 +10,16 @@ export async function login(data: LoginFormType) {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    return response.json();
+  const receivedResponse = {
+    ...(await response.json()) as { message: string, user: User },
+    status: response.status,
+  };
+
+  if (response.ok) {
+    return receivedResponse;
   }
 
-  return response.status;
+  throw new Error(receivedResponse.message);
 }
 
 export async function register(data: RegisterFormType) {
@@ -22,17 +28,19 @@ export async function register(data: RegisterFormType) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      email: data.email,
-      password: data.password,
-    }),
+    body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    return response.json();
+  const receivedResponse = {
+    ...(await response.json()) as { message: string, user: User },
+    status: response.status,
+  };
+
+  if (response.ok) {
+    return receivedResponse;
   }
 
-  return response.status;
+  throw new Error(receivedResponse.message);
 }
 
 export async function logout() {

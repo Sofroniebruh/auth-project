@@ -11,17 +11,17 @@ export async function POST(req: NextRequest) {
   });
 
   if (!user) {
-    return NextResponse.json({ message: 'Email not found' }, { status: 400 });
+    return NextResponse.json({ message: 'Email not found' }, { status: 401 });
   }
 
   const isValidPassword = await checkPassword(password, user.password!);
 
   if (!isValidPassword) {
-    return NextResponse.json({ message: 'Password does not match' }, { status: 400 });
+    return NextResponse.json({ message: 'Password does not match' }, { status: 401 });
   }
 
   const token = signJWT({ email });
-  const res = NextResponse.json({ message: 'Logged in' });
+  const res = NextResponse.json({ message: 'Logged in', user }, { status: 200 });
 
   res.cookies.set('jwt', token, {
     httpOnly: true,

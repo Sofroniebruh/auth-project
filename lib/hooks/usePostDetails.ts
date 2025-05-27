@@ -27,44 +27,44 @@ export const usePostDetails = (postId?: string) => {
     }
   }, [postId, paramsId, hydrateLikesForPost]);
 
-  const totalLikesValidator = (likes: number): string => {
-    if (likes >= 1_000_000) {
-      return `${parseFloat((likes / 1_000_000).toFixed(2))}M`;
-    } else if (likes >= 1_000) {
-      return `${parseFloat((likes / 1_000).toFixed(2))}k`;
-    }
-    return likes.toString();
-  };
-
-  useEffect(() => {
-    const fetchPost = async (id: string) => {
-      setIsMounted(true);
-      try {
-        const { post, owner, isOwner } = await API.posts.getPost(id);
-
-        if (post) {
-          const likes = post.likes.length;
-
-          setPostWithRelations(post);
-          setLikesAmount(totalLikesValidator(likes));
-          setOwnerOfPost(owner);
-          setIsOwner(isOwner);
-
-          return;
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          console.log(e.message);
-          router.push('/');
-        }
-
-        console.log(e);
-        router.push('/');
-      }
-    };
-
-    fetchPost(postId ? postId : paramsId);
-  }, []);
+  // const totalLikesValidator = (likes: number): string => {
+  //   if (likes >= 1_000_000) {
+  //     return `${parseFloat((likes / 1_000_000).toFixed(2))}M`;
+  //   } else if (likes >= 1_000) {
+  //     return `${parseFloat((likes / 1_000).toFixed(2))}k`;
+  //   }
+  //   return likes.toString();
+  // };
+  //
+  // useEffect(() => {
+  //   const fetchPost = async (id: string) => {
+  //     setIsMounted(true);
+  //     try {
+  //       const { post, owner, isOwner } = await API.posts.getPost(id);
+  //
+  //       if (post) {
+  //         const likes = post.likes.length;
+  //
+  //         setPostWithRelations(post);
+  //         setLikesAmount(totalLikesValidator(likes));
+  //         setOwnerOfPost(owner);
+  //         setIsOwner(isOwner);
+  //
+  //         return;
+  //       }
+  //     } catch (e) {
+  //       if (e instanceof Error) {
+  //         console.log(e.message);
+  //         router.push('/');
+  //       }
+  //
+  //       console.log(e);
+  //       router.push('/');
+  //     }
+  //   };
+  //
+  //   fetchPost(postId ? postId : paramsId);
+  // }, []);
 
   return {
     likesAmount,
@@ -72,7 +72,6 @@ export const usePostDetails = (postId?: string) => {
     isMounted,
     ownerOfPost,
     setLikesAmount,
-    totalLikesValidator,
     isOwner,
   };
 };

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { AvatarComponent, CommentsComponent, DialogComponent, PopoverComponent } from '@/components/common';
 import { EditIcon, HeartIcon, InfoIcon, MessageCircleIcon, ShareIcon, TrashIcon } from 'lucide-react';
@@ -6,23 +8,22 @@ import { Button } from '@/components/ui-components/ui/button';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
-import { useIsAuthenticated, usePostDetails } from '@/lib/hooks';
 import { memo } from 'react';
 import { useLikeStore } from '@/lib/store';
+import { useAuth } from '@/components/contexts/auth-context';
 
 interface Props {
   post: PostWithRelations;
   owner: PostOwner;
   isOwner: boolean;
+  totalLikes: string;
 }
 
-export const PostInteractableSection = memo(({ post, isOwner, owner }: Props) => {
-  const { totalLikesValidator } = usePostDetails(post.id.toString());
-  const { isLoggedIn } = useIsAuthenticated();
+export const PostInteractableSection = memo(({ post, isOwner, owner, totalLikes }: Props) => {
+  const { isAuthenticated } = useAuth();
 
   const isLiked = useLikeStore((state) => state.isLiked(post.id));
   const toggleLike = useLikeStore((state) => state.toggleLike);
-  const likesCount = useLikeStore((state) => state.getLikesPerPost(post.id));
 
   const handleLike = async (id: number) => {
     await toggleLike(id);
@@ -81,7 +82,7 @@ export const PostInteractableSection = memo(({ post, isOwner, owner }: Props) =>
                   <div>
                     <h1 className={'text-md font-semibold'}>Total likes:</h1>
                     <span className={'flex items-center gap-1'}><HeartIcon size={20}
-                                                                           className={'fill-red-600 text-red-600'}></HeartIcon> {totalLikesValidator(likesCount)}
+                                                                           className={'fill-red-600 text-red-600'}></HeartIcon> {totalLikes}
                           </span>
                   </div>
                 }
@@ -100,10 +101,10 @@ export const PostInteractableSection = memo(({ post, isOwner, owner }: Props) =>
             ) : (
               <div className={'flex items-center gap-3'}>
                 <div className={'w-[65px] flex items-center justify-center'}>
-                  <p className="font-semibold">{totalLikesValidator(likesCount)}</p>
+                  <p className="font-semibold">{totalLikes}</p>
                 </div>
                 <Button
-                  onClick={() => isLoggedIn ? handleLike(post.id) : toast('Log In to like')}
+                  onClick={() => isAuthenticated ? handleLike(post.id) : toast('Log In to like')}
                   variant="outline"
                   className={cn(isLiked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
                 <div className="flex items-center gap-3">
