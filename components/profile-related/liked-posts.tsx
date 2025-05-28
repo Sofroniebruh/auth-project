@@ -5,11 +5,9 @@ import * as React from 'react';
 import { MasonryLayout } from '@/components/common/masonry-layout';
 import { useTagPosts } from '@/lib/hooks/useTagPosts';
 import { Loading, NoPosts } from '../posts-related/shared';
-import { useLikeStore } from '@/lib/store/likeStore';
 
 export const LikedPosts = () => {
-  const { postsWithAction, loading, handleToggleLike } = useTagPosts('liked');
-  const { isLiked } = useLikeStore();
+  const { postsWithAction, loading } = useTagPosts('liked');
 
   if (loading) {
     return (
@@ -28,7 +26,7 @@ export const LikedPosts = () => {
       {
         postsWithAction.length > 0 && (
           postsWithAction.map((post, index) => (
-            <PostCardComponent isLikedByUser={isLiked(post.id)} handleToggleLike={handleToggleLike} id={post.id} key={index}
+            <PostCardComponent isOwner={post.isOwner} id={post.id} key={index}
                                image={post.postImageUrl} />
           ))
         )

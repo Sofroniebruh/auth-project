@@ -25,19 +25,21 @@ export async function getPostsWithoutOpenedPost(id: string) {
   throw new Error(res.statusText);
 }
 
-export async function getPost(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
-    method: 'GET',
-  });
-
-  const data = await res.json();
-
-  if (data) {
-    return data as { post: PostWithRelations, owner: PostOwner, isOwner: boolean };
-  }
-
-  throw new Error(res.statusText);
-}
+// export async function getPost(id: string) {
+//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
+//     method: 'GET',
+//   });
+//
+//   const data = await res.json();
+//
+//   console.log("Received data", data.posts);
+//
+//   if (data) {
+//     return data as { post: PostWithRelations, owner: PostOwner, isOwner: boolean };
+//   }
+//
+//   throw new Error(res.statusText);
+// }
 
 export async function getCommentsPerPost(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}/comments`, {

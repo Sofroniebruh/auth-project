@@ -21,7 +21,12 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ posts: likedPosts }, { status: 200 });
+    const postsWithIsOwners = likedPosts.map((post) => ({
+      post: post,
+      isOwner: post.userId === user.id,
+    }));
+
+    return NextResponse.json({ posts: postsWithIsOwners }, { status: 200 });
   } catch (err) {
     if (err instanceof Error) {
       return NextResponse.json({ message: 'Error retrieving user' }, { status: 401 });

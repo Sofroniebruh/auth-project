@@ -6,7 +6,6 @@ import { MasonryLayout } from '@/components/common';
 import { Loading, NoPosts } from '@/components/posts-related/shared';
 import { PostCardComponent } from '@/components/posts-related/post-card-component';
 import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
-import { useLikeStore } from '@/lib/store/likeStore';
 
 interface Props {
   isPostPage?: boolean;
@@ -17,22 +16,19 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
   const [posts, setPosts] = useState<PostsWithLikedByCurrentUser[] | []>([]);
   const [loading, setLoading] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
-  const { toggleLike, setLikedPosts } = useLikeStore();
 
   useEffect(() => {
     setHasMounted(true);
     const fetchPosts = async () => {
       const { posts } = isPostPage ? await API.posts.getPostsWithoutOpenedPost(postId!) : await API.posts.getPosts();
       if (posts) {
-        const likedPosts = posts.filter((post) => post.isLikedByCurrentUser);
         setPosts(posts);
-        setLikedPosts(new Set<number>(likedPosts.map(post => post.id)));
       }
       setLoading(false);
     };
 
     fetchPosts();
-  }, [toggleLike]);
+  }, []);
 
   if (!hasMounted) return null;
 
@@ -54,7 +50,7 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
       <MasonryLayout>
         {
           posts.map((post, index) => (
-            <PostCardComponent isLikedByUser={post.isLikedByCurrentUser} key={index} id={post.id}
+            <PostCardComponent isOwner={post.isOwner} isLikedByUser={post.isLikedByCurrentUser} key={index} id={post.id}
                                image={post.postImageUrl}></PostCardComponent>
           ))
         }

@@ -84,6 +84,7 @@ export async function GET(req: NextRequest) {
     const postsWithLikedBySelectedUser = allPosts.map((post) => ({
       ...post,
       isLikedByCurrentUser: post.likes.some((like) => like.userId === user.id),
+      isOwner: post.userId === user.id,
     }));
 
     return NextResponse.json({ posts: postsWithLikedBySelectedUser }, { status: 200 });

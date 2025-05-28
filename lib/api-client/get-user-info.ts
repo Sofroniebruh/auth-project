@@ -1,4 +1,5 @@
 import { Post, User } from '@prisma/client';
+import { PlainPostsWithIsOwner } from '@/lib/helpers/helper-types-or-interfaces';
 
 export const getUserInfo = async (): Promise<User> => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user`, {
@@ -19,7 +20,7 @@ export const getAllPostsLikedByUser = async () => {
   });
 
   if (res.ok) {
-    return (await res.json()) as { posts: Post[] };
+    return (await res.json()) as { posts: PlainPostsWithIsOwner[] };
   }
 
   if (res.status === 401 || res.status === 403) {
@@ -47,7 +48,7 @@ export const getAllPostsCreatedByUser = async () => {
   });
 
   if (res.ok) {
-    return (await res.json()) as { posts: Post[] };
+    return (await res.json()) as { posts: PlainPostsWithIsOwner[] };
   }
 
   throw new Error(res.statusText);
@@ -71,7 +72,7 @@ export const getAllPostsCommentedByUser = async () => {
   });
 
   if (res.ok) {
-    return (await res.json()) as { posts: Post[] };
+    return (await res.json()) as { posts: PlainPostsWithIsOwner[] };
   }
 
   throw new Error(res.statusText);

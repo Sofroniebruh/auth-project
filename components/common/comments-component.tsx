@@ -2,12 +2,12 @@ import { CommentComponent } from '@/components/common/comment-component';
 import { cn } from '@/lib/utils';
 import { PostOwner } from '@/lib/helpers/helper-types-or-interfaces';
 import { memo, useState } from 'react';
-import { usePaginatedComments } from '@/lib/hooks/usePaginatedComments';
 import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { CommentInput } from '@/components/common/comment-input';
 import Link from 'next/link';
 import { useAuth } from '@/components/contexts/auth-context';
+import { usePaginatedComments } from '@/lib/hooks/swr';
 
 export type Comment = {
   id: number;

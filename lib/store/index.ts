@@ -1,1 +1,0 @@
-export { useLikeStore } from './likeStore';

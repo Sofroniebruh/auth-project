@@ -8,7 +8,7 @@ import { CommentInput } from '@/components/common/comment-input';
 import { Button } from '@/components/ui-components/ui/button';
 import { API } from '@/lib/api-client/api';
 import { toast } from 'sonner';
-import { usePaginatedComments } from '@/lib/hooks/usePaginatedComments';
+import { usePaginatedComments } from '@/lib/hooks/swr';
 
 interface Props {
   comment: Comment;

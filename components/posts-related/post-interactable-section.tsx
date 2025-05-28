@@ -7,27 +7,14 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui-components/ui/button';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
-import { memo } from 'react';
-import { useLikeStore } from '@/lib/store';
 import { useAuth } from '@/components/contexts/auth-context';
+import { usePost } from '@/components/contexts/post-context';
+import { useLikes } from '@/lib/hooks/swr';
 
-interface Props {
-  post: PostWithRelations;
-  owner: PostOwner;
-  isOwner: boolean;
-  totalLikes: string;
-}
-
-export const PostInteractableSection = memo(({ post, isOwner, owner, totalLikes }: Props) => {
+export const PostInteractableSection = () => {
   const { isAuthenticated } = useAuth();
-
-  const isLiked = useLikeStore((state) => state.isLiked(post.id));
-  const toggleLike = useLikeStore((state) => state.toggleLike);
-
-  const handleLike = async (id: number) => {
-    await toggleLike(id);
-  };
+  const { post, isOwner, owner, totalLikes: initialLikes } = usePost();
+  const { hasLiked, toggleLikes, totalLikes, isLoading } = useLikes(post.id);
 
   return (
     <div className="flex flex-col w-full lg md:w-[400px] md:mt-0 gap-4 min-h-0 justify-between">
@@ -101,12 +88,12 @@ export const PostInteractableSection = memo(({ post, isOwner, owner, totalLikes 
             ) : (
               <div className={'flex items-center gap-3'}>
                 <div className={'w-[65px] flex items-center justify-center'}>
-                  <p className="font-semibold">{totalLikes}</p>
+                  <p className="font-semibold">{isLoading ? initialLikes : totalLikes}</p>
                 </div>
                 <Button
-                  onClick={() => isAuthenticated ? handleLike(post.id) : toast('Log In to like')}
+                  onClick={() => isAuthenticated ? toggleLikes() : toast('Log In to like')}
                   variant="outline"
-                  className={cn(isLiked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
+                  className={cn(hasLiked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
                 <div className="flex items-center gap-3">
                   <Button variant="outline">Save <ShareIcon /></Button>
                 </div>
@@ -139,6 +126,6 @@ export const PostInteractableSection = memo(({ post, isOwner, owner, totalLikes 
                          className={'lg:flex hidden'}></CommentsComponent>
     </div>
   );
-});
+};
 
 PostInteractableSection.displayName = 'PostInteractableSection';

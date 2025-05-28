@@ -26,7 +26,7 @@ export const CommentedPostsComponent = () => {
       {
         postsWithAction.length > 0 && (
           postsWithAction.map((post, index) => (
-            <PostCardComponent id={post.id} key={index} image={post.postImageUrl} />
+            <PostCardComponent isOwner={post.isOwner} id={post.id} key={index} image={post.postImageUrl} />
           ))
         )
       }

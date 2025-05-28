@@ -3,21 +3,15 @@
 import { PostCardOpenedVersion } from '@/components/posts-related/post-card-opened-version';
 import { ArrowLeftIcon } from 'lucide-react';
 import { PostsComponent } from '@/components/posts-related/posts-component';
-import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { PostInteractableSection } from '@/components/posts-related/post-interactable-section';
+import { usePost } from '@/components/contexts/post-context';
 
-interface Props {
-  post: PostWithRelations;
-  owner: PostOwner;
-  isOwner: boolean;
-  totalLikes: string;
-}
-
-export const PostComponent = ({ post, owner, isOwner, totalLikes }: Props) => {
+export const PostComponent = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { post } = usePost();
 
   useEffect(() => {
     window.scroll(0, 0);
@@ -35,8 +29,7 @@ export const PostComponent = ({ post, owner, isOwner, totalLikes }: Props) => {
             <PostCardOpenedVersion
               image={post.postImageUrl} />
           </div>
-          <PostInteractableSection totalLikes={totalLikes} post={post} owner={owner}
-                                   isOwner={isOwner} />
+          <PostInteractableSection />
         </div>
       </div>
       <PostsComponent postId={post.id.toString()} isPostPage={true}></PostsComponent>

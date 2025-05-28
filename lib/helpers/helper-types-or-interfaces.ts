@@ -23,6 +23,7 @@ export interface PostWithRelations extends Post {
     },
     createdAt: Date,
   }[];
+  isOwner?: boolean;
 }
 
 export interface PostsWithLikedByCurrentUser {
@@ -37,6 +38,7 @@ export interface PostsWithLikedByCurrentUser {
   postImageUrl: string;
   createdAt: Date;
   updatedAt: Date | null;
+  isOwner?: boolean;
 }
 
 export interface PostOwner {
@@ -59,3 +61,7 @@ export type Params = {
     id: string;
   };
 };
+
+export interface PlainPostsWithIsOwner extends Post {
+  isOwner: boolean;
+}

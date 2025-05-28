@@ -8,10 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { inputSchema, InputSchemaType } from '@/components/auth/schema';
 import { CommentStructure } from '@/lib/helpers/helper-types-or-interfaces';
 import { API } from '@/lib/api-client/api';
-import { usePaginatedComments } from '@/lib/hooks/usePaginatedComments';
 import { Comment } from '@/components/common/comments-component';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { usePaginatedComments } from '@/lib/hooks/swr';
 
 interface Props {
   className?: string;
