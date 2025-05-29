@@ -6,8 +6,12 @@ import { MasonryLayout } from '@/components/common/masonry-layout';
 import { useTagPosts } from '@/lib/hooks/useTagPosts';
 import { Loading, NoPosts } from '../posts-related/shared';
 
-export const LikedPosts = () => {
-  const { postsWithAction, loading } = useTagPosts('liked');
+interface Props {
+  id: number;
+}
+
+export const LikedPosts = ({ id }: Props) => {
+  const { postsWithAction, loading } = useTagPosts('liked', id);
 
   if (loading) {
     return (

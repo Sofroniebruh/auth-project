@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { API } from '@/lib/api-client/api';
 
-export const useUserData = () => {
+export const useUserData = (id: number) => {
   const [email, setEmail] = useState('');
   const [changedUsername, setChangedUsername] = useState('');
   const [username, setUsername] = useState('');
@@ -17,13 +17,13 @@ export const useUserData = () => {
     const getUser = async () => {
       setIsInfoLoading(true);
 
-      const user = await API.getUserInfo.getUserInfo();
+      const user = await API.getUserInfo.getUserInfo(id.toString());
 
-      const validatedUsername = truncate(user.username!, 10);
+      const validatedUsername = truncate(user.user.username!, 10);
       setChangedUsername(validatedUsername);
 
-      setUsername(user.username!);
-      setEmail(user.email);
+      setUsername(user.user.username!);
+      setEmail(user.user.email);
 
       setIsInfoLoading(false);
     };

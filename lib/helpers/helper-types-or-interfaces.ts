@@ -26,6 +26,13 @@ export interface PostWithRelations extends Post {
   isOwner?: boolean;
 }
 
+export type UserWithNoPassword = {
+  id: number,
+  email: string,
+  username: string,
+  pfpUrl: string | null,
+}
+
 export interface PostsWithLikedByCurrentUser {
   isLikedByCurrentUser: boolean;
   likes: {

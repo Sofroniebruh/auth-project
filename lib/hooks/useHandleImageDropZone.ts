@@ -7,9 +7,10 @@ import { useDropzone } from 'react-dropzone';
 
 interface Props {
   isPfp: boolean;
+  id: number;
 }
 
-export const useHandleImageDropZone = ({ isPfp }: Props) => {
+export const useHandleImageDropZone = ({ isPfp, id }: Props) => {
   const [openState, setOpenState] = useState<boolean>();
   const [isLoading, setIsLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState('');
@@ -17,7 +18,7 @@ export const useHandleImageDropZone = ({ isPfp }: Props) => {
 
   const fetchUserImage = async () => {
     setIsLoading(true);
-    const user = await API.getUserInfo.getUserInfo();
+    const { user } = await API.getUserInfo.getUserInfo(id.toString());
 
     if (user.pfpUrl == null || user.pfpUrl == '') {
       setIsLoading(false);

@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 
-export async function GET(req: NextRequest) {
+// @ts-ignore
+export async function GET(req: NextRequest, { params }: Promise<Params>) {
   try {
-    const user = await getUserByToken(req);
+    const { id } = params;
+    const user = await prismaClient.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
 
     if (!user) {
-      return NextResponse.json({ posts: [] }, { status: 200 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
 

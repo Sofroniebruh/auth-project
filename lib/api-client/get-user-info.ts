@@ -1,21 +1,22 @@
-import { Post, User } from '@prisma/client';
-import { PlainPostsWithIsOwner } from '@/lib/helpers/helper-types-or-interfaces';
+import { PlainPostsWithIsOwner, UserWithNoPassword } from '@/lib/helpers/helper-types-or-interfaces';
 
-export const getUserInfo = async (): Promise<User> => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user`, {
+export const getUserInfo = async (id: string, token?: string | undefined) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/${id}`, {
     method: 'GET',
+    headers: {
+      Cookie: `jwt=${token}`,
+    },
   });
 
   if (res.ok) {
-    const response = (await res.json()) as { user: User };
-    return response.user;
+    return (await res.json()) as { user: UserWithNoPassword, isOwner: boolean };
   }
 
   throw new Error(res.statusText);
 };
 
-export const getAllPostsLikedByUser = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/liked-posts`, {
+export const getAllPostsLikedByUser = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/${id}/liked-posts`, {
     method: 'GET',
   });
 
@@ -30,20 +31,8 @@ export const getAllPostsLikedByUser = async () => {
   throw new Error(res.statusText);
 };
 
-export const getPostLikedByUser = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/liked-posts/${id}`, {
-    method: 'GET',
-  });
-
-  if (res.ok) {
-    return (await res.json()) as { post: Post };
-  }
-
-  throw new Error(res.statusText);
-};
-
-export const getAllPostsCreatedByUser = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/created-posts`, {
+export const getAllPostsCreatedByUser = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/${id}/created-posts`, {
     method: 'GET',
   });
 
@@ -54,37 +43,13 @@ export const getAllPostsCreatedByUser = async () => {
   throw new Error(res.statusText);
 };
 
-export const getPostCreatedByUser = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/created-posts/${id}`, {
-    method: 'GET',
-  });
-
-  if (res.ok) {
-    return (await res.json()) as { post: Post[] };
-  }
-
-  throw new Error(res.statusText);
-};
-
-export const getAllPostsCommentedByUser = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/commented-posts`, {
+export const getAllPostsCommentedByUser = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/${id}/commented-posts`, {
     method: 'GET',
   });
 
   if (res.ok) {
     return (await res.json()) as { posts: PlainPostsWithIsOwner[] };
-  }
-
-  throw new Error(res.statusText);
-};
-
-export const getPostCommentedByUser = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/users/user/commented-posts/${id}`, {
-    method: 'GET',
-  });
-
-  if (res.ok) {
-    return (await res.json()) as { post: Post[] };
   }
 
   throw new Error(res.statusText);

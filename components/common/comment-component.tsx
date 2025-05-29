@@ -10,6 +10,7 @@ import { API } from '@/lib/api-client/api';
 import { toast } from 'sonner';
 import { usePaginatedComments } from '@/lib/hooks/swr';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 interface Props {
   comment: Comment;
@@ -59,12 +60,13 @@ export const CommentComponent = memo(({ comment, isCreator, isOwner, page, id }:
 
   return (
     <div className="flex items-start gap-3 w-full">
-      <AvatarComponent
-        className="w-9 h-9 shrink-0"
-        email={comment.commentOwner.username}
-        profilePicture={comment.commentOwner.pfpUrl}
-      />
-
+      <Link href={`/profile/${comment.commentOwner.id}`}>
+        <AvatarComponent
+          className="w-9 h-9 shrink-0"
+          email={comment.commentOwner.username}
+          profilePicture={comment.commentOwner.pfpUrl}
+        />
+      </Link>
       <div className="flex flex-col gap-1 w-full">
         <div className={'flex gap-3'}>
           <p className="text-base font-semibold break-words">{comment.commentOwner.username}</p>

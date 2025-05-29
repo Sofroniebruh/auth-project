@@ -2,25 +2,36 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { tokenCheck } from '@/lib/auth';
 import { updateProfileUsernameOrProfilePictureSchemaForAPI } from '@/components/auth/schema';
+import { Params } from '@/lib/helpers/helper-types-or-interfaces';
+import { getUserByToken } from '@/lib/helpers/helper-functions';
 
-export async function GET(req: NextRequest) {
-  const email = await tokenCheck(req);
-
-  if (!email) {
-    return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-  }
-
-  const user = await prismaClient.user.findUnique({
+// @ts-ignore
+export async function GET(req: NextRequest, { params }: Promise<Params>) {
+  const { id } = await params;
+  const userByToken = await getUserByToken(req);
+  const userById = await prismaClient.user.findUnique({
     where: {
-      email,
+      id: Number(id),
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      pfpUrl: true,
     },
   });
 
-  if (!user) {
+  if (!userById) {
     return NextResponse.json({ message: 'No user was found' }, { status: 404 });
   }
 
-  return NextResponse.json({ user: user }, { status: 200 });
+  if (!userByToken) {
+    return NextResponse.json({ user: userById, isOwner: false }, { status: 200 });
+  }
+
+  const isOwner = userByToken.id === userById.id;
+
+  return NextResponse.json({ user: userById, isOwner: isOwner }, { status: 200 });
 }
 
 export async function DELETE(req: NextRequest) {

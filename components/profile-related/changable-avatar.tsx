@@ -10,9 +10,10 @@ import { AvatarComponent } from '@/components/common';
 interface Props {
   className?: string;
   email?: string;
+  id: number;
 }
 
-export const ChangableAvatarComponent = ({ className, email }: Props) => {
+export const ChangableAvatarComponent = ({ className, email, id }: Props) => {
   const {
     isLoading,
     profilePicture,
@@ -21,7 +22,7 @@ export const ChangableAvatarComponent = ({ className, email }: Props) => {
     isDragActive,
     getRootProps,
     setIsLoading,
-  } = useHandleImageDropZone({ isPfp: true });
+  } = useHandleImageDropZone({ isPfp: true, id });
   return (
     <div className={'w-fit relative rounded-full overflow-hidden group'}>
       <AvatarComponent setProfileIsLoading={setIsLoading} isForProfile={true} profileIsLoading={isLoading}

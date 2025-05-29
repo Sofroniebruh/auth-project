@@ -7,7 +7,7 @@ import { PostComponent } from '@/components/posts-related';
 export default async function PostPage({ params }: Promise<Params>) {
   const { id } = await params;
   const cookieStore = await cookies();
-  const jwt = cookieStore.get('jwt')?.value;
+  const token = cookieStore.get('jwt')?.value;
 
   const totalLikesValidator = (likes: number): string => {
     if (likes >= 1_000_000) {
@@ -24,7 +24,7 @@ export default async function PostPage({ params }: Promise<Params>) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
       method: 'GET',
       headers: {
-        Cookie: `jwt=${jwt}`,
+        Cookie: `jwt=${token}`,
       },
     });
 

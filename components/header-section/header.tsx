@@ -15,7 +15,7 @@ import { useAuth } from '@/components/contexts/auth-context';
 export const HeaderComponent = () => {
   const pathname = usePathname();
   const isProfilePage = pathname.startsWith('/profile');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <header
@@ -33,8 +33,8 @@ export const HeaderComponent = () => {
                 <ImageIcon></ImageIcon> Posts
               </li>
             </Link>
-            {isAuthenticated ? (
-              <Link href={'/profile'}>
+            {isAuthenticated && user ? (
+              <Link href={`/profile/${user.id}`}>
                 <li
                   className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname === '/profile' && 'text-blue-600')}>
                   <UserIcon></UserIcon> Profile
@@ -49,8 +49,8 @@ export const HeaderComponent = () => {
             )
             }
           </ul>
-          {isAuthenticated && (
-            <Link href={'/profile/new-post'}>
+          {isAuthenticated && user && (
+            <Link href={`/profile/${user.id}/new-post`}>
               <Button size={'lg'}
                       className={'w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center'}>Add
                 new

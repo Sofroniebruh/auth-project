@@ -1,26 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 
-export async function GET(req: NextRequest) {
+// @ts-ignore
+export async function GET(req: NextRequest, { params }: Promise<Params>) {
   try {
-    const user = await getUserByToken(req);
-
-    if (!user) {
-      return NextResponse.json({ posts: [] }, { status: 200 });
-    }
-
-    const commentedPosts = await prismaClient.post.findMany({
+    const { id } = params;
+    const user = await prismaClient.user.findUnique({
       where: {
-        comments: {
-          some: {
-            userId: user.id,
-          },
-        },
+        id: Number(id),
       },
     });
 
-    const postsWithIsOwners = commentedPosts.map((post) => ({
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    const createdPosts = await prismaClient.post.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    const postsWithIsOwners = createdPosts.map((post) => ({
       ...post,
       isOwner: post.userId === user.id,
     }));

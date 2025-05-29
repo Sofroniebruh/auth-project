@@ -36,7 +36,7 @@ export const SignInComponent = () => {
   };
 
   const handleSignInWithGoogle = async () => {
-    await signIn('google', { callbackUrl: '/profile' });
+    await signIn('google', { callbackUrl: '/posts' });
   };
 
   const onSubmit = async (data: LoginFormType) => {
