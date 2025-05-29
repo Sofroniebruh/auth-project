@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { signIn } from 'next-auth/react';
 import { HandleNextStage } from '@/lib/helpers';
 import { useAuth } from '@/components/contexts/auth-context';
+import { mutate as globalMutate } from 'swr';
 
 export const SignInComponent = () => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -41,11 +42,10 @@ export const SignInComponent = () => {
 
   const onSubmit = async (data: LoginFormType) => {
     const res = await API.auth.login(data);
-    console.log(res);
 
     if (res.status === 200) {
-      console.log(res.user);
       setUser(res.user);
+      await globalMutate(() => true, undefined, { revalidate: false });
       router.push('/posts');
       toast.success('Login successful');
 

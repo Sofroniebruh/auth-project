@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { NewPostData } from '@/lib/api-client/change-user-info';
-import { tokenCheck } from '@/lib/auth';
+import { getUserByToken } from '@/lib/helpers/helper-functions';
 
 export async function POST(req: NextRequest) {
-  const email = await tokenCheck(req);
   const data = (await req.json()) as NewPostData;
-
-  if (!email) {
-    return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-  }
-
-  const user = await prismaClient.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const user = await getUserByToken(req);
 
   if (!user) {
     return NextResponse.json({ message: 'No user was found' }, { status: 404 });
@@ -40,7 +30,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const postIdToSkip = req.nextUrl.searchParams.get('excluding');
-    const email = await tokenCheck(req);
+    const user = await getUserByToken(req);
 
     const allPosts = postIdToSkip ?
       await prismaClient.post.findMany({
@@ -66,16 +56,6 @@ export async function GET(req: NextRequest) {
           },
         },
       });
-
-    if (!email) {
-      return NextResponse.json({ posts: allPosts }, { status: 200 });
-    }
-
-    const user = await prismaClient.user.findUnique({
-      where: {
-        email,
-      },
-    });
 
     if (!user) {
       return NextResponse.json({ posts: allPosts }, { status: 200 });

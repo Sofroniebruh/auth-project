@@ -50,7 +50,7 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
       <MasonryLayout>
         {
           posts.map((post, index) => (
-            <PostCardComponent isOwner={post.isOwner} isLikedByUser={post.isLikedByCurrentUser} key={index} id={post.id}
+            <PostCardComponent isLiked={post.isLikedByCurrentUser} isOwner={post.isOwner} key={index} id={post.id}
                                image={post.postImageUrl}></PostCardComponent>
           ))
         }

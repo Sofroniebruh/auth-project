@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { usePaginatedComments } from '@/lib/hooks/swr';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useAuth } from '@/components/contexts/auth-context';
 
 interface Props {
   comment: Comment;
@@ -24,6 +25,7 @@ export const CommentComponent = memo(({ comment, isCreator, isOwner, page, id }:
   const { mutate } = usePaginatedComments(id, page);
   const [likesAmount, setLikesAmount] = useState(comment.likes.length);
   const [isLiked, setIsLiked] = useState(comment.isLiked);
+  const { isAuthenticated } = useAuth();
 
   const handleDelete = async (id: number) => {
     if (await API.comments.deleteComment(id)) {
@@ -37,6 +39,11 @@ export const CommentComponent = memo(({ comment, isCreator, isOwner, page, id }:
   };
 
   const handleLike = async () => {
+    if (!isAuthenticated) {
+      toast('Log In to like');
+      return;
+    }
+
     const prevLikes = likesAmount;
     const prevLiked = isLiked;
 

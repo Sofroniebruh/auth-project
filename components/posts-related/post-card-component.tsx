@@ -14,10 +14,11 @@ interface Props {
   image: string,
   id: number,
   isOwner?: boolean,
+  isLiked?: boolean,
 }
 
-export const PostCardComponent = ({ image, id, isOwner }: Props) => {
-  const { hasLiked, toggleLikes } = useLikes(id);
+export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
+  const { hasLiked, toggleLikes, isLoading } = useLikes(id);
   const [isLoaded, setIsLoaded] = useState<boolean>();
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const { isAuthenticated } = useAuth();
@@ -77,10 +78,20 @@ export const PostCardComponent = ({ image, id, isOwner }: Props) => {
               }
               className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"
             >
-              <HeartIcon
-                size={20}
-                className={cn(hasLiked && 'fill-red-600 text-red-600')}
-              />
+              {isOwner ? (
+                <div
+                  onClick={() => handleEdit(id)}
+                  className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"
+                >
+                  <EditIcon size={20} />
+                </div>
+              ) : (
+                <HeartIcon
+                  size={20}
+                  className={cn(isLoading ? isLiked && 'fill-red-600 text-red-600' : hasLiked && 'fill-red-600 text-red-600')}
+                />
+              )}
+
             </div>
           )}
         </div>

@@ -16,12 +16,14 @@ export const PostInteractableSection = () => {
   const { post, isOwner, owner, totalLikes: initialLikes } = usePost();
   const { hasLiked, toggleLikes, totalLikes, isLoading } = useLikes(post.id);
 
+  console.log('Loading', isLoading, 'Is liked', post.isLikedByUser, 'Has liked', hasLiked);
+
   return (
     <div className="flex flex-col w-full lg md:w-[400px] md:mt-0 gap-4 min-h-0 justify-between">
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div className={'flex items-center gap-3'}>
-            <Link href={'#'}>
+            <Link href={`/profile/${post.createdBy.id}`}>
               <AvatarComponent className={'w-9 h-9'} email={post.createdBy.email}
                                profilePicture={post.createdBy.pfpUrl} />
             </Link>

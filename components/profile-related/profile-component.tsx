@@ -16,23 +16,24 @@ import Link from 'next/link';
 import { useAuth } from '@/components/contexts/auth-context';
 import { ServerUserType } from '@/app/(with-header)/profile/[id]/page';
 import { useUserUsername } from '@/lib/hooks/swr';
+import { mutate as globalMutate } from 'swr';
 
 interface Props {
   user: ServerUserType;
 }
 
 export const ProfileComponent = ({ user }: Props) => {
-  // const { email, username, setUsername, changedUsername, setChangedUsername } = useUserData(user.user.id);
   const [saveDisabled, setSaveDisabled] = useState(true);
   const { mutate, changeUsername, isLoading, profileUser } = useUserUsername(user.user.id.toString());
   const { logout } = useAuth();
 
   function truncate(text: string, maxLength: number): string {
+    if (!text) return '';
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
   }
 
-  const validatedUsername = truncate(isLoading ? user.user.username : profileUser.username, 10);
-  
+  const validatedUsername = truncate(isLoading ? user.user.username : profileUser?.username || user.user.username, 10);
+
   const router = useRouter();
   const form = useForm<UsernameSchemaType>({
     resolver: zodResolver(usernameSchema),
@@ -66,6 +67,7 @@ export const ProfileComponent = ({ user }: Props) => {
     try {
       await logout();
       router.push('/');
+      await globalMutate(() => true, undefined, { revalidate: false });
       return;
     } catch (error) {
       console.log(error);
@@ -76,7 +78,8 @@ export const ProfileComponent = ({ user }: Props) => {
   return (
     <div className={'w-full min-h-screen p-5 flex flex-col'}>
       <div className={'flex flex-col items-center justify-center gap-5'}>
-        <ChangableAvatarComponent id={user.user.id} email={isLoading ? user.user.email : profileUser.email}
+        <ChangableAvatarComponent isOwner={user.isOwner} id={user.user.id}
+                                  email={isLoading ? user.user.email : profileUser?.email || ''}
                                   className={'sm:w-[110px] sm:h-[110px]'}></ChangableAvatarComponent>
         {/*{isInfoLoading ? (*/}
         {/*  <div className={'flex flex-col items-center justify-center gap-1'}>*/}
@@ -88,7 +91,7 @@ export const ProfileComponent = ({ user }: Props) => {
         <div className={'flex flex-col items-center justify-center gap-1'}>
           <HoverCardComponent trigger={
             <h1 className={'text-2xl sm:text-5xl'}>{validatedUsername}</h1>
-          } content={isLoading ? user.user.username : profileUser.username} />
+          } content={isLoading ? user.user.username : profileUser?.username || user.user.username} />
           <p className={'text-gray-700 text-base sm:text-lg'}>{user.user.email}</p>
         </div>
         {/*)}*/}
@@ -117,7 +120,7 @@ export const ProfileComponent = ({ user }: Props) => {
                           <Input {...form.register('username')}
                                  onChange={() => setSaveDisabled(false)} className={'mt-1'}
                                  name={'username'}
-                                 placeholder={isLoading ? user.user.username : profileUser.username}></Input>
+                                 placeholder={isLoading ? user.user.username : profileUser?.username || user.user.username}></Input>
                         </div>
                         {form.formState.errors.username && (
                           <p className={'text-sm text-red-500'}>{form.formState.errors.username.message}</p>
