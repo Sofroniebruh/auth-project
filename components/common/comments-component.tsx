@@ -8,6 +8,7 @@ import { CommentInput } from '@/components/common/comment-input';
 import Link from 'next/link';
 import { useAuth } from '@/components/contexts/auth-context';
 import { usePaginatedComments } from '@/lib/hooks/swr';
+import { CommentLike } from '@prisma/client';
 
 export type Comment = {
   id: number;
@@ -18,7 +19,9 @@ export type Comment = {
     username: string;
   };
   createdAt: Date;
+  likes: CommentLike[];
   isOwner?: boolean;
+  isLiked?: boolean;
 };
 
 interface Props {

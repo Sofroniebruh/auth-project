@@ -22,6 +22,7 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
         createdBy: true,
         comments: {
           select: {
+            likes: true,
             id: true,
             commentOwner: {
               select: {

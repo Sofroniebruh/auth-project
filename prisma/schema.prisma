@@ -14,14 +14,15 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  password   String?
-  username   String?
-  likedPosts Post[]
-  comments   Comment[]
-  pfpUrl     String?
-  likes      Like[]
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String?
+  username    String?
+  likedPosts  Post[]
+  comments    Comment[]
+  pfpUrl      String?
+  likes       Like[]
+  CommentLike CommentLike[]
 }
 
 model Post {
@@ -38,21 +39,31 @@ model Post {
 }
 
 model Like {
-  userLiked User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userLiked User @relation(fields: [userId], references: [id])
   userId    Int
-  postLiked Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postLiked Post @relation(fields: [postId], references: [id])
   postId    Int
 
   @@id([userId, postId])
 }
 
+model CommentLike {
+  userLiked    User    @relation(fields: [userId], references: [id])
+  userId       Int
+  commentLiked Comment @relation("CommentToLikes", fields: [commentId], references: [id])
+  commentId    Int
+
+  @@id([userId, commentId])
+}
+
 model Comment {
-  id             Int      @id @default(autoincrement())
-  commentOwner   User     @relation(fields: [userId], references: [id])
+  id             Int           @id @default(autoincrement())
+  commentOwner   User          @relation(fields: [userId], references: [id])
   userId         Int
   commentContent String
-  postCommented  Post     @relation(fields: [postId], references: [id])
+  postCommented  Post          @relation(fields: [postId], references: [id])
   postId         Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now())
+  likes          CommentLike[] @relation("CommentToLikes")
 }

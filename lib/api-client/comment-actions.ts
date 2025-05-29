@@ -1,8 +1,10 @@
 import { CommentStructure, EditCommentStructure } from '@/lib/helpers/helper-types-or-interfaces';
 import { Comment } from '@/components/common/comments-component';
 
+const route = `${process.env.NEXT_PUBLIC_API_ROUTE}/comments`;
+
 export async function createComment(data: CommentStructure) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/comments`, {
+  const res = await fetch(`${route}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -21,7 +23,7 @@ export async function createComment(data: CommentStructure) {
 }
 
 export async function updateComment(data: EditCommentStructure) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/comments/${data.commentId}`, {
+  const res = await fetch(`${route}/${data.commentId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -36,8 +38,16 @@ export async function updateComment(data: EditCommentStructure) {
 }
 
 export async function deleteComment(commentId: number) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/comments/${commentId}`, {
+  const res = await fetch(`${route}/${commentId}`, {
     method: 'DELETE',
+  });
+
+  return res.ok;
+}
+
+export async function toggleLikeOnComment(commentId: number) {
+  const res = await fetch(`${route}/${commentId}`, {
+    method: 'PATCH',
   });
 
   return res.ok;
