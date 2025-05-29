@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     });
 
     const postsWithIsOwners = likedPosts.map((post) => ({
-      post: post,
+      ...post,
       isOwner: post.userId === user.id,
     }));
 

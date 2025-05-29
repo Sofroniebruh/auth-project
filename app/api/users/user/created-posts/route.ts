@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     });
 
     const postsWithIsOwners = createdPosts.map((post) => ({
-      post: post,
+      ...post,
       isOwner: post.userId === user.id,
     }));
 

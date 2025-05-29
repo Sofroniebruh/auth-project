@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     });
 
     const postsWithIsOwners = commentedPosts.map((post) => ({
-      post: post,
+      ...post,
       isOwner: post.userId === user.id,
     }));
 
