@@ -68,9 +68,8 @@ export const PostInteractableSection = () => {
                 {isOwner &&
                   <div>
                     <h1 className={'text-md font-semibold'}>Total likes:</h1>
-                    <span className={'flex items-center gap-1'}><HeartIcon size={20}
-                                                                           className={'fill-red-600 text-red-600'}></HeartIcon> {totalLikes}
-                          </span>
+                    <span className={'flex items-center gap-1'}>
+                      <HeartIcon size={20} className={'fill-red-600 text-red-600'}></HeartIcon>{totalLikes}</span>
                   </div>
                 }
               </div>
@@ -93,7 +92,7 @@ export const PostInteractableSection = () => {
                 <Button
                   onClick={() => isAuthenticated ? toggleLikes() : toast('Log In to like')}
                   variant="outline"
-                  className={cn(hasLiked ? 'text-red-600 fill-red-600' : '')}>Like <HeartIcon /></Button>
+                  className={cn(isLoading ? post.isLikedByUser && 'text-red-600 fill-red-600' : hasLiked && 'text-red-600 fill-red-600')}>Like <HeartIcon /></Button>
                 <div className="flex items-center gap-3">
                   <Button variant="outline">Save <ShareIcon /></Button>
                 </div>

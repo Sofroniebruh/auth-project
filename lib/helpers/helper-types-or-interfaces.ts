@@ -1,7 +1,7 @@
 import { Post } from '@prisma/client';
 
 export interface PostWithRelations extends Post {
-  isLikedByUser?: boolean;
+  isLikedByUser: boolean;
   createdBy: {
     id: number
     email: string

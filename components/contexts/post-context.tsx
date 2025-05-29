@@ -17,7 +17,7 @@ export const PostProvider = ({ children, post, owner, isOwner, totalLikes }: {
   post: PostWithRelations
   owner: PostOwner,
   isOwner: boolean,
-  totalLikes: string
+  totalLikes: string,
 }) => {
   return (
     <PostContext.Provider value={{ post, owner, isOwner, totalLikes }}>
