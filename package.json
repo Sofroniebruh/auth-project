@@ -11,6 +11,7 @@
   "dependencies": {
     "@auth/core": "^0.34.2",
     "@aws-sdk/client-s3": "^3.802.0",
+    "@aws-sdk/s3-request-presigner": "^3.820.0",
     "@hookform/resolvers": "^5.0.1",
     "@prisma/client": "^6.7.0",
     "@radix-ui/react-avatar": "^1.1.7",

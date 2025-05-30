@@ -5,7 +5,7 @@ interface Props {
   formData: FormData;
 }
 
-const s3 = new S3Client({
+export const s3 = new S3Client({
   region: process.env.NEXT_PUBLIC_AWS_REGION!,
   credentials: {
     accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY!,

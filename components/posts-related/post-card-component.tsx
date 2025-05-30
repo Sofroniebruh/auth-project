@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/components/contexts/auth-context';
 import { useLikes } from '@/lib/hooks/swr';
 import { usePathname } from 'next/navigation';
+import { generatePresignedURL } from '@/lib/aws/presigned-url-generator';
 
 interface Props {
   image: string,
@@ -39,6 +40,15 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
     console.log(id);
   };
 
+  const handleDownload = async (link: string) => {
+    const download = document.createElement('a');
+    download.href = await generatePresignedURL(link.split('.com/')[1]);
+    download.download = 'pinterest-image.jpg';
+    document.body.appendChild(download);
+    download.click();
+    document.body.removeChild(download);
+  };
+
   return (
     <div className={'break-inside-avoid rounded-lg shadow-sm overflow-hidden relative'}>
       {isLoaded ? (
@@ -59,7 +69,8 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
       )}
       <div className={'absolute bottom-5 right-5'}>
         <div className={'flex items-center gap-2.5'}>
-          <div className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70">
+          <div onClick={() => handleDownload(image)}
+               className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70">
             <ShareIcon size={20} />
           </div>
           {isProfilePage ? (
