@@ -66,7 +66,7 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
             isOwner && (
               <div
                 onClick={() => handleEdit(id)}
-                className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"
+                className="rounded-full huh bg-white p-2 cursor-pointer hover:bg-white/70"
               >
                 <EditIcon size={20} />
               </div>
@@ -81,7 +81,7 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
               {isOwner ? (
                 <div
                   onClick={() => handleEdit(id)}
-                  className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"
+                  className="rounded-full cursor-pointer"
                 >
                   <EditIcon size={20} />
                 </div>

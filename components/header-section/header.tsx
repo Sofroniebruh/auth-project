@@ -17,6 +17,7 @@ export const HeaderComponent = () => {
   const isProfilePage = pathname.startsWith('/profile');
   const { isAuthenticated, user } = useAuth();
 
+
   return (
     <header
       className={'flex py-5 px-5 w-full justify-between items-center bg-white/70 backdrop-blur-md fixed top-0 z-50'}>
@@ -29,14 +30,14 @@ export const HeaderComponent = () => {
           <ul>
             <Link href={'/posts'}>
               <li
-                className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname === '/posts' && 'text-blue-600')}>
+                className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/posts') && 'text-blue-600')}>
                 <ImageIcon></ImageIcon> Posts
               </li>
             </Link>
             {isAuthenticated && user ? (
               <Link href={`/profile/${user.id}`}>
                 <li
-                  className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname === '/profile' && 'text-blue-600')}>
+                  className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/profile') && 'text-blue-600')}>
                   <UserIcon></UserIcon> Profile
                 </li>
               </Link>

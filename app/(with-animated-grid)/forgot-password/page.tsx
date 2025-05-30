@@ -21,7 +21,6 @@ export default function ForgotPasswordPage() {
       confirmPassword: '',
     },
   });
-  console.log(token);
 
   if (!token) {
     return notFound();

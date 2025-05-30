@@ -48,8 +48,6 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
       throw new Error();
     }
 
-    console.log(id);
-
     const deletedComment = await prismaClient.comment.delete({
       where: {
         id: Number(id),

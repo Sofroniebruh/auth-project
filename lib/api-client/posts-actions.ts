@@ -1,11 +1,11 @@
-import { PostOwner, PostsWithLikedByCurrentUser, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
+import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
 import { Comment } from '@/components/common/comments-component';
 
 export async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts`, {
     method: 'GET',
   });
-
+  
   if (res.ok) {
     return (await res.json()) as { posts: PostsWithLikedByCurrentUser[] };
   }
@@ -24,22 +24,6 @@ export async function getPostsWithoutOpenedPost(id: string) {
 
   throw new Error(res.statusText);
 }
-
-// export async function getPost(id: string) {
-//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
-//     method: 'GET',
-//   });
-//
-//   const data = await res.json();
-//
-//   console.log("Received data", data.posts);
-//
-//   if (data) {
-//     return data as { post: PostWithRelations, owner: PostOwner, isOwner: boolean };
-//   }
-//
-//   throw new Error(res.statusText);
-// }
 
 export async function getCommentsPerPost(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}/comments`, {

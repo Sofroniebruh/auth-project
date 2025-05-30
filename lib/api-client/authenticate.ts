@@ -19,7 +19,7 @@ export async function login(data: LoginFormType) {
     return receivedResponse;
   }
 
-  throw new Error(receivedResponse.message);
+  return new Error(receivedResponse.message);
 }
 
 export async function register(data: RegisterFormType) {
