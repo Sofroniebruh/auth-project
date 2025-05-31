@@ -12,6 +12,9 @@ import { usePaginatedComments } from '@/lib/hooks/swr';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useAuth } from '@/components/contexts/auth-context';
+import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
+import { useStore } from 'zustand/react';
+import { dialogStore } from '@/lib/store';
 
 interface Props {
   comment: Comment;
@@ -26,10 +29,15 @@ export const CommentComponent = memo(({ comment, isCreator, isOwner, page, id }:
   const [likesAmount, setLikesAmount] = useState(comment.likes.length);
   const [isLiked, setIsLiked] = useState(comment.isLiked);
   const { isAuthenticated } = useAuth();
+  const dialogs = useStore(dialogStore, (state) => state.dialogs);
+  const isDeleteCommentDialogOpen = dialogs.some((d) => d.key.name === 'deleteComment');
+  const isEditCommentDialogOpen = dialogs.some((d) => d.key.name === 'editComment');
+  const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
   const handleDelete = async (id: number) => {
     if (await API.comments.deleteComment(id)) {
       toast.success('Comment was deleted successfully');
+      setIsOpen(false, { key: { name: 'deleteComment' }, value: false });
       await mutate();
 
       return;
@@ -95,17 +103,22 @@ export const CommentComponent = memo(({ comment, isCreator, isOwner, page, id }:
       </div>
       {isOwner &&
         <div className={'flex flex-col items-end justify-evenly h-full'}>
-          <DialogComponent triggerButton={
-            <TrashIcon className={'cursor-pointer'} size={16} />
-          } title={'Are you sure?'}>
-            <div className={'w-full flex items-center justify-center gap-5'}>
+          <DialogComponent openState={isDeleteCommentDialogOpen} description={'This action can not be undone'}
+                           triggerButton={
+                             <TrashIcon onClick={() => setIsOpen(true, { key: { name: 'deleteComment' }, value: true })}
+                                        className={'cursor-pointer'} size={16} />
+                           } title={'Are you sure?'}>
+            <DeleteDialogComponent deleteButton={
               <Button onClick={() => handleDelete(comment.id)} size={'lg'} variant={'destructive'}>Delete My
                 Comment</Button>
-              <Button size={'lg'} variant={'outline'}>Cancel</Button>
-            </div>
+            } setDialogOpen={() => setIsOpen(false, {
+              key: { name: 'deleteComment' },
+              value: false,
+            })}></DeleteDialogComponent>
           </DialogComponent>
-          <DialogComponent triggerButton={
-            <EditIcon className={'cursor-pointer'} size={16} />
+          <DialogComponent openState={isEditCommentDialogOpen} triggerButton={
+            <EditIcon onClick={() => setIsOpen(true, { key: { name: 'editComment' }, value: true })}
+                      className={'cursor-pointer'} size={16} />
           } title={'Edit your comment'}>
             <CommentInput comment={comment} isUpdatingComment={true} postId={id} page={page} />
           </DialogComponent>

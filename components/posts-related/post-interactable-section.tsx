@@ -21,13 +21,14 @@ export const PostInteractableSection = () => {
   const { post, isOwner, owner, totalLikes: initialLikes } = usePost();
   const { hasLiked, toggleLikes, totalLikes, isLoading } = useLikes(post.id);
   const router = useRouter();
-  const isOpen = useStore(dialogStore, (state) => state.isOpen);
+  const dialogs = useStore(dialogStore, (state) => state.dialogs);
+  const isDeleteDialogOpen = dialogs.some(d => d.key.name === 'deletePost');
   const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
   const handleDelete = async (id: number) => {
     if (await API.posts.deletePost(id)) {
       toast.success('Post deleted successfully.');
-      setIsOpen(false);
+      setIsOpen(false, { key: { name: 'deletePost' }, value: false });
       router.push('/posts');
       return;
     }
@@ -98,15 +99,19 @@ export const PostInteractableSection = () => {
           {
             isOwner ? (
               <div className={'flex gap-2'}>
-                <DialogComponent description={'This action can not be undone'} openState={isOpen} triggerButton={
-                  <div onClick={() => setIsOpen(true)}
+                <DialogComponent description={'This action can not be undone'}
+                                 openState={isDeleteDialogOpen} triggerButton={
+                  <div onClick={() => setIsOpen(true, { key: { name: 'deletePost' }, value: true })}
                        className={'flex p-2 px-3 bg-red-600 text-white gap-1 rounded-md text-sm items-center cursor-pointer hover:bg-red-700'}>Delete
                     Post <TrashIcon size={16}></TrashIcon></div>
                 } title={'Are you sure?'}>
                   <DeleteDialogComponent deleteButton={
                     <Button onClick={() => handleDelete(post.id)} size={'lg'} variant={'destructive'}>Delete my
                       post</Button>
-                  } setDialogOpen={() => setIsOpen(false)}></DeleteDialogComponent>
+                  } setDialogOpen={() => setIsOpen(false, {
+                    key: { name: 'deletePost' },
+                    value: false,
+                  })}></DeleteDialogComponent>
                 </DialogComponent>
                 <Button
                   className={'bg-blue-600 hover:bg-blue-700'}>Edit <EditIcon></EditIcon></Button>

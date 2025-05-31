@@ -12,6 +12,8 @@ import { Comment } from '@/components/common/comments-component';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
 import { usePaginatedComments } from '@/lib/hooks/swr';
+import { useStore } from 'zustand/react';
+import { dialogStore } from '@/lib/store';
 
 interface Props {
   className?: string;
@@ -23,6 +25,7 @@ interface Props {
 
 export const CommentInput = ({ className, postId, page, isUpdatingComment, comment }: Props) => {
   const { mutate } = usePaginatedComments(postId, page);
+  const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
   const form = useForm<InputSchemaType>({
     resolver: zodResolver(inputSchema),
@@ -45,6 +48,7 @@ export const CommentInput = ({ className, postId, page, isUpdatingComment, comme
 
     if (await API.comments.updateComment(commentData)) {
       toast.success('Comment updated successfully');
+      setIsOpen(false, { key: { name: 'editComment' }, value: false });
       await mutate();
       form.reset();
 
