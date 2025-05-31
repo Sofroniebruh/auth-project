@@ -17,154 +17,161 @@ import { useAuth } from '@/components/contexts/auth-context';
 import { ServerUserType } from '@/app/(with-header)/profile/[id]/page';
 import { useUserUsername } from '@/lib/hooks/swr';
 import { mutate as globalMutate } from 'swr';
+import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
+import { useStore } from 'zustand/react';
+import { dialogIsOpenStore } from '@/lib/store/useDialogIsOpen';
 
 interface Props {
   user: ServerUserType;
 }
 
 export const ProfileComponent = ({ user }: Props) => {
-  const [saveDisabled, setSaveDisabled] = useState(true);
-  const { mutate, changeUsername, isLoading, profileUser } = useUserUsername(user.user.id.toString());
-  const { logout } = useAuth();
+    const [saveDisabled, setSaveDisabled] = useState(true);
+    const { mutate, changeUsername, isLoading, profileUser } = useUserUsername(user.user.id.toString());
+    const { logout } = useAuth();
+    const isOpen = useStore(dialogIsOpenStore, (state) => state.isOpen);
+    const setIsOpen = useStore(dialogIsOpenStore, (state) => state.setIsOpen);
 
-  function truncate(text: string, maxLength: number): string {
-    if (!text) return '';
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-  }
-
-  const validatedUsername = truncate(isLoading ? user.user.username : profileUser?.username || user.user.username, 10);
-
-  const router = useRouter();
-  const form = useForm<UsernameSchemaType>({
-    resolver: zodResolver(usernameSchema),
-    defaultValues: {
-      username: '',
-    },
-  });
-
-  const handleUsernameSubmit = async (value: UsernameSchemaType, id: string) => {
-    try {
-      await changeUsername(value.username, id);
-      await mutate();
-      return;
-    } catch (error) {
-      console.error(error);
-      toast.error('Error updating your username.');
-    }
-  };
-
-  const handleDelete = async () => {
-    if (await API.changeUserInfo.deleteUser(user.user.id.toString())) {
-      router.push('/');
-
-      return;
+    function truncate(text: string, maxLength: number): string {
+      if (!text) return '';
+      return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
     }
 
-    toast.error('Error deleting the user');
-  };
+    const validatedUsername = truncate(isLoading ? user.user.username : profileUser?.username || user.user.username, 10);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      router.push('/');
-      await globalMutate(() => true, undefined, { revalidate: false });
-      return;
-    } catch (error) {
-      console.log(error);
-      toast.error('Error while logging out');
-    }
-  };
+    const router = useRouter();
+    const form = useForm<UsernameSchemaType>({
+      resolver: zodResolver(usernameSchema),
+      defaultValues: {
+        username: '',
+      },
+    });
 
-  return (
-    <div className={'w-full min-h-screen p-5 flex flex-col'}>
-      <div className={'flex flex-col items-center justify-center gap-5'}>
-        <ChangableAvatarComponent isOwner={user.isOwner} id={user.user.id}
-                                  email={isLoading ? user.user.email : profileUser?.email || ''}
-                                  className={'sm:w-[110px] sm:h-[110px]'}></ChangableAvatarComponent>
-        {/*{isInfoLoading ? (*/}
-        {/*  <div className={'flex flex-col items-center justify-center gap-1'}>*/}
+    const handleUsernameSubmit = async (value: UsernameSchemaType, id: string) => {
+      try {
+        await changeUsername(value.username, id);
+        await mutate();
+        return;
+      } catch (error) {
+        console.error(error);
+        toast.error('Error updating your username.');
+      }
+    };
 
-        {/*    <Skeleton className={'w-[174px] h-[32px] sm:w-[174px] sm:h-[48px]'}></Skeleton>*/}
-        {/*    <Skeleton className={'w-[174px] h-[24px] sm:w-[174px] sm:h-[28px]'}></Skeleton>*/}
-        {/*  </div>*/}
-        {/*) : (*/}
-        <div className={'flex flex-col items-center justify-center gap-1'}>
-          <HoverCardComponent trigger={
-            <h1 className={'text-2xl sm:text-5xl'}>{validatedUsername}</h1>
-          } content={isLoading ? user.user.username : profileUser?.username || user.user.username} />
-          <p className={'text-gray-700 text-base sm:text-lg'}>{user.user.email}</p>
-        </div>
-        {/*)}*/}
-        {user.isOwner &&
-          <div className={'flex gap-2.5'}>
-            <div onClick={handleLogout}
-                 className={'bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4'}>
-              Log Out <LogOutIcon></LogOutIcon>
-            </div>
-            <SheetComponent triggerElement={
-              <div className={'rounded-md border shadow-sm cursor-pointer flex p-2 gap-2 px-4'}>
-                Settings <SettingsIcon></SettingsIcon>
-              </div>
-            } sheetTitle={'Settings'}>
-              <div className={'w-full flex items-center justify-center'}>
-                <div className={'flex-col flex gap-2 w-3/4'}>
-                  <div className={'w-full flex items-center justify-center mb-4'}>
-                    <ChangableAvatarComponent id={user.user.id} email={user.user.email}></ChangableAvatarComponent>
-                  </div>
-                  <FormProvider {...form}>
-                    <form onSubmit={form.handleSubmit((value) => handleUsernameSubmit(value, user.user.id.toString()))}>
-                      <label className={'text-sm text-gray-500'} htmlFor={'username'}>Your
-                        username</label>
-                      <div>
-                        <div className={'relative'}>
-                          <Input {...form.register('username')}
-                                 onChange={() => setSaveDisabled(false)} className={'mt-1'}
-                                 name={'username'}
-                                 placeholder={isLoading ? user.user.username : profileUser?.username || user.user.username}></Input>
-                        </div>
-                        {form.formState.errors.username && (
-                          <p className={'text-sm text-red-500'}>{form.formState.errors.username.message}</p>
-                        )}
-                      </div>
+    const handleDelete = async () => {
+      if (await API.changeUserInfo.deleteUser(user.user.id.toString())) {
+        router.push('/');
 
-                      <div>
-                        <label className={'text-sm text-gray-500'} htmlFor={'email'}>Your
-                          email</label>
-                        <Input className={'mt-1'} name={'email'} value={user.user.email} readOnly={true}
-                               disabled={true}></Input>
-                      </div>
-                      <div className={'mt-10 sm:mt-0 flex gap-2 flex-col sm:flex-row'}>
-                        <Link href={'/request-password-change'}>
-                          <Button type={'button'} variant={'outline'}
-                                  className={'mt-4 w-full text-sm'}>Change
-                            your
-                            password</Button>
-                        </Link>
-                        <Button type={'submit'} disabled={saveDisabled} variant={'outline'}
-                                className={'sm:mt-4 text-sm sm:flex-1'}>Save</Button>
-                      </div>
-                    </form>
-                  </FormProvider>
-                  <DialogComponent triggerButton={
-                    <div
-                      className={'cursor-pointer mt-10 bg-red-500 text-sm text-white p-2 rounded-md'}>Delete
-                      account</div>
-                  } title={'Are you sure?'} description={'This action can not be undone'}>
-                    <div className={'w-full flex items-center justify-center gap-5'}>
-                      <Button onClick={handleDelete} size={'lg'} variant={'destructive'}>Delete My
-                        Account</Button>
-                      <Button size={'lg'} variant={'outline'}>Cancel</Button>
-                    </div>
-                  </DialogComponent>
-                </div>
-              </div>
-            </SheetComponent>
+        return;
+      }
+
+      toast.error('Error deleting the user');
+    };
+
+    const handleLogout = async () => {
+      try {
+        await logout();
+        router.push('/');
+        await globalMutate(() => true, undefined, { revalidate: false });
+        return;
+      } catch (error) {
+        console.log(error);
+        toast.error('Error while logging out');
+      }
+    };
+
+    return (
+      <div className={'w-full min-h-screen p-5 flex flex-col'}>
+        <div className={'flex flex-col items-center justify-center gap-5'}>
+          <ChangableAvatarComponent isOwner={user.isOwner} id={user.user.id}
+                                    email={isLoading ? user.user.email : profileUser?.email || ''}
+                                    className={'sm:w-[110px] sm:h-[110px]'}></ChangableAvatarComponent>
+          {/*{isInfoLoading ? (*/}
+          {/*  <div className={'flex flex-col items-center justify-center gap-1'}>*/}
+
+          {/*    <Skeleton className={'w-[174px] h-[32px] sm:w-[174px] sm:h-[48px]'}></Skeleton>*/}
+          {/*    <Skeleton className={'w-[174px] h-[24px] sm:w-[174px] sm:h-[28px]'}></Skeleton>*/}
+          {/*  </div>*/}
+          {/*) : (*/}
+          <div className={'flex flex-col items-center justify-center gap-1'}>
+            <HoverCardComponent trigger={
+              <h1 className={'text-2xl sm:text-5xl'}>{validatedUsername}</h1>
+            } content={isLoading ? user.user.username : profileUser?.username || user.user.username} />
+            <p className={'text-gray-700 text-base sm:text-lg'}>{user.user.email}</p>
           </div>
-        }
+          {/*)}*/}
+          {user.isOwner &&
+            <div className={'flex gap-2.5'}>
+              <div onClick={handleLogout}
+                   className={'bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4'}>
+                Log Out <LogOutIcon></LogOutIcon>
+              </div>
+              <SheetComponent triggerElement={
+                <div className={'rounded-md border shadow-sm cursor-pointer flex p-2 gap-2 px-4'}>
+                  Settings <SettingsIcon></SettingsIcon>
+                </div>
+              } sheetTitle={'Settings'}>
+                <div className={'w-full flex items-center justify-center'}>
+                  <div className={'flex-col flex gap-2 w-3/4'}>
+                    <div className={'w-full flex items-center justify-center mb-4'}>
+                      <ChangableAvatarComponent id={user.user.id} email={user.user.email}></ChangableAvatarComponent>
+                    </div>
+                    <FormProvider {...form}>
+                      <form onSubmit={form.handleSubmit((value) => handleUsernameSubmit(value, user.user.id.toString()))}>
+                        <label className={'text-sm text-gray-500'} htmlFor={'username'}>Your
+                          username</label>
+                        <div>
+                          <div className={'relative'}>
+                            <Input {...form.register('username')}
+                                   onChange={() => setSaveDisabled(false)} className={'mt-1'}
+                                   name={'username'}
+                                   placeholder={isLoading ? user.user.username : profileUser?.username || user.user.username}></Input>
+                          </div>
+                          {form.formState.errors.username && (
+                            <p className={'text-sm text-red-500'}>{form.formState.errors.username.message}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className={'text-sm text-gray-500'} htmlFor={'email'}>Your
+                            email</label>
+                          <Input className={'mt-1'} name={'email'} value={user.user.email} readOnly={true}
+                                 disabled={true}></Input>
+                        </div>
+                        <div className={'mt-10 sm:mt-0 flex gap-2 flex-col sm:flex-row'}>
+                          <Link href={'/request-password-change'}>
+                            <Button type={'button'} variant={'outline'}
+                                    className={'mt-4 w-full text-sm'}>Change
+                              your
+                              password</Button>
+                          </Link>
+                          <Button type={'submit'} disabled={saveDisabled} variant={'outline'}
+                                  className={'sm:mt-4 text-sm sm:flex-1'}>Save</Button>
+                        </div>
+                      </form>
+                    </FormProvider>
+                    <DialogComponent classNameForTriggerButton={'mt-10'} openState={isOpen} triggerButton={
+                      <div onClick={() => setIsOpen(true)}
+                           className={'cursor-pointer bg-red-500 text-sm text-white p-2 rounded-md'}>Delete
+                        account</div>
+                    } title={'Are you sure?'} description={'This action can not be undone'}>
+                      <DeleteDialogComponent deleteButton={
+                        <Button size={'lg'} variant={'destructive'}>Delete My account.</Button>
+                      } setDialogOpen={() => setIsOpen(false)}
+                      ></DeleteDialogComponent>
+                    </DialogComponent>
+                  </div>
+                </div>
+              </SheetComponent>
+            </div>
+          }
+        </div>
+        <div className={'w-full mt-10'}>
+          <ProfileTabsComponent id={user.user.id}></ProfileTabsComponent>
+        </div>
+        ;
       </div>
-      <div className={'w-full mt-10'}>
-        <ProfileTabsComponent id={user.user.id}></ProfileTabsComponent>
-      </div>
-    </div>
-  );
-};
+    )
+      ;
+  }
+;

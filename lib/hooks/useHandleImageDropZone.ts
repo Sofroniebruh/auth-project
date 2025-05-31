@@ -43,7 +43,7 @@ export const useHandleImageDropZone = ({ isPfp, id }: Props) => {
   const handleImage = async (file: File) => {
     const link = await API.uploadImage.uploadPublicImage(file);
     if (link) {
-      if (await API.changeUserInfo.changeUserPfp(link)) {
+      if (await API.changeUserInfo.changeUserPfp(link, id.toString())) {
         setProfilePicture(link);
         toast('Image uploaded successfully');
 

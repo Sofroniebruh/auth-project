@@ -10,11 +10,31 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/contexts/auth-context';
 import { usePost } from '@/components/contexts/post-context';
 import { useLikes } from '@/lib/hooks/swr';
+import { API } from '@/lib/api-client/api';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
+import { dialogIsOpenStore } from '@/lib/store/useDialogIsOpen';
+import { useStore } from 'zustand/react';
 
 export const PostInteractableSection = () => {
   const { isAuthenticated } = useAuth();
   const { post, isOwner, owner, totalLikes: initialLikes } = usePost();
   const { hasLiked, toggleLikes, totalLikes, isLoading } = useLikes(post.id);
+  const router = useRouter();
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const isOpen = useStore(dialogIsOpenStore, (state) => state.isOpen);
+  const setIsOpen = useStore(dialogIsOpenStore, (state) => state.setIsOpen);
+
+  const handleDelete = async (id: number) => {
+    if (await API.posts.deletePost(id)) {
+      toast.success('Post deleted successfully.');
+      setIsOpen(false);
+      router.push('/posts');
+      return;
+    }
+    toast.error('Failed to delete the post');
+  };
 
   return (
     <div className="flex flex-col w-full lg md:w-[400px] md:mt-0 gap-4 min-h-0 justify-between">
@@ -80,9 +100,18 @@ export const PostInteractableSection = () => {
           {
             isOwner ? (
               <div className={'flex gap-2'}>
-                <Button variant={'destructive'}>Delete Post <TrashIcon></TrashIcon></Button>
+                <DialogComponent description={'This action can not be undone'} openState={isOpen} triggerButton={
+                  <div onClick={() => setIsOpen(true)}
+                       className={'flex p-2 px-3 bg-red-600 text-white gap-1 rounded-md text-sm items-center cursor-pointer hover:bg-red-700'}>Delete
+                    Post <TrashIcon size={16}></TrashIcon></div>
+                } title={'Are you sure?'}>
+                  <DeleteDialogComponent deleteButton={
+                    <Button onClick={() => handleDelete(post.id)} size={'lg'} variant={'destructive'}>Delete my
+                      post</Button>
+                  } setDialogOpen={() => setIsOpen(false)}></DeleteDialogComponent>
+                </DialogComponent>
                 <Button
-                  className={'bg-blue-600 hover:bg-blue-500'}>Edit <EditIcon></EditIcon></Button>
+                  className={'bg-blue-600 hover:bg-blue-700'}>Edit <EditIcon></EditIcon></Button>
               </div>
             ) : (
               <div className={'flex items-center gap-3'}>

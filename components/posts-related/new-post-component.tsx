@@ -13,15 +13,17 @@ import { toast } from 'sonner';
 import { NewPostData } from '@/lib/api-client/change-user-info';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
+import { useAuth } from '@/components/contexts/auth-context';
 
 export const NewPostComponent = () => {
+  const { user } = useAuth();
   const {
     getInputProps,
     isDragActive,
     getRootProps,
     uploadedFile,
     setUploadedFile,
-  } = useHandleImageDropZone({ isPfp: false });
+  } = useHandleImageDropZone({ isPfp: false, id: user!.id });
   const form = useForm<NewPostSchemaType>({
     resolver: zodResolver(newPostSchema),
     defaultValues: {
@@ -61,7 +63,7 @@ export const NewPostComponent = () => {
 
     if (await API.changeUserInfo.createUserPost(newPostData)) {
       toast.success('Post was created successfully');
-      router.push('/profile');
+      router.push(`/profile/${user!.id}`);
 
       return;
     }

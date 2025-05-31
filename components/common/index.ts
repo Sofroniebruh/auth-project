@@ -10,3 +10,4 @@ export { AvatarComponent } from './avatar-component';
 export { CommentsComponent } from './comments-component';
 export { CommentInput } from './comment-input';
 export { PopoverComponent } from './popover-component';
+export {} from "./delete-dialog-component"

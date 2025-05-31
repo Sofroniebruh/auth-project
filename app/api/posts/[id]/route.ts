@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { tokenCheck } from '@/lib/auth';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
+import { getUserByToken } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
   try {
     let isOwner = false;
     const { id } = await params;
-    const email = await tokenCheck(req);
+    const user = await getUserByToken(req);
 
     if (!id) {
       return NextResponse.json({ message: 'Not found' }, { status: 404 });
@@ -52,16 +52,6 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       email: postWithRelations.createdBy.email,
     };
 
-    if (!email) {
-      return NextResponse.json({ post: postWithRelations, owner, isOwner: isOwner }, { status: 200 });
-    }
-
-    const user = await prismaClient.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
     if (!user) {
       return NextResponse.json({ posts: postWithRelations, owner, isOwner: isOwner }, { status: 200 });
     }
@@ -89,21 +79,11 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
 export async function PUT(req: NextRequest, { params }: Promise<Params>) {
   try {
     const { id } = await params;
-    const email = await tokenCheck(req);
+    const user = await getUserByToken(req);
 
     if (!id) {
       return NextResponse.json({ message: 'Not found' }, { status: 404 });
     }
-
-    if (!email) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-
-    const user = await prismaClient.user.findUnique({
-      where: {
-        email,
-      },
-    });
 
     if (!user) {
       return NextResponse.json({ message: 'No user was found' }, { status: 404 });
@@ -156,10 +136,32 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
     }
 
     console.error(error);
-    return NextResponse.json({ error: 'Error retrieving the post' }, { status: 500 });
+    return NextResponse.json({ error: 'Error updating the post' }, { status: 500 });
   }
 }
 
-export async function DELETE() {
+// @ts-ignore
+export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
+  try {
+    const { id } = await params;
+    const user = await getUserByToken(req);
 
+    if (!user) {
+      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+    }
+
+    await prismaClient.post.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    console.error(error);
+    return NextResponse.json({ error: 'Error deleting the post' }, { status: 500 });
+  }
 }
