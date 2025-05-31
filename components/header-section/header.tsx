@@ -11,31 +11,35 @@ import { HeaderSearchSmall } from '@/components/header-section/header-search-sma
 import { HeaderSearchBig } from '@/components/header-section/header-search-big';
 import React from 'react';
 import { useAuth } from '@/components/contexts/auth-context';
+import { useStore } from 'zustand/react';
+import { sheetStore } from '@/lib/store';
 
 export const HeaderComponent = () => {
   const pathname = usePathname();
   const isProfilePage = pathname.startsWith('/profile');
   const { isAuthenticated, user } = useAuth();
-
+  const isOpenSheet = useStore(sheetStore, (state) => state.isOpenSheet);
+  const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
 
   return (
     <header
       className={'flex py-5 px-5 w-full justify-between items-center bg-white/70 backdrop-blur-md fixed top-0 z-50'}>
-      <SheetComponent triggerElement={<MenuIcon size={25} className={'cursor-pointer'}></MenuIcon>}
+      <SheetComponent openState={isOpenSheet} triggerElement={<MenuIcon onClick={() => setIsOpenSheet(true)} size={25}
+                                                                        className={'cursor-pointer'}></MenuIcon>}
                       sheetTitle={'Menu'}
                       side={'left'}>
         <div className={'flex flex-col p-10 gap-5 max-w-[345px] sm:w-full'}>
           <h1 className={'text-3xl sm:text-5xl font-semibold'}>Cube</h1>
           <div className={'w-full h-0.5 bg-black'}></div>
           <ul>
-            <Link href={'/posts'}>
+            <Link onClick={() => setIsOpenSheet(false)} href={'/posts'}>
               <li
                 className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/posts') && 'text-blue-600')}>
                 <ImageIcon></ImageIcon> Posts
               </li>
             </Link>
             {isAuthenticated && user ? (
-              <Link href={`/profile/${user.id}`}>
+              <Link onClick={() => setIsOpenSheet(false)} href={`/profile/${user.id}`}>
                 <li
                   className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/profile') && 'text-blue-600')}>
                   <UserIcon></UserIcon> Profile

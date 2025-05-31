@@ -15,6 +15,7 @@ interface Props {
   className?: string,
   sheetTitle: string | React.ReactNode,
   sheetDescription?: string,
+  openState?: boolean
 }
 
 export const SheetComponent = (
@@ -25,9 +26,10 @@ export const SheetComponent = (
     className,
     sheetTitle,
     sheetDescription,
+    openState,
   }: Props) => {
   return (
-    <Sheet>
+    <Sheet open={openState}>
       <SheetTrigger className={className}>
         {triggerElement}
       </SheetTrigger>

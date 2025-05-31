@@ -6,7 +6,7 @@ import { XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { useStore } from 'zustand/react';
-import { dialogIsOpenStore } from '@/lib/store/useDialogIsOpen';
+import { dialogStore } from '@/lib/store';
 
 function Dialog({
                   ...props
@@ -36,7 +36,7 @@ function DialogOverlay({
                          className,
                          ...props
                        }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
-  const setIsOpen = useStore(dialogIsOpenStore, (state) => state.setIsOpen);
+  const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
@@ -55,7 +55,7 @@ function DialogContent({
                          children,
                          ...props
                        }: React.ComponentProps<typeof DialogPrimitive.Content>) {
-  const setIsOpen = useStore(dialogIsOpenStore, (state) => state.setIsOpen);
+  const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />

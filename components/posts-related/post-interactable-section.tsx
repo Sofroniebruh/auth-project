@@ -12,19 +12,17 @@ import { usePost } from '@/components/contexts/post-context';
 import { useLikes } from '@/lib/hooks/swr';
 import { API } from '@/lib/api-client/api';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
-import { dialogIsOpenStore } from '@/lib/store/useDialogIsOpen';
 import { useStore } from 'zustand/react';
+import { dialogStore } from '@/lib/store';
 
 export const PostInteractableSection = () => {
   const { isAuthenticated } = useAuth();
   const { post, isOwner, owner, totalLikes: initialLikes } = usePost();
   const { hasLiked, toggleLikes, totalLikes, isLoading } = useLikes(post.id);
   const router = useRouter();
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const isOpen = useStore(dialogIsOpenStore, (state) => state.isOpen);
-  const setIsOpen = useStore(dialogIsOpenStore, (state) => state.setIsOpen);
+  const isOpen = useStore(dialogStore, (state) => state.isOpen);
+  const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
   const handleDelete = async (id: number) => {
     if (await API.posts.deletePost(id)) {

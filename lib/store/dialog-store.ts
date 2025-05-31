@@ -1,11 +1,11 @@
 import { createStore } from 'zustand/vanilla';
 
-interface UseDialogIsOpenStore {
+interface DialogStore {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export const dialogIsOpenStore = createStore<UseDialogIsOpenStore>((set) => ({
+export const dialogStore = createStore<DialogStore>((set) => ({
   isOpen: false,
   setIsOpen: (isOpen: boolean) => {
     set({ isOpen });

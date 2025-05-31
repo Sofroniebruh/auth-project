@@ -19,7 +19,7 @@ import { useUserUsername } from '@/lib/hooks/swr';
 import { mutate as globalMutate } from 'swr';
 import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
 import { useStore } from 'zustand/react';
-import { dialogIsOpenStore } from '@/lib/store/useDialogIsOpen';
+import { dialogStore } from '@/lib/store';
 
 interface Props {
   user: ServerUserType;
@@ -29,8 +29,8 @@ export const ProfileComponent = ({ user }: Props) => {
     const [saveDisabled, setSaveDisabled] = useState(true);
     const { mutate, changeUsername, isLoading, profileUser } = useUserUsername(user.user.id.toString());
     const { logout } = useAuth();
-    const isOpen = useStore(dialogIsOpenStore, (state) => state.isOpen);
-    const setIsOpen = useStore(dialogIsOpenStore, (state) => state.setIsOpen);
+    const isOpen = useStore(dialogStore, (state) => state.isOpen);
+    const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
     function truncate(text: string, maxLength: number): string {
       if (!text) return '';
@@ -156,7 +156,7 @@ export const ProfileComponent = ({ user }: Props) => {
                         account</div>
                     } title={'Are you sure?'} description={'This action can not be undone'}>
                       <DeleteDialogComponent deleteButton={
-                        <Button size={'lg'} variant={'destructive'}>Delete My account.</Button>
+                        <Button size={'lg'} variant={'destructive'}>Delete My account</Button>
                       } setDialogOpen={() => setIsOpen(false)}
                       ></DeleteDialogComponent>
                     </DialogComponent>
