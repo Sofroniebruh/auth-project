@@ -72,7 +72,8 @@ export const ProfileComponent = ({ user }: Props) => {
     const handleLogout = async () => {
       try {
         await logout();
-        router.push('/');
+        router.replace('/sign-in');
+        router.refresh();
         await globalMutate(() => true, undefined, { revalidate: false });
         return;
       } catch (error) {
