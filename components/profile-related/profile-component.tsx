@@ -29,7 +29,8 @@ export const ProfileComponent = ({ user }: Props) => {
     const [saveDisabled, setSaveDisabled] = useState(true);
     const { mutate, changeUsername, isLoading, profileUser } = useUserUsername(user.user.id.toString());
     const { logout } = useAuth();
-    const isOpen = useStore(dialogStore, (state) => state.isOpen);
+    const dialogs = useStore(dialogStore, (state) => state.dialogs);
+    const isOpenDeleteAccountDialog = dialogs.some(d => d.key.name === 'deleteAccount');
     const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
     function truncate(text: string, maxLength: number): string {
@@ -150,15 +151,17 @@ export const ProfileComponent = ({ user }: Props) => {
                         </div>
                       </form>
                     </FormProvider>
-                    <DialogComponent classNameForTriggerButton={'mt-10'} openState={isOpen} triggerButton={
-                      <div onClick={() => setIsOpen(true)}
-                           className={'cursor-pointer bg-red-500 text-sm text-white p-2 rounded-md'}>Delete
-                        account</div>
-                    } title={'Are you sure?'} description={'This action can not be undone'}>
+                    <DialogComponent classNameForTriggerButton={'mt-10'} openState={isOpenDeleteAccountDialog}
+                                     triggerButton={
+                                       <div
+                                         onClick={() => setIsOpen(true, { key: { name: 'deleteAccount' }, value: true })}
+                                         className={'cursor-pointer bg-red-500 text-sm text-white p-2 rounded-md'}>Delete
+                                         account</div>
+                                     } title={'Are you sure?'} description={'This action can not be undone'}>
                       <DeleteDialogComponent deleteButton={
                         <Button size={'lg'} variant={'destructive'}>Delete My account</Button>
-                      } setDialogOpen={() => setIsOpen(false)}
-                      ></DeleteDialogComponent>
+                      } setDialogOpen={() => setIsOpen(false, { key: { name: 'deleteAccount' }, value: false })}
+                      />
                     </DialogComponent>
                   </div>
                 </div>
@@ -169,9 +172,7 @@ export const ProfileComponent = ({ user }: Props) => {
         <div className={'w-full mt-10'}>
           <ProfileTabsComponent id={user.user.id}></ProfileTabsComponent>
         </div>
-        ;
       </div>
-    )
-      ;
+    );
   }
 ;

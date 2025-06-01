@@ -3,12 +3,11 @@
 import { PostCardOpenedVersion } from '@/components/posts-related/post-card-opened-version';
 import { ArrowLeftIcon } from 'lucide-react';
 import { PostsComponent } from '@/components/posts-related/posts-component';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { PostInteractableSection } from '@/components/posts-related/post-interactable-section';
 import { usePost } from '@/components/contexts/post-context';
 
 export const PostComponent = () => {
-  const pathname = usePathname();
   const router = useRouter();
   const { post } = usePost();
 

@@ -6,9 +6,12 @@ import Link from 'next/link';
 import React from 'react';
 import { CommonCard } from '@/components/common';
 import { useAuth } from '@/components/contexts/auth-context';
+import { useStore } from 'zustand/react';
+import { sheetStore } from '@/lib/store';
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
+  const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
 
   return (
     <CommonCard>
@@ -29,7 +32,7 @@ export default function Home() {
               in <LogInIcon></LogInIcon></Button>
           </Link>
         )}
-        <Link href="/posts" className={'w-full flex items-center justify-center'}>
+        <Link onClick={() => setIsOpenSheet(false)} href="/posts" className={'w-full flex items-center justify-center'}>
           <Button
             className={'w-2/3 shadow-sm bg-linear-to-r/decreasing from-blue-50 to-white text-black border text-base sm:text-lg py-5 rounded-lg'}>Browse...</Button>
         </Link>

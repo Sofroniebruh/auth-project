@@ -1,6 +1,6 @@
-import { NewPostSchemaType } from '@/components/auth/schema';
+import { PostSchemaType } from '@/components/auth/schema';
 
-export interface NewPostData extends NewPostSchemaType {
+export interface PostData extends PostSchemaType {
   imageUrl: string;
 }
 
@@ -36,7 +36,7 @@ export async function changeUserPfp(link: string, id: string) {
   return res.ok;
 }
 
-export async function createUserPost(data: NewPostData) {
+export async function createUserPost(data: PostData) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts`, {
     method: 'POST',
     headers: {

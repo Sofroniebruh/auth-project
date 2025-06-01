@@ -17,11 +17,14 @@ import { signIn } from 'next-auth/react';
 import { HandleNextStage } from '@/lib/helpers';
 import { useAuth } from '@/components/contexts/auth-context';
 import { mutate as globalMutate } from 'swr';
+import { useStore } from 'zustand/react';
+import { sheetStore } from '@/lib/store';
 
 export const SignInComponent = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const { setUser } = useAuth();
   const router = useRouter();
+  const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
   const form = useForm<LoginFormType>({
     resolver: zodResolver(formLoginSchema),
     defaultValues: {
@@ -43,7 +46,8 @@ export const SignInComponent = () => {
   const onSubmit = async (data: LoginFormType) => {
     const res = await API.auth.login(data);
 
-    if (res.status === 200) {
+    if (!(res instanceof Error) && res.status === 200) {
+      setIsOpenSheet(false);
       setUser(res.user);
       await globalMutate(() => true, undefined, { revalidate: false });
       router.push('/posts');

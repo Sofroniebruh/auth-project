@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   const user = await prismaClient.user.findFirst({
     where: { email },
   });
-
+  
   if (!user) {
     return NextResponse.json({ message: 'Email not found' }, { status: 401 });
   }

@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
 import { useStore } from 'zustand/react';
 import { dialogStore } from '@/lib/store';
+import { handleDownload } from '@/lib/helpers/edit-post-helper';
 
 export const PostInteractableSection = () => {
   const { isAuthenticated } = useAuth();
@@ -113,8 +114,10 @@ export const PostInteractableSection = () => {
                     value: false,
                   })}></DeleteDialogComponent>
                 </DialogComponent>
-                <Button
-                  className={'bg-blue-600 hover:bg-blue-700'}>Edit <EditIcon></EditIcon></Button>
+                <Link href={`/posts/${post.id}/edit-post`}>
+                  <Button
+                    className={'bg-blue-600 hover:bg-blue-700'}>Edit <EditIcon></EditIcon></Button>
+                </Link>
               </div>
             ) : (
               <div className={'flex items-center gap-3'}>
@@ -125,7 +128,7 @@ export const PostInteractableSection = () => {
                   onClick={() => isAuthenticated ? toggleLikes() : toast('Log In to like')}
                   variant="outline"
                   className={cn(isLoading ? post.isLikedByUser && 'text-red-600 fill-red-600' : hasLiked && 'text-red-600 fill-red-600')}>Like <HeartIcon /></Button>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" onClick={() => handleDownload(post.postImageUrl)}>
                   <Button variant="outline">Save <ShareIcon /></Button>
                 </div>
               </div>

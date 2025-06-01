@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { NewPostData } from '@/lib/api-client/change-user-info';
+import { PostData } from '@/lib/api-client/change-user-info';
 import { getUserByToken } from '@/lib/helpers/helper-functions';
 
 export async function POST(req: NextRequest) {
-  const data = (await req.json()) as NewPostData;
+  const data = (await req.json()) as PostData;
   const user = await getUserByToken(req);
 
   if (!user) {

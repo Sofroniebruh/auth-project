@@ -1,4 +1,5 @@
 import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
+import { PostData } from '@/lib/api-client/change-user-info';
 
 export async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts`, {
@@ -26,7 +27,7 @@ export async function getPostsWithoutOpenedPost(id: string) {
 
 export async function likePost(id: number) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
   });
 
   return res.ok;
@@ -39,3 +40,19 @@ export async function deletePost(id: number) {
 
   return res.ok;
 }
+
+export async function updatePost(data: PostData, id: number) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(
+      {
+        postName: data.name,
+        postImageUrl: data.imageUrl,
+        description: data.description,
+      },
+    ),
+  });
+
+  return res.ok;
+}
+

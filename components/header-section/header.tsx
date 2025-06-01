@@ -17,6 +17,7 @@ import { sheetStore } from '@/lib/store';
 export const HeaderComponent = () => {
   const pathname = usePathname();
   const isProfilePage = pathname.startsWith('/profile');
+  const isEditPostPage = pathname.includes('/edit-post');
   const { isAuthenticated, user } = useAuth();
   const isOpenSheet = useStore(sheetStore, (state) => state.isOpenSheet);
   const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
@@ -41,7 +42,7 @@ export const HeaderComponent = () => {
             {isAuthenticated && user ? (
               <Link onClick={() => setIsOpenSheet(false)} href={`/profile/${user.id}`}>
                 <li
-                  className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/profile') && 'text-blue-600')}>
+                  className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/profile') && !pathname.includes('new-post') && 'text-blue-600')}>
                   <UserIcon></UserIcon> Profile
                 </li>
               </Link>
@@ -55,7 +56,7 @@ export const HeaderComponent = () => {
             }
           </ul>
           {isAuthenticated && user && (
-            <Link href={`/profile/${user.id}/new-post`}>
+            <Link onClick={() => setIsOpenSheet(false)} href={`/profile/${user.id}/new-post`}>
               <Button size={'lg'}
                       className={'w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center'}>Add
                 new
@@ -64,7 +65,7 @@ export const HeaderComponent = () => {
           )}
         </div>
       </SheetComponent>
-      {!isProfilePage && (
+      {(!isEditPostPage && !isProfilePage) && (
         <>
           <HeaderSearchBig />
           <HeaderSearchSmall />

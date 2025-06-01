@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/components/contexts/auth-context';
 import { useLikes } from '@/lib/hooks/swr';
 import { usePathname } from 'next/navigation';
-import { generatePresignedURL } from '@/lib/aws/presigned-url-generator';
+import { handleDownload } from '@/lib/helpers/edit-post-helper';
 
 interface Props {
   image: string,
@@ -35,19 +35,6 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
       setIsLoaded(true);
     };
   }, [image]);
-
-  const handleEdit = (id: number) => {
-    console.log(id);
-  };
-
-  const handleDownload = async (link: string) => {
-    const download = document.createElement('a');
-    download.href = await generatePresignedURL(link.split('.com/')[1]);
-    download.download = 'pinterest-image.jpg';
-    document.body.appendChild(download);
-    download.click();
-    document.body.removeChild(download);
-  };
 
   return (
     <div className={'break-inside-avoid rounded-lg shadow-sm overflow-hidden relative'}>
@@ -75,12 +62,12 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
           </div>
           {isProfilePage ? (
             isOwner && (
-              <div
-                onClick={() => handleEdit(id)}
-                className="rounded-full huh bg-white p-2 cursor-pointer hover:bg-white/70"
+              <Link
+                href={`/posts/${id}/edit-post`}
+                className="rounded-full bg-white p-2 hover:bg-white/70 transition-colors duration-200"
               >
                 <EditIcon size={20} />
-              </div>
+              </Link>
             )
           ) : (
             <div
@@ -90,19 +77,22 @@ export const PostCardComponent = ({ image, id, isOwner, isLiked }: Props) => {
               className="rounded-full bg-white p-2 cursor-pointer hover:bg-white/70"
             >
               {isOwner ? (
-                <div
-                  onClick={() => handleEdit(id)}
-                  className="rounded-full cursor-pointer"
+                <Link
+                  href={`/posts/${id}/edit-post`}
+                  className="rounded-full block"
                 >
                   <EditIcon size={20} />
-                </div>
+                </Link>
               ) : (
                 <HeartIcon
                   size={20}
-                  className={cn(isLoading ? isLiked && 'fill-red-600 text-red-600' : hasLiked && 'fill-red-600 text-red-600')}
+                  className={cn(
+                    isLoading
+                      ? isLiked && 'fill-red-600 text-red-600'
+                      : hasLiked && 'fill-red-600 text-red-600',
+                  )}
                 />
               )}
-
             </div>
           )}
         </div>

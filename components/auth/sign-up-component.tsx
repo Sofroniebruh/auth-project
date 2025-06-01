@@ -13,11 +13,14 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { HandleNextStage } from '@/lib/helpers';
 import { useAuth } from '@/components/contexts/auth-context';
+import { useStore } from 'zustand/react';
+import { sheetStore } from '@/lib/store';
 
 export const SignUpComponent = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const { setUser } = useAuth();
   const router = useRouter();
+  const setSheetIsOpen = useStore(sheetStore, (state) => state.setIsOpenSheet);
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(formRegisterSchema),
     defaultValues: {
@@ -37,6 +40,7 @@ export const SignUpComponent = () => {
     const res = await API.auth.register(data);
     if (res.status === 200) {
       setUser(res.user);
+      setSheetIsOpen(false);
       router.push('/posts');
       toast.success('Register successful');
 

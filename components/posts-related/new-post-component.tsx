@@ -4,13 +4,13 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { DragAndDropImageComponent } from '@/components/common';
 import { useHandleImageDropZone } from '@/lib/hooks/useHandleImageDropZone';
 import { Input } from '@/components/ui-components/ui/input';
-import { newPostSchema, NewPostSchemaType } from '@/components/auth/schema';
+import { newPostSchema, PostSchemaType } from '@/components/auth/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { Button } from '@/components/ui-components/ui/button';
 import { API } from '@/lib/api-client/api';
 import { toast } from 'sonner';
-import { NewPostData } from '@/lib/api-client/change-user-info';
+import { PostData } from '@/lib/api-client/change-user-info';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useAuth } from '@/components/contexts/auth-context';
@@ -24,7 +24,7 @@ export const NewPostComponent = () => {
     uploadedFile,
     setUploadedFile,
   } = useHandleImageDropZone({ isPfp: false, id: user!.id });
-  const form = useForm<NewPostSchemaType>({
+  const form = useForm<PostSchemaType>({
     resolver: zodResolver(newPostSchema),
     defaultValues: {
       name: '',
@@ -47,16 +47,16 @@ export const NewPostComponent = () => {
     };
   }, [previewImage]);
 
-  const onSubmit = async (data: NewPostSchemaType) => {
+  const onSubmit = async (data: PostSchemaType) => {
     const image = await API.uploadImage.uploadPublicImage(uploadedFile!);
 
-    if (!image) {
+    if (!image || image instanceof Error) {
       toast.error('Image upload failed');
 
       return;
     }
 
-    const newPostData: NewPostData = {
+    const newPostData: PostData = {
       ...data,
       imageUrl: image,
     };

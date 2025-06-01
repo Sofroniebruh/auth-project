@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { updatePost } from '@/components/auth/schema';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
@@ -19,7 +20,14 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
         id: Number(id),
       },
       include: {
-        createdBy: true,
+        createdBy: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            pfpUrl: true,
+          },
+        },
         comments: {
           select: {
             likes: true,
@@ -53,7 +61,7 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     };
 
     if (!user) {
-      return NextResponse.json({ posts: postWithRelations, owner, isOwner: isOwner }, { status: 200 });
+      return NextResponse.json({ post: postWithRelations, owner, isOwner: isOwner }, { status: 200 });
     }
 
     isOwner = owner.email === user.email;
@@ -76,7 +84,7 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
-export async function PUT(req: NextRequest, { params }: Promise<Params>) {
+export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);
@@ -141,6 +149,52 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
+export async function PUT(req: NextRequest, { params }: Promise<Params>) {
+  try {
+    const { id } = await params;
+    const user = await getUserByToken(req);
+    const body = await req.json();
+
+    const postToUpdate = await prismaClient.post.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!postToUpdate) {
+      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+    }
+
+    if (!user) {
+      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+    }
+
+    if (user.id !== postToUpdate.userId) {
+      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+    }
+
+    const data = updatePost.parse(body);
+
+    const updatedPost = await prismaClient.post.update({
+      where: {
+        id: postToUpdate.id,
+      },
+      data,
+    });
+
+    return NextResponse.json({ updatedPost }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    console.error(error);
+    return NextResponse.json({ error: 'Error updating the post' }, { status: 500 });
+  }
+}
+
+// @ts-ignore
 export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
   try {
     const { id } = await params;
@@ -155,6 +209,8 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
         id: Number(id),
       },
     });
+
+    return NextResponse.json({ message: 'Post was deleted successfully' }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

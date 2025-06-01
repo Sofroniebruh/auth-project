@@ -1120,7 +1120,7 @@ export namespace Prisma {
     next: (params: MiddlewareParams) => $Utils.JsPromise<T>,
   ) => $Utils.JsPromise<T>
 
-  // tested in getLogLevel.test.ts
+  // tested in getLogLevel.edit-post-helper.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
 
   /**

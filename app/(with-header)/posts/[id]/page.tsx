@@ -30,7 +30,7 @@ export default async function PostPage({ params }: Promise<Params>) {
 
     const data = (await res.json()) as { post: PostWithRelations, owner: PostOwner, isOwner: boolean };
     const { post, owner, isOwner } = data;
-
+    
     if (data.post) {
       const likes = data.post.likes.length;
       const totalLikes = totalLikesValidator(likes);

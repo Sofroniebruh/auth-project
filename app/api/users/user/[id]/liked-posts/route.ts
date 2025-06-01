@@ -7,7 +7,7 @@ import { getUserByToken } from '@/lib/helpers/helper-functions';
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
   try {
     const userByToken = await getUserByToken(req);
-    const { id } = params;
+    const { id } = await params;
     const user = await prismaClient.user.findUnique({
       where: {
         id: Number(id),

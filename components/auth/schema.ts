@@ -52,9 +52,14 @@ export const updateProfileUsernameOrProfilePictureSchemaForAPI = z.object({
   pfpUrl: z.string().optional(),
 });
 
+export const updatePost = z.object({
+  postImageUrl: z.string().optional(),
+  postName: z.string().optional(),
+  description: z.string().optional(),
+});
+
 export type InputSchemaType = z.infer<typeof inputSchema>
-export type UpdatedUserAPISchema = z.infer<typeof updateProfileUsernameOrProfilePictureSchemaForAPI>
-export type NewPostSchemaType = z.infer<typeof newPostSchema>
+export type PostSchemaType = z.infer<typeof newPostSchema>
 export type UsernameSchemaType = z.infer<typeof usernameSchema>
 export type TwoPasswordsSchemaType = z.infer<typeof twoPasswordsSchema>
 export type EmailType = z.infer<typeof emailSchema>

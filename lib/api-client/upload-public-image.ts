@@ -12,5 +12,5 @@ export async function uploadPublicImage(file: File) {
     return image.link;
   }
 
-  return res.ok;
+  return new Error(res.statusText);
 }

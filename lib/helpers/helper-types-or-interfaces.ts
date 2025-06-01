@@ -5,7 +5,6 @@ export interface PostWithRelations extends Post {
   createdBy: {
     id: number
     email: string
-    password: string | null
     username: string | null
     pfpUrl: string | null
   };
