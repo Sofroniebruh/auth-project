@@ -14,17 +14,22 @@ export default async function EditPostPage({ params }: Promise<Params>) {
     redirect('/sign-in');
   }
 
+  const postId = Number(id);
+  if (!postId || !Number.isSafeInteger(postId) || postId > 2147483647) {
+    redirect('/not-found');
+  }
+
   const post = await prismaClient.post.findUnique({
     where: {
-      id: Number(id),
+      id: postId,
     },
   });
 
-  if (post) {
-    return (
-      <EditPostComponent post={post}></EditPostComponent>
-    );
-  } else {
-    return null;
+  if (!post) {
+    redirect('/not-found');
   }
+
+  return (
+    <EditPostComponent post={post}></EditPostComponent>
+  );
 }

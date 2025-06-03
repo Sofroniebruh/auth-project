@@ -18,15 +18,16 @@ export const useHandleImageDropZone = ({ isPfp, id }: Props) => {
 
   const fetchUserImage = async () => {
     setIsLoading(true);
-    const { user } = await API.getUserInfo.getUserInfo(id.toString());
+    const user = await API.getUserInfo.getUserInfo(id.toString());
 
-    if (user.pfpUrl == null || user.pfpUrl == '') {
-      setIsLoading(false);
+    if (user && !(user instanceof Error)) {
+      if (user.user.pfpUrl == null || user.user.pfpUrl == '') {
+        setIsLoading(false);
 
-      return;
+        return;
+      }
+      setProfilePicture(user.user.pfpUrl);
     }
-
-    setProfilePicture(user.pfpUrl);
   };
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export const useHandleImageDropZone = ({ isPfp, id }: Props) => {
 
   const handleImage = async (file: File) => {
     const link = await API.uploadImage.uploadPublicImage(file);
-    if (link) {
+    if (link && !(link instanceof Error)) {
       if (await API.changeUserInfo.changeUserPfp(link, id.toString())) {
         setProfilePicture(link);
         toast('Image uploaded successfully');

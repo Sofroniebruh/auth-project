@@ -19,12 +19,13 @@ import { useAuth } from '@/components/contexts/auth-context';
 import { mutate as globalMutate } from 'swr';
 import { useStore } from 'zustand/react';
 import { sheetStore } from '@/lib/store';
+import { UserWithNoPassword } from '@/lib/helpers/helper-types-or-interfaces';
 
 export const SignInComponent = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const { setUser } = useAuth();
   const router = useRouter();
-  const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
+  const setAllSheetsClosed = useStore(sheetStore, (state) => state.setAllSheetsClosed);
   const form = useForm<LoginFormType>({
     resolver: zodResolver(formLoginSchema),
     defaultValues: {
@@ -47,8 +48,8 @@ export const SignInComponent = () => {
     const res = await API.auth.login(data);
 
     if (!(res instanceof Error) && res.status === 200) {
-      setIsOpenSheet(false);
-      setUser(res.user);
+      setAllSheetsClosed();
+      setUser(res.user as UserWithNoPassword);
       await globalMutate(() => true, undefined, { revalidate: false });
       router.push('/posts');
       toast.success('Login successful');

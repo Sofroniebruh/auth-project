@@ -19,7 +19,7 @@ import { useUserUsername } from '@/lib/hooks/swr';
 import { mutate as globalMutate } from 'swr';
 import { DeleteDialogComponent } from '@/components/common/delete-dialog-component';
 import { useStore } from 'zustand/react';
-import { dialogStore } from '@/lib/store';
+import { dialogStore, sheetStore } from '@/lib/store';
 
 interface Props {
   user: ServerUserType;
@@ -28,10 +28,13 @@ interface Props {
 export const ProfileComponent = ({ user }: Props) => {
     const [saveDisabled, setSaveDisabled] = useState(true);
     const { mutate, changeUsername, isLoading, profileUser } = useUserUsername(user.user.id.toString());
-    const { logout } = useAuth();
+    const { logout, setUser } = useAuth();
     const dialogs = useStore(dialogStore, (state) => state.dialogs);
     const isOpenDeleteAccountDialog = dialogs.some(d => d.key.name === 'deleteAccount');
     const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
+    const sheets = useStore(sheetStore, (state) => state.sheets);
+    const isOpenSettingsSheet = sheets.some(s => s.key.name === 'settings sheet');
+    const setIsSheetOpen = useStore(sheetStore, (state) => state.setIsSheetOpen);
 
     function truncate(text: string, maxLength: number): string {
       if (!text) return '';
@@ -51,6 +54,7 @@ export const ProfileComponent = ({ user }: Props) => {
     const handleUsernameSubmit = async (value: UsernameSchemaType, id: string) => {
       try {
         await changeUsername(value.username, id);
+        setIsSheetOpen(false, { key: { name: 'settings sheet' }, value: false });
         await mutate();
         return;
       } catch (error) {
@@ -61,7 +65,9 @@ export const ProfileComponent = ({ user }: Props) => {
 
     const handleDelete = async () => {
       if (await API.changeUserInfo.deleteUser(user.user.id.toString())) {
-        router.push('/');
+        setUser(null);
+        router.replace('/');
+        router.refresh();
 
         return;
       }
@@ -108,8 +114,9 @@ export const ProfileComponent = ({ user }: Props) => {
                    className={'bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4'}>
                 Log Out <LogOutIcon></LogOutIcon>
               </div>
-              <SheetComponent triggerElement={
-                <div className={'rounded-md border shadow-sm cursor-pointer flex p-2 gap-2 px-4'}>
+              <SheetComponent openState={isOpenSettingsSheet} triggerElement={
+                <div onClick={() => setIsSheetOpen(true, { key: { name: 'settings sheet' }, value: true })}
+                     className={'rounded-md border shadow-sm cursor-pointer flex p-2 gap-2 px-4'}>
                   Settings <SettingsIcon></SettingsIcon>
                 </div>
               } sheetTitle={'Settings'}>
@@ -160,7 +167,7 @@ export const ProfileComponent = ({ user }: Props) => {
                                          account</div>
                                      } title={'Are you sure?'} description={'This action can not be undone'}>
                       <DeleteDialogComponent deleteButton={
-                        <Button size={'lg'} variant={'destructive'}>Delete My account</Button>
+                        <Button size={'lg'} variant={'destructive'} onClick={handleDelete}>Delete My account</Button>
                       } setDialogOpen={() => setIsOpen(false, { key: { name: 'deleteAccount' }, value: false })}
                       />
                     </DialogComponent>

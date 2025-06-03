@@ -1,13 +1,13 @@
 'use client';
 
 import React, { createContext, useContext, useState } from 'react';
-import { User } from '@prisma/client';
 import { API } from '@/lib/api-client/api';
+import { UserWithNoPassword } from '@/lib/helpers/helper-types-or-interfaces';
 
 type AuthContextType = {
-  user: User | null;
+  user: UserWithNoPassword | null;
   isAuthenticated: boolean;
-  setUser: (user: User | null) => void;
+  setUser: (user: UserWithNoPassword | null) => void;
   logout: () => Promise<void>;
 };
 
@@ -24,9 +24,9 @@ export const AuthContext = createContext<AuthContextType>(defaultValue);
 
 export const AuthProviderUser = ({ children, initialUser }: {
   children: React.ReactNode,
-  initialUser: User | null
+  initialUser: UserWithNoPassword | null
 }) => {
-  const [user, setUser] = useState<User | null>(initialUser);
+  const [user, setUser] = useState<UserWithNoPassword | null>(initialUser);
 
   const logout = async () => {
     try {

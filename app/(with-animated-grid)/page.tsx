@@ -11,7 +11,7 @@ import { sheetStore } from '@/lib/store';
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
-  const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
+  const setAllSheetsClosed = useStore(sheetStore, (state) => state.setAllSheetsClosed);
 
   return (
     <CommonCard>
@@ -32,7 +32,7 @@ export default function Home() {
               in <LogInIcon></LogInIcon></Button>
           </Link>
         )}
-        <Link onClick={() => setIsOpenSheet(false)} href="/posts" className={'w-full flex items-center justify-center'}>
+        <Link onClick={setAllSheetsClosed} href="/posts" className={'w-full flex items-center justify-center'}>
           <Button
             className={'w-2/3 shadow-sm bg-linear-to-r/decreasing from-blue-50 to-white text-black border text-base sm:text-lg py-5 rounded-lg'}>Browse...</Button>
         </Link>

@@ -19,28 +19,32 @@ export const HeaderComponent = () => {
   const isProfilePage = pathname.startsWith('/profile');
   const isEditPostPage = pathname.includes('/edit-post');
   const { isAuthenticated, user } = useAuth();
-  const isOpenSheet = useStore(sheetStore, (state) => state.isOpenSheet);
-  const setIsOpenSheet = useStore(sheetStore, (state) => state.setIsOpenSheet);
+  const sheets = useStore(sheetStore, (state) => state.sheets);
+  const isHeaderSheetOpen = sheets.some((s) => s.key.name === 'header sheet');
+  const setIsSheetOpen = useStore(sheetStore, (state) => state.setIsSheetOpen);
 
   return (
     <header
       className={'flex py-5 px-5 w-full justify-between items-center bg-white/70 backdrop-blur-md fixed top-0 z-50'}>
-      <SheetComponent openState={isOpenSheet} triggerElement={<MenuIcon onClick={() => setIsOpenSheet(true)} size={25}
-                                                                        className={'cursor-pointer'}></MenuIcon>}
+      <SheetComponent openState={isHeaderSheetOpen} triggerElement={<MenuIcon
+        onClick={() => setIsSheetOpen(true, { key: { name: 'header sheet' }, value: true })} size={25}
+        className={'cursor-pointer'}></MenuIcon>}
                       sheetTitle={'Menu'}
                       side={'left'}>
         <div className={'flex flex-col p-10 gap-5 max-w-[345px] sm:w-full'}>
           <h1 className={'text-3xl sm:text-5xl font-semibold'}>Cube</h1>
           <div className={'w-full h-0.5 bg-black'}></div>
           <ul>
-            <Link onClick={() => setIsOpenSheet(false)} href={'/posts'}>
+            <Link onClick={() => setIsSheetOpen(false, { key: { name: 'header sheet' }, value: false })}
+                  href={'/posts'}>
               <li
                 className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/posts') && 'text-blue-600')}>
                 <ImageIcon></ImageIcon> Posts
               </li>
             </Link>
             {isAuthenticated && user ? (
-              <Link onClick={() => setIsOpenSheet(false)} href={`/profile/${user.id}`}>
+              <Link onClick={() => setIsSheetOpen(false, { key: { name: 'header sheet' }, value: false })}
+                    href={`/profile/${user.id}`}>
                 <li
                   className={cn('text-lg sm:text-2xl flex gap-2 items-center justify-start cursor-pointer', pathname.startsWith('/profile') && !pathname.includes('new-post') && 'text-blue-600')}>
                   <UserIcon></UserIcon> Profile
@@ -56,7 +60,8 @@ export const HeaderComponent = () => {
             }
           </ul>
           {isAuthenticated && user && (
-            <Link onClick={() => setIsOpenSheet(false)} href={`/profile/${user.id}/new-post`}>
+            <Link onClick={() => setIsSheetOpen(false, { key: { name: 'header sheet' }, value: false })}
+                  href={`/profile/${user.id}/new-post`}>
               <Button size={'lg'}
                       className={'w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center'}>Add
                 new

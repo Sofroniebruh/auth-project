@@ -2,6 +2,7 @@ import { PostProvider } from '@/components/contexts/post-context';
 import { Params, PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { cookies } from 'next/headers';
 import { PostComponent } from '@/components/posts-related';
+import { redirect } from 'next/navigation';
 
 // @ts-ignore
 export default async function PostPage({ params }: Promise<Params>) {
@@ -19,18 +20,26 @@ export default async function PostPage({ params }: Promise<Params>) {
     return likes.toString();
   };
 
-  try {
+  const postId = Number(id);
+  if (!postId || !Number.isSafeInteger(postId) || postId > 2147483647) {
+    redirect('/not-found');
+  }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}`, {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${postId}`, {
       method: 'GET',
       headers: {
         Cookie: `jwt=${token}`,
       },
     });
 
+    if (!res.ok) {
+      redirect('/not-found');
+    }
+
     const data = (await res.json()) as { post: PostWithRelations, owner: PostOwner, isOwner: boolean };
     const { post, owner, isOwner } = data;
-    
+
     if (data.post) {
       const likes = data.post.likes.length;
       const totalLikes = totalLikesValidator(likes);
@@ -45,12 +54,10 @@ export default async function PostPage({ params }: Promise<Params>) {
     }
   } catch (e) {
     if (e instanceof Error) {
-      console.error(e.message);
-
-      return null;
+      console.error('Failed to fetch post data:', e.message);
+      redirect('/not-found');
     }
-    console.error(e);
-
-    return null;
+    console.error('Failed to fetch post data:', e);
+    redirect('/not-found');
   }
 }

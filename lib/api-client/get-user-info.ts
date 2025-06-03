@@ -12,7 +12,7 @@ export const getUserInfo = async (id: string, token?: string | undefined) => {
     return (await res.json()) as { user: UserWithNoPassword, isOwner: boolean };
   }
 
-  throw new Error(res.statusText);
+  return new Error(res.statusText);
 };
 
 export const getAllPostsLikedByUser = async (id: string) => {

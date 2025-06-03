@@ -30,7 +30,6 @@ export async function updateComment(data: EditCommentStructure) {
     },
     body: JSON.stringify({
       message: data.message,
-      commentId: data.commentId,
     }),
   });
 

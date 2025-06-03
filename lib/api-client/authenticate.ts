@@ -10,8 +10,10 @@ export async function login(data: LoginFormType) {
     body: JSON.stringify(data),
   });
 
+  const json = await response.json();
+
   const receivedResponse = {
-    ...(await response.json()) as { message: string, user: User },
+    ...json as { message: string, user: User },
     status: response.status,
   };
 
@@ -19,7 +21,7 @@ export async function login(data: LoginFormType) {
     return receivedResponse;
   }
 
-  return new Error(receivedResponse.message);
+  return new Error(json.error);
 }
 
 export async function register(data: RegisterFormType) {
@@ -31,8 +33,10 @@ export async function register(data: RegisterFormType) {
     body: JSON.stringify(data),
   });
 
+  const json = await response.json();
+
   const receivedResponse = {
-    ...(await response.json()) as { message: string, user: User },
+    ...json as { message: string, user: User },
     status: response.status,
   };
 
@@ -40,7 +44,7 @@ export async function register(data: RegisterFormType) {
     return receivedResponse;
   }
 
-  throw new Error(receivedResponse.message);
+  return new Error(json.error);
 }
 
 export async function logout() {
