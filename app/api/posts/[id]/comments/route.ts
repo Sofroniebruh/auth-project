@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
@@ -10,6 +10,10 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     const page = Number(req.nextUrl.searchParams.get('page'));
     const limit = Number(req.nextUrl.searchParams.get('limit'));
     const user = await getUserByToken(req);
+
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
 
     const [paginatedComments, count] = await prismaClient.$transaction([
       prismaClient.comment.findMany({
@@ -42,7 +46,12 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
 
     const totalPages = Math.ceil(count / limit);
 
-    const response = NextResponse.json({ comments: paginatedComments, totalPages: totalPages, isOwner: false });
+    const response = NextResponse.json({
+      message: 'Comments were processed successfully',
+      comments: paginatedComments,
+      totalPages: totalPages,
+      isOwner: false,
+    }, { status: 200 });
 
 
     if (!user) {
@@ -61,12 +70,15 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       isLiked: commentsLikedByCurrentUser.some((likedComment) => likedComment.commentId === comment.id),
     }));
 
-    return NextResponse.json({ comments: postCommentsWithIsOwner, totalPages: totalPages });
+    return NextResponse.json({
+      message: 'Comments were processed successfully',
+      comments: postCommentsWithIsOwner,
+      totalPages: totalPages,
+    }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message);
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

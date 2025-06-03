@@ -39,18 +39,18 @@ model Post {
 }
 
 model Like {
-  userLiked User @relation(fields: [userId], references: [id])
+  userLiked User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  postLiked Post @relation(fields: [postId], references: [id])
+  postLiked Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
 
   @@id([userId, postId])
 }
 
 model CommentLike {
-  userLiked    User    @relation(fields: [userId], references: [id])
+  userLiked    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
-  commentLiked Comment @relation("CommentToLikes", fields: [commentId], references: [id])
+  commentLiked Comment @relation("CommentToLikes", fields: [commentId], references: [id], onDelete: Cascade)
   commentId    Int
 
   @@id([userId, commentId])
@@ -58,10 +58,10 @@ model CommentLike {
 
 model Comment {
   id             Int           @id @default(autoincrement())
-  commentOwner   User          @relation(fields: [userId], references: [id])
+  commentOwner   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   commentContent String
-  postCommented  Post          @relation(fields: [postId], references: [id])
+  postCommented  Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId         Int
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @default(now())

@@ -1,40 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { tokenCheck } from '@/lib/auth';
 import { prismaClient } from '@/prisma/prisma-client';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function PUT(req: NextRequest, { params }: Promise<Params>) {
   try {
     const { id } = await params;
-    const email = await tokenCheck(req);
-    const commentData = (await req.json()) as { message: string, commentId: number };
+    const user = await getUserByToken(req);
+    const commentData = (await req.json()) as { message: string };
 
-    if (!email) {
-      throw new Error();
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!commentData.message || !commentData.message.trim()) {
+      return NextResponse.json({ error: 'Message is required' }, { status: 400 });
+    }
+
+    const commentToUpdate = await prismaClient.comment.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!commentToUpdate) {
+      return NextResponse.json({ error: 'Comment was not found' }, { status: 404 });
+    }
+
+    if (commentToUpdate.userId !== user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const updatedComment = await prismaClient.comment.update({
       where: {
-        id: commentData.commentId,
+        id: commentToUpdate.id,
       },
       data: {
         commentContent: commentData.message,
       },
     });
 
-    if (!updatedComment) {
-      return NextResponse.json({ message: 'Error updating comment' }, { status: 500 });
+    return NextResponse.json({ message: 'Comment was updated successfully', comment: updatedComment }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    return NextResponse.json({ message: 'Comment was successfully updated ' }, { status: 200 });
-  } catch (err) {
-    if (err instanceof Error) {
-      return NextResponse.json({ message: 'Error retrieving user' }, { status: 401 });
-    }
-
-    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
 
@@ -42,39 +58,54 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
 export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
   try {
     const { id } = await params;
-    const email = await tokenCheck(req);
+    const user = await getUserByToken(req);
 
-    if (!email) {
-      throw new Error();
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
     }
 
-    const deletedComment = await prismaClient.comment.delete({
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const commentToDelete = await prismaClient.comment.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    if (!deletedComment) {
-      return NextResponse.json({ message: 'Error deleting your comment' }, { status: 500 });
+    if (!commentToDelete) {
+      return NextResponse.json({ error: 'Comment was not found' }, { status: 404 });
     }
+
+    if (commentToDelete.userId !== user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await prismaClient.comment.delete({
+      where: {
+        id: commentToDelete.id,
+      },
+    });
 
     return NextResponse.json({ message: 'Comment was deleted successfully' }, { status: 200 });
-
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error(err);
-      return NextResponse.json({ message: 'Error retrieving user' }, { status: 401 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
 
 // @ts-ignore
 export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const user = await getUserByToken(req);
+
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -87,7 +118,7 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
     });
 
     if (!comment) {
-      return NextResponse.json({ error: 'Comment not found', status: 404 });
+      return NextResponse.json({ error: 'Comment was not found' }, { status: 404 });
     }
 
     const commentHasLiked = await prismaClient.commentLike.findUnique({
@@ -120,12 +151,10 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
     });
 
     return NextResponse.json({ message: 'Comment was unliked' }, { status: 200 });
-
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message);
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

@@ -4,27 +4,32 @@ import { PostData } from '@/lib/api-client/change-user-info';
 import { getUserByToken } from '@/lib/helpers/helper-functions';
 
 export async function POST(req: NextRequest) {
-  const data = (await req.json()) as PostData;
-  const user = await getUserByToken(req);
+  try {
+    const data = (await req.json()) as PostData;
+    const user = await getUserByToken(req);
 
-  if (!user) {
-    return NextResponse.json({ message: 'No user was found' }, { status: 404 });
+    if (!data.imageUrl || !data.name) return NextResponse.json({ error: 'Post image and post name must be provided' }, { status: 400 });
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const post = await prismaClient.post.create({
+      data: {
+        userId: user.id,
+        postName: data.name,
+        description: data.description,
+        postImageUrl: data.imageUrl,
+      },
+    });
+
+    return NextResponse.json({ message: 'Post was created successfully', post }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
-
-  const newPost = await prismaClient.post.create({
-    data: {
-      userId: user.id,
-      postName: data.name,
-      description: data.description,
-      postImageUrl: data.imageUrl,
-    },
-  });
-
-  if (newPost) {
-    return NextResponse.json({ message: 'Post created successfully' }, { status: 200 });
-  }
-
-  return NextResponse.json({ message: 'Error creating new Post' }, { status: 500 });
 }
 
 export async function GET(req: NextRequest) {
@@ -58,7 +63,10 @@ export async function GET(req: NextRequest) {
       });
 
     if (!user) {
-      return NextResponse.json({ posts: allPosts }, { status: 200 });
+      return NextResponse.json({
+        message: 'Posts were retrieved successfully',
+        posts: allPosts,
+      }, { status: 200 });
     }
 
     const postsWithLikedBySelectedUser = allPosts.map((post) => ({
@@ -67,10 +75,14 @@ export async function GET(req: NextRequest) {
       isOwner: post.userId === user.id,
     }));
 
-    return NextResponse.json({ posts: postsWithLikedBySelectedUser }, { status: 200 });
-  } catch (err) {
-    console.error(err);
-
-    return NextResponse.json({ message: 'Error fetching posts' }, { status: 500 });
+    return NextResponse.json({
+      message: 'Posts were retrieved successfully',
+      posts: postsWithLikedBySelectedUser,
+    }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

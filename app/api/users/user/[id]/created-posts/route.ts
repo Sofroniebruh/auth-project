@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
   try {
     const userByToken = await getUserByToken(req);
     const { id } = await params;
+
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
     const user = await prismaClient.user.findUnique({
       where: {
         id: Number(id),
@@ -15,7 +20,7 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     });
 
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'User was not found' }, { status: 404 });
     }
 
     const createdPosts = await prismaClient.post.findMany({
@@ -29,12 +34,14 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       isOwner: userByToken ? post.userId === user.id && userByToken.id === user.id : false,
     }));
 
-    return NextResponse.json({ posts: postsWithIsOwners }, { status: 200 });
-  } catch (err) {
-    if (err instanceof Error) {
-      return NextResponse.json({ message: 'Error retrieving user' }, { status: 401 });
+    return NextResponse.json({
+      message: 'Posts created by user were processed successfully',
+      posts: postsWithIsOwners,
+    }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

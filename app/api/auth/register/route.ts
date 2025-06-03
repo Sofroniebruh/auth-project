@@ -4,34 +4,46 @@ import { hashPassword } from '@/lib/auth/password-actions';
 import { signJWT } from '@/lib/auth/jwt-actions';
 
 export async function POST(req: NextRequest) {
-  const { email, password } = (await req.json()) as { email: string; password: string };
+  try {
+    const { email, password } = (await req.json()) as { email: string; password: string };
 
-  const isEmailTaken = await prismaClient.user.findUnique({
-    where: { email },
-  });
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    }
 
-  if (isEmailTaken) {
-    return NextResponse.json({ message: 'Email already taken' }, { status: 401 });
+    const isEmailTaken = await prismaClient.user.findUnique({
+      where: { email },
+    });
+
+    if (isEmailTaken) {
+      return NextResponse.json({ error: 'Email already taken' }, { status: 401 });
+    }
+
+    const user = await prismaClient.user.create({
+      data: {
+        email,
+        password: await hashPassword(password),
+        username: email,
+      },
+    });
+
+    const { password: _, ...safeUser } = user;
+    const token = signJWT({ email: user.email, id: user.id });
+    const res = NextResponse.json({ message: 'Registered', user: safeUser });
+
+    res.cookies.set('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24,
+    });
+
+    return res;
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
-
-  await prismaClient.user.create({
-    data: {
-      email,
-      password: await hashPassword(password),
-      username: email,
-    },
-  });
-
-  const token = signJWT({ email });
-  const res = NextResponse.json({ message: 'Registered' });
-
-  res.cookies.set('jwt', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 60 * 60 * 24,
-  });
-
-  return res;
 }

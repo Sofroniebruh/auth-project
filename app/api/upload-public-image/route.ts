@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const link = await uploadPublicImage({ formData });
 
   if (!link) {
-    return NextResponse.json({ message: 'Upload failed.' }, { status: 500 });
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 
   return NextResponse.json({ link: link }, { status: 200 });

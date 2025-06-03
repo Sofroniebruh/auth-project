@@ -13,7 +13,7 @@ export async function verifyJWT(token: string) {
   const secret = new TextEncoder().encode(SECRET);
   try {
     const { payload } = await jwtVerify(token, secret);
-    return payload as { email: string, iat: number, exp: number };
+    return payload;
   } catch (error) {
     return null;
   }

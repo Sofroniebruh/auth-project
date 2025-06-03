@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 import { updatePost } from '@/components/auth/schema';
 
 // @ts-ignore
@@ -11,8 +11,8 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     const { id } = await params;
     const user = await getUserByToken(req);
 
-    if (!id) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
     }
 
     const postWithRelations = await prismaClient.post.findUnique({
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     });
 
     if (!postWithRelations) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
     }
 
     const owner = {
@@ -61,7 +61,12 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     };
 
     if (!user) {
-      return NextResponse.json({ post: postWithRelations, owner, isOwner: isOwner }, { status: 200 });
+      return NextResponse.json({
+        message: 'Post was retrieved successfully',
+        post: postWithRelations,
+        owner,
+        isOwner: isOwner,
+      }, { status: 200 });
     }
 
     isOwner = owner.email === user.email;
@@ -71,15 +76,15 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       isLikedByUser: postWithRelations.likes.some((like) => like.userId === user.id),
     };
 
-    return NextResponse.json({ post: postWithUserLikedOrNo, owner: owner, isOwner: isOwner }, { status: 200 });
+    return NextResponse.json({
+      message: 'Post was retrieved successfully',
+      post: postWithUserLikedOrNo, owner: owner, isOwner: isOwner,
+    }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    console.error(error);
-    return NextResponse.json({ error: 'Error retrieving the post' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
 
@@ -89,22 +94,25 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
     const { id } = await params;
     const user = await getUserByToken(req);
 
-    if (!id) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
     }
 
     if (!user) {
-      return NextResponse.json({ message: 'No user was found' }, { status: 404 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const post = await prismaClient.post.findUnique({
       where: {
         id: Number(id),
       },
+      select: {
+        id: true,
+      },
     });
 
     if (!post) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
     }
 
     const existingLike = await prismaClient.like.findUnique({
@@ -136,15 +144,12 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
       },
     });
 
-    return NextResponse.json({ message: 'Post was liked' }, { status: 201 });
+    return NextResponse.json({ message: 'Post was liked' }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    console.error(error);
-    return NextResponse.json({ error: 'Error updating the post' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
 
@@ -155,6 +160,10 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
     const user = await getUserByToken(req);
     const body = await req.json();
 
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
     const postToUpdate = await prismaClient.post.findUnique({
       where: {
         id: Number(id),
@@ -162,15 +171,15 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
     });
 
     if (!postToUpdate) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
     }
 
     if (!user) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     if (user.id !== postToUpdate.userId) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const data = updatePost.parse(body);
@@ -182,15 +191,12 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
       data,
     });
 
-    return NextResponse.json({ updatedPost }, { status: 200 });
+    return NextResponse.json({ message: 'Post was updated successfully', updatedPost }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    console.error(error);
-    return NextResponse.json({ error: 'Error updating the post' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
 
@@ -200,24 +206,43 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
     const { id } = await params;
     const user = await getUserByToken(req);
 
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
     if (!user) {
-      return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const postToDelete = await prismaClient.post.findUnique({
+      where: {
+        id: Number(id),
+      },
+      select: {
+        userId: true,
+        id: true,
+      },
+    });
+
+    if (!postToDelete) {
+      return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
+    }
+
+    if (postToDelete.userId !== user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await prismaClient.post.delete({
       where: {
-        id: Number(id),
+        id: postToDelete.id,
       },
     });
 
     return NextResponse.json({ message: 'Post was deleted successfully' }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    console.error(error);
-    return NextResponse.json({ error: 'Error deleting the post' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

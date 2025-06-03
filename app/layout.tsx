@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'AuthApp',
-  description: 'Auth app for portfolio',
+  title: 'Cube',
+  description: 'Cube app for portfolio',
 };
 
 export default async function RootLayout(

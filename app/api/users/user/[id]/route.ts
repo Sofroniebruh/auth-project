@@ -1,93 +1,136 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { tokenCheck } from '@/lib/auth';
 import { updateProfileUsernameOrProfilePictureSchemaForAPI } from '@/components/auth/schema';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
-  const { id } = await params;
-  const userByToken = await getUserByToken(req);
-  const userById = await prismaClient.user.findUnique({
-    where: {
-      id: Number(id),
-    },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      pfpUrl: true,
-    },
-  });
+  try {
+    const { id } = await params;
+    const userByToken = await getUserByToken(req);
 
-  if (!userById) {
-    return NextResponse.json({ message: 'No user was found' }, { status: 404 });
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
+    const userById = await prismaClient.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        pfpUrl: true,
+      },
+    });
+
+    if (!userById) {
+      return NextResponse.json({ error: 'User was not found' }, { status: 404 });
+    }
+
+    if (!userByToken) {
+      return NextResponse.json({
+        message: 'User was retrieved successfully',
+        user: userById,
+        isOwner: false,
+      }, { status: 200 });
+    }
+
+    const isOwner = userByToken.id === userById.id;
+
+    return NextResponse.json({
+      message: 'User was retrieved successfully',
+      user: userById,
+      isOwner: isOwner,
+    }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
-
-  if (!userByToken) {
-    return NextResponse.json({ user: userById, isOwner: false }, { status: 200 });
-  }
-
-  const isOwner = userByToken.id === userById.id;
-
-  return NextResponse.json({ user: userById, isOwner: isOwner }, { status: 200 });
 }
 
-export async function DELETE(req: NextRequest) {
-  const email = await tokenCheck(req);
+// @ts-ignore
+export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
+  try {
+    const { id } = await params;
+    const user = await getUserByToken(req);
 
-  if (!email) {
-    return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
+    if (!user || user.id !== Number(id)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userToDelete = await prismaClient.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (!userToDelete) {
+      return NextResponse.json({ error: 'User was not found' }, { status: 404 });
+    }
+
+    await prismaClient.user.delete({
+      where: {
+        email: userToDelete.email,
+      },
+    });
+
+    const res = NextResponse.json({ message: 'User was deleted successfully' }, { status: 200 });
+
+    res.cookies.set('jwt', '', {
+      httpOnly: true,
+      path: '/',
+      expires: new Date(0),
+    });
+
+    return res;
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
-
-  const user = await prismaClient.user.delete({
-    where: {
-      email,
-    },
-  });
-
-  if (!user) {
-    return NextResponse.json({ message: 'No user was found' }, { status: 404 });
-  }
-
-  const res = NextResponse.json({ message: 'User was deleted successfully' }, { status: 200 });
-
-  res.cookies.set('jwt', '', {
-    httpOnly: true,
-    path: '/',
-    expires: new Date(0),
-  });
-
-  return res;
 }
 
-export async function PUT(req: NextRequest) {
-  const email = await tokenCheck(req);
-  const body = await req.json();
+// @ts-ignore
+export async function PUT(req: NextRequest, { params }: Promise<Params>) {
+  try {
+    const { id } = await params;
+    const user = await getUserByToken(req);
+    const body = await req.json();
 
-  if (!email) {
-    return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+    if (!isValidId(id)) {
+      return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
+    }
+
+    if (!user || user.id !== Number(id)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const data = updateProfileUsernameOrProfilePictureSchemaForAPI.parse(body);
+
+    const userToUpdate = await prismaClient.user.update({
+      where: {
+        email: user.email,
+      },
+      data,
+    });
+
+    const { password: _, ...safeUser } = userToUpdate;
+
+    return NextResponse.json({ message: 'User was updated successfully', user: safeUser }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
-
-  const user = await prismaClient.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  if (!user) {
-    return NextResponse.json({ message: 'No user was found' }, { status: 404 });
-  }
-
-  const data = updateProfileUsernameOrProfilePictureSchemaForAPI.parse(body);
-
-  await prismaClient.user.update({
-    where: {
-      email,
-    },
-    data,
-  });
-
-  return NextResponse.json({ message: 'User was updated successfully' }, { status: 200 });
 }
