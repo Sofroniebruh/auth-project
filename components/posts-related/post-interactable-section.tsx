@@ -80,9 +80,9 @@ export const PostInteractableSection = () => {
                 <div>
                   <h1 className={'text-md font-semibold'}>Tags</h1>
                   <div className={'break-words w-full flex gap-x-2 flex-wrap'}>
-                    <p>#Frieren</p>
-                    <p>#Anime</p>
-                    <p>#Bladerunner</p>
+                    {post.tagAndPosts.map((tagAndPost) => (
+                      <p key={tagAndPost.tag.id}>#{tagAndPost.tag.tagName}</p>
+                    ))}
                   </div>
                 </div>
                 {isOwner &&

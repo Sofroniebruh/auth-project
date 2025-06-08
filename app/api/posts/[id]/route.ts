@@ -48,6 +48,11 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
             userId: true,
           },
         },
+        tagAndPosts: {
+          include: {
+            tag: true,
+          },
+        },
       },
     });
 

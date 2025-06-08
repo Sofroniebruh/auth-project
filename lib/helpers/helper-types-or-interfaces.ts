@@ -1,4 +1,4 @@
-import { Post } from '@prisma/client';
+import { Post, Tags } from '@prisma/client';
 
 export interface PostWithRelations extends Post {
   isLikedByUser: boolean;
@@ -23,6 +23,13 @@ export interface PostWithRelations extends Post {
     createdAt: Date,
   }[];
   isOwner?: boolean;
+  tagAndPosts: TagAndPost[];
+}
+
+export type TagAndPost = {
+  postId: number
+  tagId: number
+  tag: Tags
 }
 
 export type UserWithNoPassword = {
