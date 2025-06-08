@@ -26,16 +26,17 @@ model User {
 }
 
 model Post {
-  id           Int       @id @default(autoincrement())
-  createdBy    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           Int           @id @default(autoincrement())
+  createdBy    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
   postName     String
   description  String?
   likes        Like[]
   comments     Comment[]
   postImageUrl String
-  createdAt    DateTime  @default(now())
+  createdAt    DateTime      @default(now())
   updatedAt    DateTime?
+  tagAndPosts  TagAndPosts[]
 }
 
 model Like {
@@ -54,6 +55,21 @@ model CommentLike {
   commentId    Int
 
   @@id([userId, commentId])
+}
+
+model Tags {
+  id          Int           @id @default(autoincrement())
+  tagName     String        @unique
+  tagAndPosts TagAndPosts[]
+}
+
+model TagAndPosts {
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+  tag    Tags @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  Int
+
+  @@id([tagId, postId])
 }
 
 model Comment {

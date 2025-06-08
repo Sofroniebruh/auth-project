@@ -6,6 +6,7 @@ import * as getUserInfo from './get-user-info';
 import * as changeUserInfo from './change-user-info';
 import * as posts from './posts-actions';
 import * as comments from './comment-actions';
+import * as tags from './tags-actions';
 
 export const API = {
   tokenCheck,
@@ -16,4 +17,5 @@ export const API = {
   changeUserInfo,
   posts,
   comments,
+  tags,
 };

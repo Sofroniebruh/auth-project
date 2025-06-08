@@ -71,3 +71,8 @@ export type Params = {
 export interface PlainPostsWithIsOwner extends Post {
   isOwner: boolean;
 }
+
+export interface TagsWithIsCreated {
+  tagName: string;
+  isCreated: boolean;
+}

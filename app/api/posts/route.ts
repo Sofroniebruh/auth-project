@@ -23,6 +23,41 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    if (data.selectedTags) {
+      const tagsNotCreatedPreviously = data.selectedTags.filter(tag => !tag.isCreated);
+      const tagsCreatedPreviously = data.selectedTags.filter(tag => tag.isCreated);
+
+      for (const tag of tagsNotCreatedPreviously) {
+        await prismaClient.tags.create({
+          data: {
+            tagName: tag.tagName,
+            tagAndPosts: {
+              create: {
+                postId: post.id,
+              },
+            },
+          },
+        });
+      }
+
+      for (const tag of tagsCreatedPreviously) {
+        const createdTag = await prismaClient.tags.findUnique({
+          where: {
+            tagName: tag.tagName,
+          },
+        });
+
+        if (!createdTag) continue;
+
+        await prismaClient.tagAndPosts.create({
+          data: {
+            postId: post.id,
+            tagId: createdTag.id,
+          },
+        });
+      }
+    }
+
     return NextResponse.json({ message: 'Post was created successfully', post }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
