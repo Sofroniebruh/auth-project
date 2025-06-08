@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
+import { Params, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
+import { getUserByToken, isValidId, validateReceivedHashtags } from '@/lib/helpers/helper-functions';
 import { updatePost } from '@/components/auth/schema';
 
 // @ts-ignore
@@ -164,6 +164,8 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
     const { id } = await params;
     const user = await getUserByToken(req);
     const body = await req.json();
+    const { selectedTags, ...rest } = body;
+    const typedTags: TagsWithIsCreated[] = selectedTags;
 
     if (!isValidId(id)) {
       return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
@@ -179,6 +181,10 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
     }
 
+    if (typedTags) {
+      await validateReceivedHashtags(postToUpdate, typedTags);
+    }
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -187,7 +193,7 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const data = updatePost.parse(body);
+    const data = updatePost.parse(rest);
 
     const updatedPost = await prismaClient.post.update({
       where: {

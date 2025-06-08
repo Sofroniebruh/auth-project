@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { PostData } from '@/lib/api-client/change-user-info';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { getUserByToken, validateReceivedHashtags } from '@/lib/helpers/helper-functions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,38 +24,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (data.selectedTags) {
-      const tagsNotCreatedPreviously = data.selectedTags.filter(tag => !tag.isCreated);
-      const tagsCreatedPreviously = data.selectedTags.filter(tag => tag.isCreated);
-
-      for (const tag of tagsNotCreatedPreviously) {
-        await prismaClient.tags.create({
-          data: {
-            tagName: tag.tagName,
-            tagAndPosts: {
-              create: {
-                postId: post.id,
-              },
-            },
-          },
-        });
-      }
-
-      for (const tag of tagsCreatedPreviously) {
-        const createdTag = await prismaClient.tags.findUnique({
-          where: {
-            tagName: tag.tagName,
-          },
-        });
-
-        if (!createdTag) continue;
-
-        await prismaClient.tagAndPosts.create({
-          data: {
-            postId: post.id,
-            tagId: createdTag.id,
-          },
-        });
-      }
+      await validateReceivedHashtags(post, data.selectedTags);
     }
 
     return NextResponse.json({ message: 'Post was created successfully', post }, { status: 200 });

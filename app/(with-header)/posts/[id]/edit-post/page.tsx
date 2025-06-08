@@ -23,6 +23,13 @@ export default async function EditPostPage({ params }: Promise<Params>) {
     where: {
       id: postId,
     },
+    include: {
+      tagAndPosts: {
+        include: {
+          tag: true,
+        },
+      },
+    },
   });
 
   if (!post) {

@@ -49,6 +49,7 @@ export async function updatePost(data: PostData, id: number) {
         postName: data.name,
         postImageUrl: data.imageUrl,
         description: data.description,
+        selectedTags: data.selectedTags,
       },
     ),
   });

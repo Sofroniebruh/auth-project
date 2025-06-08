@@ -26,6 +26,10 @@ export interface PostWithRelations extends Post {
   tagAndPosts: TagAndPost[];
 }
 
+export interface PostWithTags extends Post {
+  tagAndPosts: TagAndPost[];
+}
+
 export type TagAndPost = {
   postId: number
   tagId: number

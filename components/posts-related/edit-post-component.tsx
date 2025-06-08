@@ -1,6 +1,5 @@
 'use client';
 
-import { Post } from '@prisma/client';
 import { useAuth } from '@/components/contexts/auth-context';
 import { useHandleImageDropZone } from '@/lib/hooks';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -15,9 +14,11 @@ import { Button } from '@/components/ui-components/ui/button';
 import { DragAndDropImageComponent } from '@/components/common';
 import { Input } from '@/components/ui-components/ui/input';
 import { Loader2 } from 'lucide-react';
+import { PostWithTags, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
+import { TagsComponent } from '@/components/posts-related/tags-component';
 
 interface Props {
-  post: Post;
+  post: PostWithTags;
 }
 
 export const EditPostComponent = ({ post }: Props) => {
@@ -26,6 +27,8 @@ export const EditPostComponent = ({ post }: Props) => {
 
   const [postImage, setPostImage] = useState(post.postImageUrl);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chosenTags, setChosenTags] = useState<TagsWithIsCreated[] | []>([]);
+  const [isNotEnteredTags, setIsNotEnteredTags] = useState<boolean>(false);
 
   const {
     getInputProps,
@@ -62,6 +65,12 @@ export const EditPostComponent = ({ post }: Props) => {
     setIsSubmitting(true);
     let imageUrl = postImage;
 
+    if (chosenTags.length == 0) {
+      setIsNotEnteredTags(true);
+
+      return;
+    }
+
     if (uploadedFile) {
       const image = await API.uploadImage.uploadPublicImage(uploadedFile);
       if (image instanceof Error) {
@@ -76,6 +85,7 @@ export const EditPostComponent = ({ post }: Props) => {
     const updatedPostData: PostData = {
       ...data,
       imageUrl,
+      selectedTags: chosenTags,
     };
 
     const result = await API.posts.updatePost(updatedPostData, post.id);
@@ -108,32 +118,37 @@ export const EditPostComponent = ({ post }: Props) => {
           className="flex flex-col sm:flex-row items-center gap-8 w-full max-w-6xl justify-center"
         >
           <div className="w-full flex-col sm:flex-row flex items-center justify-center mt-[40px] gap-10">
-            {postImage ? (
-              <div className="flex flex-col items-center gap-2 w-full max-w-sm relative">
-                <div className="relative w-full rounded-lg overflow-hidden">
-                  <img
-                    src={postImage}
-                    alt={'cube image'}
-                    className="w-full rounded-lg"
-                  />
+            <div className={'flex flex-col items-center justify-center'}>
+              {postImage ? (
+                <div className="flex flex-col items-center gap-2 w-full max-w-sm relative">
+                  <div className="relative w-full rounded-lg overflow-hidden">
+                    <img
+                      src={postImage}
+                      alt={'cube image'}
+                      className="w-full rounded-lg"
+                    />
+                  </div>
+                  <Button type="button" onClick={handleResetImage} variant="outline">
+                    Change Image
+                  </Button>
                 </div>
-                <Button className={'sm:mb-[80px]'} type="button" onClick={handleResetImage} variant="outline">
-                  Change Image
-                </Button>
-              </div>
-            ) : (
-              !postImage && (
-                <div className="h-[300px] w-[335px]">
-                  <DragAndDropImageComponent
-                    className="flex-1"
-                    getRootProps={getRootProps}
-                    getInputProps={getInputProps}
-                    isDragActive={isDragActive}
-                  />
-                </div>
-              )
-            )}
-            <div className="w-full sm:w-fit space-y-4 flex flex-col px-4">
+              ) : (
+                !postImage && (
+                  <div className="h-[300px] w-[335px]">
+                    <DragAndDropImageComponent
+                      className="flex-1"
+                      getRootProps={getRootProps}
+                      getInputProps={getInputProps}
+                      isDragActive={isDragActive}
+                    />
+                  </div>
+                )
+              )}
+            </div>
+            <div className="w-full sm:max-w-[282px] sm:w-fit space-y-4 flex flex-col px-4">
+              <TagsComponent tagAndPosts={post.tagAndPosts} isFileEmpty={isDisabled}
+                             setSelectedTagsByUser={setChosenTags}
+                             isNotEnteredTags={isNotEnteredTags}></TagsComponent>
               <div className="w-full sm:w-[250px]">
                 <label className="text-sm text-gray-500" htmlFor="name">Post name:</label>
                 <Input {...form.register('name')} placeholder="Enter name..." />
