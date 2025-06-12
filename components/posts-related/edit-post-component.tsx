@@ -67,6 +67,7 @@ export const EditPostComponent = ({ post }: Props) => {
 
     if (chosenTags.length == 0) {
       setIsNotEnteredTags(true);
+      setIsSubmitting(false);
 
       return;
     }
@@ -95,6 +96,7 @@ export const EditPostComponent = ({ post }: Props) => {
       toast.success('Post was updated successfully');
       router.push(`/profile/${user!.id}`);
     } else {
+      setIsSubmitting(false);
       toast.error('Error updating post');
     }
   };
