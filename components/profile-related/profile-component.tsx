@@ -123,7 +123,8 @@ export const ProfileComponent = ({ user }: Props) => {
                 <div className={'w-full flex items-center justify-center'}>
                   <div className={'flex-col flex gap-2 w-3/4'}>
                     <div className={'w-full flex items-center justify-center mb-4'}>
-                      <ChangableAvatarComponent id={user.user.id} email={user.user.email}></ChangableAvatarComponent>
+                      <ChangableAvatarComponent isOwner={user.isOwner} id={user.user.id}
+                                                email={user.user.email}></ChangableAvatarComponent>
                     </div>
                     <FormProvider {...form}>
                       <form onSubmit={form.handleSubmit((value) => handleUsernameSubmit(value, user.user.id.toString()))}>
@@ -140,7 +141,6 @@ export const ProfileComponent = ({ user }: Props) => {
                             <p className={'text-sm text-red-500'}>{form.formState.errors.username.message}</p>
                           )}
                         </div>
-
                         <div>
                           <label className={'text-sm text-gray-500'} htmlFor={'email'}>Your
                             email</label>

@@ -80,7 +80,10 @@ export const PostInteractableSection = () => {
                 <div>
                   <h1 className={'text-md font-semibold'}>Tags</h1>
                   <div className={'break-words w-full flex gap-x-2 flex-wrap'}>
-                    {post.tagAndPosts.map((tagAndPost) => (
+                    {post.tagAndPosts.length == 0 && (
+                      <p className={'text-gray-400'}>No tags were added</p>
+                    )}
+                    {post.tagAndPosts.length > 0 && post.tagAndPosts.map((tagAndPost) => (
                       <p key={tagAndPost.tag.id}>#{tagAndPost.tag.tagName}</p>
                     ))}
                   </div>
