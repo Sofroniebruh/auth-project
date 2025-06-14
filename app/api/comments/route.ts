@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     await deleteKeysWithPrefix(`post:${data.id}:comments`);
+    await deleteKeysWithPrefix(`user:${user.id}:commented_posts`);
 
     const newComment = await prismaClient.comment.create({
       data: {

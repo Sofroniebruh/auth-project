@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { PostData } from '@/lib/api-client/change-user-info';
-import { getUserByToken, validateReceivedHashtags } from '@/lib/helpers/helper-functions';
+import { deleteKeysWithPrefix, getUserByToken, validateReceivedHashtags } from '@/lib/helpers/helper-functions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    await deleteKeysWithPrefix(`user:${user.id}:created_posts`);
 
     const post = await prismaClient.post.create({
       data: {

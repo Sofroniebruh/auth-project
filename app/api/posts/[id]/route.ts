@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params, PostWithTagsAndLiked, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken, isValidId, validateReceivedHashtags } from '@/lib/helpers/helper-functions';
+import {
+  deleteKeysWithPrefix,
+  getUserByToken,
+  isValidId,
+  validateReceivedHashtags,
+} from '@/lib/helpers/helper-functions';
 import { updatePost } from '@/components/auth/schema';
 import { redis } from '@/lib/redis';
 
@@ -131,6 +136,9 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
     }
 
+    await deleteKeysWithPrefix(`post:${id}`);
+    await deleteKeysWithPrefix(`user:${user.id}:liked_posts`);
+
     const existingLike = await prismaClient.like.findUnique({
       where: {
         userId_postId: {
@@ -204,6 +212,9 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    await deleteKeysWithPrefix(`post:${id}`);
+    await deleteKeysWithPrefix(`user:${user.id}:created_posts`);
+
     const data = updatePost.parse(rest);
 
     const updatedPost = await prismaClient.post.update({
@@ -253,6 +264,10 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
     if (postToDelete.userId !== user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    await deleteKeysWithPrefix(`post:${id}`);
+    await deleteKeysWithPrefix(`user:${user.id}:created_posts`);
+    await deleteKeysWithPrefix(`user:${user.id}:commented_posts`);
 
     await prismaClient.post.delete({
       where: {

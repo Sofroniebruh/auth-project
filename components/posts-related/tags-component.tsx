@@ -32,6 +32,10 @@ export const TagsComponent = ({ isFileEmpty, tagAndPosts, setSelectedTagsByUser,
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setSelectedTagsByUser(initialTags);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsStartedTypingTags(false);
