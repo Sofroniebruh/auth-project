@@ -3,6 +3,7 @@ import { tokenCheck } from '@/lib/auth';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Post } from '@prisma/client';
 import { TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
+import { redis } from '@/lib/redis';
 
 export async function getUserByToken(req: NextRequest) {
   const email = await tokenCheck(req);
@@ -37,9 +38,8 @@ export const validateReceivedHashtags = async (post: Post, selectedTags: TagsWit
 
   const selectedTagNames = selectedTags.map(tag => tag.tagName);
 
-  // Step 1: Remove tag connections that are no longer in selectedTags
   const tagsToRemove = existingTagConnections.filter(
-    (connection) => !selectedTagNames.includes(connection.tag.tagName)
+    (connection) => !selectedTagNames.includes(connection.tag.tagName),
   );
 
   for (const connection of tagsToRemove) {
@@ -53,7 +53,6 @@ export const validateReceivedHashtags = async (post: Post, selectedTags: TagsWit
     });
   }
 
-  // Step 2: Add new tags (existing logic)
   const tagsNotCreatedPreviously = selectedTags.filter(tag => !tag.isCreated);
   const tagsCreatedPreviously = selectedTags.filter(tag => tag.isCreated);
 
@@ -98,3 +97,17 @@ export const validateReceivedHashtags = async (post: Post, selectedTags: TagsWit
     }
   }
 };
+
+export async function deleteKeysWithPrefix(prefix: string) {
+  const stream = redis.scanStream({ match: `${prefix}*` });
+
+  const keysToDelete: string[] = [];
+
+  for await (const keys of stream) {
+    if (keys.length) keysToDelete.push(...keys);
+  }
+
+  if (keysToDelete.length) {
+    await redis.del(...keysToDelete);
+  }
+}

@@ -1,21 +1,23 @@
-'use client';
-
 import useSWR, { mutate as globalMutate } from 'swr';
 import { useEffect } from 'react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export const usePaginatedComments = (id: number, page: number, limit = 7) => {
+  const key = `${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}/comments?page=${page}&limit=${limit}`;
+
   const {
     data,
     error,
     isLoading,
     mutate,
-  } = useSWR(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}/comments?page=${page}&limit=${limit}`, fetcher);
+  } = useSWR(key, fetcher, {
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+  });
 
   useEffect(() => {
     const nextPage = `${process.env.NEXT_PUBLIC_API_ROUTE}/posts/${id}/comments?page=${page + 1}&limit=${limit}`;
-
     globalMutate(nextPage, fetcher(nextPage), false);
   }, [limit, page]);
 

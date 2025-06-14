@@ -87,3 +87,23 @@ export interface TagsWithIsCreated {
   tagName: string;
   isCreated: boolean;
 }
+
+export interface PostWithTagsAndLiked {
+  createdBy: {
+    id: number
+    email: string
+    username: string | null
+    pfpUrl: string | null
+  };
+  likes: {
+    userId: number
+  }[];
+  comments: {
+    id: number
+    createdAt: Date
+    commentContent: string
+    likes: {}[]
+    commentOwner: {}
+  }[];
+  tagAndPosts: {}[];
+}

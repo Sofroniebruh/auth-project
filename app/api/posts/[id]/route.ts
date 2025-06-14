@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { Params, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
+import { Params, PostWithTagsAndLiked, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
 import { getUserByToken, isValidId, validateReceivedHashtags } from '@/lib/helpers/helper-functions';
 import { updatePost } from '@/components/auth/schema';
+import { redis } from '@/lib/redis';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
@@ -15,60 +16,70 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
     }
 
-    const postWithRelations = await prismaClient.post.findUnique({
-      where: {
-        id: Number(id),
-      },
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            pfpUrl: true,
-          },
-        },
-        comments: {
-          select: {
-            likes: true,
-            id: true,
-            commentOwner: {
-              select: {
-                id: true,
-                username: true,
-                pfpUrl: true,
-              },
-            },
-            commentContent: true,
-            createdAt: true,
-          },
-        },
-        likes: {
-          select: {
-            userId: true,
-          },
-        },
-        tagAndPosts: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-    });
+    const CACHED_KEY = `post:${id}`;
+    const cached = await redis.get(CACHED_KEY);
+    let post: PostWithTagsAndLiked | null;
 
-    if (!postWithRelations) {
+    if (cached) {
+      post = JSON.parse(cached);
+    } else {
+      post = await prismaClient.post.findUnique({
+        where: {
+          id: Number(id),
+        },
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              pfpUrl: true,
+            },
+          },
+          comments: {
+            select: {
+              likes: true,
+              id: true,
+              commentOwner: {
+                select: {
+                  id: true,
+                  username: true,
+                  pfpUrl: true,
+                },
+              },
+              commentContent: true,
+              createdAt: true,
+            },
+          },
+          likes: {
+            select: {
+              userId: true,
+            },
+          },
+          tagAndPosts: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+
+      await redis.set(CACHED_KEY, JSON.stringify(post), 'EX', 600);
+    }
+
+    if (!post) {
       return NextResponse.json({ error: 'Post was not found' }, { status: 404 });
     }
 
     const owner = {
-      id: postWithRelations.createdBy.id,
-      email: postWithRelations.createdBy.email,
+      id: post.createdBy.id,
+      email: post.createdBy.email,
     };
 
     if (!user) {
       return NextResponse.json({
         message: 'Post was retrieved successfully',
-        post: postWithRelations,
+        post: post,
         owner,
         isOwner: isOwner,
       }, { status: 200 });
@@ -77,8 +88,8 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
     isOwner = owner.email === user.email;
 
     const postWithUserLikedOrNo = {
-      ...postWithRelations,
-      isLikedByUser: postWithRelations.likes.some((like) => like.userId === user.id),
+      ...post,
+      isLikedByUser: post.likes.some((like) => like.userId === user.id),
     };
 
     return NextResponse.json({

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Comment } from '@/components/common/comments-component';
-import { getUserByToken } from '@/lib/helpers/helper-functions';
+import { deleteKeysWithPrefix, getUserByToken } from '@/lib/helpers/helper-functions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Un authorized' }, { status: 401 });
     }
 
     const existingPost = await prismaClient.post.findUnique({
@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
     if (!existingPost) {
       return NextResponse.json({ error: 'Provided id does not have corresponding post' }, { status: 400 });
     }
+
+    await deleteKeysWithPrefix(`post:${data.id}:comments`);
 
     const newComment = await prismaClient.comment.create({
       data: {

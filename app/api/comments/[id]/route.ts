@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { prismaClient } from '@/prisma/prisma-client';
-import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
+import { deleteKeysWithPrefix, getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function PUT(req: NextRequest, { params }: Promise<Params>) {
@@ -35,6 +35,8 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
     if (commentToUpdate.userId !== user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    await deleteKeysWithPrefix(`post:${commentToUpdate.postId}:comments`);
 
     const updatedComment = await prismaClient.comment.update({
       where: {
@@ -82,6 +84,8 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    await deleteKeysWithPrefix(`post:${commentToDelete.postId}:comments`);
+
     await prismaClient.comment.delete({
       where: {
         id: commentToDelete.id,
@@ -120,6 +124,8 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
     if (!comment) {
       return NextResponse.json({ error: 'Comment was not found' }, { status: 404 });
     }
+
+    await deleteKeysWithPrefix(`post:${comment.postId}:comments`);
 
     const commentHasLiked = await prismaClient.commentLike.findUnique({
       where: {

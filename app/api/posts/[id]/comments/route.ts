@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
+import { redis } from '@/lib/redis';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
@@ -15,40 +16,59 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'Id is invalid' }, { status: 400 });
     }
 
-    const [paginatedComments, count] = await prismaClient.$transaction([
-      prismaClient.comment.findMany({
-        where: {
-          postId: Number(id),
-        },
-        select: {
-          id: true,
-          likes: true,
-          commentContent: true,
-          createdAt: true,
-          commentOwner: {
-            select: {
-              id: true,
-              pfpUrl: true,
-              username: true,
+    const COUNT_CACHE_KEY = `post:${id}:comments:count`;
+    const CACHE_KEY = `post:${id}:comments:page${page}:limit:${limit}`;
+    const countCached = await redis.get(COUNT_CACHE_KEY);
+    const cached = await redis.get(CACHE_KEY);
+
+    let comments: any[] = [];
+    let count: number;
+
+    if (countCached && cached) {
+      comments = JSON.parse(cached);
+      count = Number(countCached);
+    } else {
+      const [paginatedComments, commentCount] = await prismaClient.$transaction([
+        prismaClient.comment.findMany({
+          where: {
+            postId: Number(id),
+          },
+          select: {
+            id: true,
+            likes: true,
+            commentContent: true,
+            createdAt: true,
+            commentOwner: {
+              select: {
+                id: true,
+                pfpUrl: true,
+                username: true,
+              },
             },
           },
-        },
-        skip: limit * (page - 1),
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-      prismaClient.comment.count({
-        where: {
-          postId: Number(id),
-        },
-      }),
-    ]);
+          skip: limit * (page - 1),
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+        }),
+        prismaClient.comment.count({
+          where: {
+            postId: Number(id),
+          },
+        }),
+      ]);
+
+      comments = paginatedComments;
+      count = Number(commentCount);
+
+      await redis.set(COUNT_CACHE_KEY, count.toString(), 'EX', 600);
+      await redis.set(CACHE_KEY, JSON.stringify(comments), 'EX', 600);
+    }
 
     const totalPages = Math.ceil(count / limit);
 
     const response = NextResponse.json({
       message: 'Comments were processed successfully',
-      comments: paginatedComments,
+      comments: comments,
       totalPages: totalPages,
       isOwner: false,
     }, { status: 200 });
@@ -64,7 +84,7 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       },
     });
 
-    const postCommentsWithIsOwner = paginatedComments.map((comment) => ({
+    const postCommentsWithIsOwner = comments.map((comment) => ({
       ...comment,
       isOwner: comment.commentOwner.id === user.id,
       isLiked: commentsLikedByCurrentUser.some((likedComment) => likedComment.commentId === comment.id),

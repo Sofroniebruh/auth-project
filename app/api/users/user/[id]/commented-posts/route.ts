@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
+import { redis } from '@/lib/redis';
+import { Post } from '@prisma/client';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
@@ -23,6 +25,21 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'User was not found' }, { status: 404 });
     }
 
+    const CACHE_KEY = `user:${user.id}:commented_posts`;
+
+    const cached = await redis.get(CACHE_KEY);
+
+    if (cached) {
+      const postsWithIsOwners = (JSON.parse(cached) as Post[]).map((post) => ({
+        ...post,
+        isOwner: userByToken ? post.userId === user.id && userByToken.id === user.id : false,
+      }));
+      return NextResponse.json({
+        message: 'Posts commented by user were processed successfully',
+        posts: postsWithIsOwners,
+      }, { status: 200 });
+    }
+
     const commentedPosts = await prismaClient.post.findMany({
       where: {
         comments: {
@@ -32,6 +49,8 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
         },
       },
     });
+
+    await redis.set(CACHE_KEY, JSON.stringify(commentedPosts), 'EX', 600);
 
     const postsWithIsOwners = commentedPosts.map((post) => ({
       ...post,
