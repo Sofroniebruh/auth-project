@@ -39,7 +39,7 @@ export const SignUpComponent = () => {
 
   const onSubmit = async (data: RegisterFormType) => {
     const res = await API.auth.register(data);
-    if (res.status === 200) {
+    if (!(res instanceof Error) && res.status === 200) {
       setUser(res.user as UserWithNoPassword);
       setAllSheetsClosed();
       router.push('/posts');
@@ -68,7 +68,7 @@ export const SignUpComponent = () => {
                   <p className={'text-sm text-red-500'}>{form.formState.errors.email.message}</p>
                 )}
               </div>
-              <Button onClick={handleNext} className="bg-blue-600 text-base">
+              <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-base">
                 Next <LogInIcon></LogInIcon>
               </Button>
             </div>
@@ -99,7 +99,7 @@ export const SignUpComponent = () => {
                   <p className={'text-sm text-red-500'}>{form.formState.errors.confirmPassword.message}</p>
                 )}
               </div>
-              <Button type={'submit'} className="text-base mt-7 bg-blue-600">
+              <Button type={'submit'} className="text-base mt-7 bg-blue-600 hover:bg-blue-700">
                 Sign Up <LogInIcon />
               </Button>
             </div>

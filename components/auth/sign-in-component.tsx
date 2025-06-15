@@ -74,7 +74,7 @@ export const SignInComponent = () => {
                   <p className={'text-sm text-red-500'}>{form.formState.errors.email.message}</p>}
               </div>
               <Button type={'button'} onClick={handleNext}
-                      className={'bg-blue-600 shadow-sm text-base'}>Sign
+                      className={'bg-blue-600 hover:bg-blue-700 shadow-sm text-base'}>Sign
                 In <LogInIcon></LogInIcon></Button>
             </div>
             <div className={'flex w-full items-center justify-center gap-2'}>

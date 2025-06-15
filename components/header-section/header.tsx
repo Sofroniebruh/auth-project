@@ -63,7 +63,7 @@ export const HeaderComponent = () => {
             <Link onClick={() => setIsSheetOpen(false, { key: { name: 'header sheet' }, value: false })}
                   href={`/profile/${user.id}/new-post`}>
               <Button size={'lg'}
-                      className={'w-full bg-blue-600 mt-10 text-lg sm:text-xl sm:py-6 cursor-pointer text-center'}>Add
+                      className={'w-full bg-blue-600 mt-5 sm:mt-10 text-base hover:bg-blue-700 sm:text-xl sm:py-6 cursor-pointer text-center'}>Add
                 new
                 Post <PlusIcon /></Button>
             </Link>

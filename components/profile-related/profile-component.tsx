@@ -111,7 +111,7 @@ export const ProfileComponent = ({ user }: Props) => {
           {user.isOwner &&
             <div className={'flex gap-2.5'}>
               <div onClick={handleLogout}
-                   className={'bg-blue-600 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4'}>
+                   className={'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer rounded-md border shadow-sm flex p-2 gap-2 px-4'}>
                 Log Out <LogOutIcon></LogOutIcon>
               </div>
               <SheetComponent openState={isOpenSettingsSheet} triggerElement={
@@ -163,11 +163,11 @@ export const ProfileComponent = ({ user }: Props) => {
                                      triggerButton={
                                        <div
                                          onClick={() => setIsOpen(true, { key: { name: 'deleteAccount' }, value: true })}
-                                         className={'cursor-pointer bg-red-500 text-sm text-white p-2 rounded-md'}>Delete
+                                         className={'cursor-pointer bg-red-500 hover:bg-red-600 text-sm text-white p-2 rounded-md'}>Delete
                                          account</div>
                                      } title={'Are you sure?'} description={'This action can not be undone'}>
                       <DeleteDialogComponent deleteButton={
-                        <Button size={'lg'} variant={'destructive'} onClick={handleDelete}>Delete My account</Button>
+                        <Button className={"bg-red-500 hover:bg-red-600"} size={'lg'} variant={'destructive'} onClick={handleDelete}>Delete My account</Button>
                       } setDialogOpen={() => setIsOpen(false, { key: { name: 'deleteAccount' }, value: false })}
                       />
                     </DialogComponent>

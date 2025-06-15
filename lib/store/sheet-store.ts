@@ -1,10 +1,10 @@
 import { createStore } from 'zustand/vanilla';
 
 type SheetType = {
-  name: 'header sheet' | 'settings sheet'
+  name: 'header sheet' | 'settings sheet' | 'search sheet'
 }
 
-interface Sheet {
+export interface Sheet {
   key: SheetType;
   value: boolean;
 }

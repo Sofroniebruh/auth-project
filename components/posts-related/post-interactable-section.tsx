@@ -152,7 +152,7 @@ export const PostInteractableSection = () => {
       <div className={'hidden sm:flex lg:hidden w-full h-full items-center justify-center'}>
         <DialogComponent className={'flex flex-col justify-center items-center'} triggerButton={
           <div
-            className={'bg-blue-600 hover:bg-blue-500 text-white rounded-md p-2 text-sm px-3 cursor-pointer'}>Open
+            className={'bg-blue-600 hover:bg-blue-700 text-white rounded-md p-2 text-sm px-3 cursor-pointer'}>Open
             comment section</div>
         } title={''}>
           <CommentsComponent id={post.id} owner={owner}

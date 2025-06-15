@@ -1,10 +1,10 @@
 import { createStore } from 'zustand/vanilla';
 
 type DialogType = {
-  name: 'deleteComment' | 'deletePost' | 'deleteAccount' | 'editComment';
+  name: 'deleteComment' | 'deletePost' | 'deleteAccount' | 'editComment' | 'smallSearch';
 }
 
-interface Dialog {
+export interface Dialog {
   key: DialogType,
   value: boolean,
 }

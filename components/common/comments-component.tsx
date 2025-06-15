@@ -99,7 +99,7 @@ export const CommentsComponent = memo(({ className, owner, id }: Props) => {
         <CommentInput page={page} postId={id} className={className} />
       ) : (
         <Link href="/sign-in" className={cn('justify-center w-full', className)}>
-          <Button className="bg-blue-600 text-white w-[200px] cursor-pointer">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white w-[200px] cursor-pointer">
             Log In to leave comments
           </Button>
         </Link>

@@ -25,7 +25,7 @@ export const PostComponent = () => {
           <div
             className="w-full sm:min-w-[240px] sm:max-w-[300px] md:max-w-[370px] xl:max-w-[430px] flex items-center justify-center relative gap-8">
             <div onClick={handleBack}
-                 className={'hidden md:block rounded-full p-2.5 cursor-pointer bg-blue-600 text-white hover:bg-blue-500'}>
+                 className={'hidden md:block rounded-full p-2.5 cursor-pointer bg-blue-600 text-white hover:bg-blue-700'}>
               <ArrowLeftIcon /></div>
             <PostCardOpenedVersion
               image={post.postImageUrl} />
