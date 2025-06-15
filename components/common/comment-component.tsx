@@ -1,3 +1,5 @@
+'use client';
+
 import { AvatarComponent } from '@/components/common/avatar-component';
 import { Comment } from '@/components/common/comments-component';
 import { EditIcon, HeartIcon, TrashIcon } from 'lucide-react';

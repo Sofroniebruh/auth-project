@@ -6,6 +6,7 @@ import { MasonryLayout } from '@/components/common';
 import { Loading, NoPosts } from '@/components/posts-related/shared';
 import { PostCardComponent } from '@/components/posts-related/post-card-component';
 import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
+import { useSearchParams } from 'next/navigation';
 
 interface Props {
   isPostPage?: boolean;
@@ -16,11 +17,13 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
   const [posts, setPosts] = useState<PostsWithLikedByCurrentUser[] | []>([]);
   const [loading, setLoading] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
+  const searchParams = useSearchParams();
+  const tag = searchParams.get('tag');
 
   useEffect(() => {
     setHasMounted(true);
     const fetchPosts = async () => {
-      const { posts } = isPostPage ? await API.posts.getPostsWithoutOpenedPost(postId!) : await API.posts.getPosts();
+      const { posts } = isPostPage ? await API.posts.getPostsWithoutOpenedPost(postId!) : await API.posts.getPosts(tag ? tag : '');
       if (posts) {
         setPosts(posts);
       }
@@ -28,7 +31,7 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
     };
 
     fetchPosts();
-  }, []);
+  }, [tag]);
 
   if (!hasMounted) return null;
 

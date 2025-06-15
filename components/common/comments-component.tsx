@@ -1,3 +1,5 @@
+'use client';
+
 import { CommentComponent } from '@/components/common/comment-component';
 import { cn } from '@/lib/utils';
 import { PostOwner } from '@/lib/helpers/helper-types-or-interfaces';

@@ -9,7 +9,11 @@ export async function GET(req: NextRequest) {
     const excludingList = excludingParam ? excludingParam.split(',').map(tag => tag.trim()).filter(Boolean) : [];
 
     if (!name) {
-      return NextResponse.json({ error: 'Tag name must be provided' }, { status: 400 });
+      const tags = await prismaClient.tags.findMany();
+      return NextResponse.json({
+        message: 'Tags were retrieved successfully',
+        tags,
+      }, { status: 200 });
     }
 
     const allTagsMatchingName = await prismaClient.tags.findMany({

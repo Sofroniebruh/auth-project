@@ -12,3 +12,15 @@ export async function getTagsByName(name: string, excluding?: string) {
 
   throw new Error(res.statusText);
 }
+
+export async function getAllTags() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/tags`, {
+    method: 'GET',
+  });
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw new Error(res.statusText);
+}
