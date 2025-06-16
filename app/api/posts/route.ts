@@ -58,7 +58,6 @@ export async function GET(req: NextRequest) {
     const tag = req.nextUrl.searchParams.get('tag');
     const search = req.nextUrl.searchParams.get('search');
     const user = await getUserByToken(req);
-    console.log("Search", search)
     let allPosts;
 
     const baseInclude = {
