@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { updateProfileUsernameOrProfilePictureSchemaForAPI } from '@/components/auth/schema';
 import { Params } from '@/lib/helpers/helper-types-or-interfaces';
-import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
+import { deleteKeysWithPrefix, getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
 export async function GET(req: NextRequest, { params }: Promise<Params>) {
@@ -77,6 +77,8 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
       return NextResponse.json({ error: 'User was not found' }, { status: 404 });
     }
 
+    await deleteKeysWithPrefix('post');
+
     await prismaClient.user.delete({
       where: {
         email: userToDelete.email,
@@ -116,6 +118,7 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
     }
 
     const data = updateProfileUsernameOrProfilePictureSchemaForAPI.parse(body);
+    await deleteKeysWithPrefix('post');
 
     const userToUpdate = await prismaClient.user.update({
       where: {
