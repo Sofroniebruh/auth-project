@@ -19,11 +19,17 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
   const [hasMounted, setHasMounted] = useState(false);
   const searchParams = useSearchParams();
   const tag = searchParams.get('tag');
+  const search = searchParams.get('search');
 
   useEffect(() => {
     setHasMounted(true);
     const fetchPosts = async () => {
-      const { posts } = isPostPage ? await API.posts.getPostsWithoutOpenedPost(postId!) : await API.posts.getPosts(tag ? tag : '');
+      const { posts } = isPostPage ? await API.posts.getPostsWithoutOpenedPost(postId!) :
+        tag ?
+          await API.posts.getPosts(tag, false) :
+          search ?
+            await API.posts.getPosts(search, true) :
+            await API.posts.getPosts('', false);
       if (posts) {
         setPosts(posts);
       }
@@ -31,7 +37,7 @@ export const PostsComponent = ({ isPostPage, postId }: Props) => {
     };
 
     fetchPosts();
-  }, [tag]);
+  }, [tag, search]);
 
   if (!hasMounted) return null;
 

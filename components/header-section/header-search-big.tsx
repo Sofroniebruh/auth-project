@@ -9,6 +9,8 @@ import { useTags } from '@/components/contexts/tag-context';
 import { Tags } from '@prisma/client';
 import { useStore } from 'zustand/react';
 import { sheetStore } from '@/lib/store';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function getRandomElements<T>(array: T[], count: number): T[] {
   const shuffled = [...array].sort(() => 0.5 - Math.random());
@@ -16,20 +18,43 @@ export function getRandomElements<T>(array: T[], count: number): T[] {
 }
 
 export const HeaderSearchBig = () => {
-  const headerInput = (
-    <div onClick={
-      () => setIsSheetOpen(true, { key: { name: 'search sheet' }, value: true })
-    } className={'relative w-full'}>
-      <Input className={'bg-white w-full pl-[34px]'}
-             placeholder={'Search...'}></Input>
-      <SearchIcon className={'text-blue-600 absolute top-[7px] left-[7px] opacity-50'}></SearchIcon>
-    </div>
-  );
+  const router = useRouter();
+  const [value, setValue] = useState('');
+  const [randomTags, setRandomTags] = useState<Tags[] | []>([]);
   const { tags } = useTags();
   const sheets = useStore(sheetStore, (state) => state.sheets);
   const setIsSheetOpen = useStore(sheetStore, (state) => state.setIsSheetOpen);
   const isOpenSearchSheet = sheets.some((sheet) => sheet.key.name === 'search sheet');
-  const randomTags: Tags[] = getRandomElements(tags, 3);
+
+  const handleSubmit = (query: string) => {
+    router.replace(`/posts?search=${query}`);
+    router.refresh();
+  };
+  const handleKeyEnter = (key: React.KeyboardEvent<HTMLInputElement>, query: string) => {
+    if (key.key === 'Enter') {
+      setIsSheetOpen(false, { key: { name: 'search sheet' }, value: false });
+      handleSubmit(query);
+    }
+  };
+
+  const headerInput = (
+    <div onClick={
+      () => setIsSheetOpen(true, { key: { name: 'search sheet' }, value: true })
+    } className={'relative w-full'}>
+      <Input onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyEnter(e, value)}
+             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+               setValue(e.target.value);
+             }}
+             className={'bg-white w-full pl-[34px]'}
+             placeholder={'Search...'}></Input>
+      <SearchIcon className={'text-blue-600 absolute top-[7px] left-[7px] opacity-50'}></SearchIcon>
+    </div>
+  );
+
+  useEffect(() => {
+    if (!isOpenSearchSheet) return;
+    setRandomTags(getRandomElements(tags, 3));
+  }, [isOpenSearchSheet]);
 
   return (
     <>

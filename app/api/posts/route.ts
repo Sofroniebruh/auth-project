@@ -29,6 +29,20 @@ export async function POST(req: NextRequest) {
       await validateReceivedHashtags(post, data.selectedTags);
     }
 
+    const embedded = await fetch(`http://localhost:5050/add/${post.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: post.postImageUrl,
+      }),
+    });
+
+    if (!embedded) {
+      return NextResponse.json({ error: 'Failed to save embedded vector', post }, { status: 500 });
+    }
+
     return NextResponse.json({ message: 'Post was created successfully', post }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
@@ -42,7 +56,9 @@ export async function GET(req: NextRequest) {
   try {
     const postIdToSkip = req.nextUrl.searchParams.get('excluding');
     const tag = req.nextUrl.searchParams.get('tag');
+    const search = req.nextUrl.searchParams.get('search');
     const user = await getUserByToken(req);
+    console.log("Search", search)
     let allPosts;
 
     const baseInclude = {
@@ -68,6 +84,29 @@ export async function GET(req: NextRequest) {
               id: Number(postIdToSkip),
             },
           }),
+        },
+        include: baseInclude,
+      });
+    } else if (search) {
+      const res = await fetch(`http://localhost:5050/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: search,
+        }),
+      });
+      const ids: number[] = [];
+      const validatedResult = (await res.json() as { id: number, postImageUrl: string }[]);
+      for (const result of validatedResult) {
+        ids.push(result.id);
+      }
+      allPosts = await prismaClient.post.findMany({
+        where: {
+          id: {
+            in: ids,
+          },
         },
         include: baseInclude,
       });

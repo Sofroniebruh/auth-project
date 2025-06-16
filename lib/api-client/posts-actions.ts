@@ -1,8 +1,10 @@
 import { PostsWithLikedByCurrentUser } from '@/lib/helpers/helper-types-or-interfaces';
 import { PostData } from '@/lib/api-client/change-user-info';
 
-export async function getPosts(tag: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/posts?tag=${tag}`, {
+export async function getPosts(query: string, isSearch: boolean) {
+  const url = isSearch ? `${process.env.NEXT_PUBLIC_API_ROUTE}/posts?search=${query}` :
+    `${process.env.NEXT_PUBLIC_API_ROUTE}/posts?tag=${query}`
+  const res = await fetch(url, {
     method: 'GET',
   });
 

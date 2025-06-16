@@ -104,7 +104,7 @@ export const SignInComponent = () => {
                 {form.formState.errors.password &&
                   <p className={'text-sm text-red-500'}>{form.formState.errors.password.message}</p>}
               </div>
-              <Button type={'submit'} className={'bg-blue-600 shadow-sm text-base'}>Sign
+              <Button type={'submit'} className={'bg-blue-600 hover:bg-blue-700 shadow-sm text-base'}>Sign
                 In <LogInIcon></LogInIcon></Button>
             </div>
             <p className={'text-sm text-gray-400 text-center'}>Forgot your password? <Link
