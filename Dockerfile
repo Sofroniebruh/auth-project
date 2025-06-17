@@ -2,6 +2,9 @@
 FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma
+COPY .env .env
+RUN npx prisma generate
 RUN npm install
 
 # Build app
