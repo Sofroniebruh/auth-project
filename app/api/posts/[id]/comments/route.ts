@@ -88,7 +88,10 @@ export async function GET(req: NextRequest, { params }: {
     const postCommentsWithIsOwner = comments.map((comment) => ({
       ...comment,
       isOwner: comment.commentOwner.id === user.id,
-      isLiked: commentsLikedByCurrentUser.some((likedComment) => likedComment.commentId === comment.id),
+      isLiked: commentsLikedByCurrentUser.some((likedComment: {
+        userId: number
+        commentId: number
+      }) => likedComment.commentId === comment.id),
     }));
 
     return NextResponse.json({
