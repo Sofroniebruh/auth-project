@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const name = req.nextUrl.searchParams.get('name');
     const excludingParam = req.nextUrl.searchParams.get('excluding');
-    const excludingList = excludingParam ? excludingParam.split(',').map(tag => tag.trim()).filter(Boolean) : [];
+    const excludingList = excludingParam ? excludingParam.split(',').map((tag: string) => tag.trim()).filter(Boolean) : [];
 
     if (!name) {
       const tags = await prismaClient.tags.findMany();
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const tagsWithIsCreated: TagsWithIsCreated[] = allTagsMatchingName.map((tag) => ({
+    const tagsWithIsCreated: TagsWithIsCreated[] = allTagsMatchingName.map((tag: { id: number, tagName: string }) => ({
       tagName: tag.tagName,
       isCreated: true,
     }));

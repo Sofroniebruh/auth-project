@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: {
     const cached = await redis.get(CACHE_KEY);
 
     if (cached) {
-      const postsWithIsOwners = (JSON.parse(cached) as Post[]).map((post) => ({
+      const postsWithIsOwners = (JSON.parse(cached) as Post[]).map((post: Post) => ({
         ...post,
         isOwner: userByToken ? post.userId === user.id && userByToken.id === user.id : false,
       }));
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest, { params }: {
 
     await redis.set(CACHE_KEY, JSON.stringify(commentedPosts), 'EX', 600);
 
-    const postsWithIsOwners = commentedPosts.map((post) => ({
+    const postsWithIsOwners = commentedPosts.map((post: Post) => ({
       ...post,
       isOwner: userByToken ? post.userId === user.id && userByToken.id === user.id : false,
     }));
