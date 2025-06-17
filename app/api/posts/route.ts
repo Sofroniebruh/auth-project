@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       await validateReceivedHashtags(post, data.selectedTags);
     }
 
-    const embedded = await fetch(`http://localhost:5050/add/${post.id}`, {
+    const embedded = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_ROUTE}/add/${post.id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
         include: baseInclude,
       });
     } else if (search) {
-      const res = await fetch(`http://localhost:5050/search`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_ROUTE}/search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

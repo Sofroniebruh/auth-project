@@ -1,11 +1,13 @@
 import { PostProvider } from '@/components/contexts/post-context';
-import { Params, PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
+import { PostOwner, PostWithRelations } from '@/lib/helpers/helper-types-or-interfaces';
 import { cookies } from 'next/headers';
 import { PostComponent } from '@/components/posts-related';
 import { redirect } from 'next/navigation';
 
-// @ts-ignore
-export default async function PostPage({ params }: Promise<Params>) {
+export default async function PostPage(
+  { params }: {
+    params: Promise<{ id: string }>;
+  }) {
   const { id } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get('jwt')?.value;

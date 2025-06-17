@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { Params, PostWithTagsAndLiked, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
+import { PostWithTagsAndLiked, TagsWithIsCreated } from '@/lib/helpers/helper-types-or-interfaces';
 import {
   deleteKeysWithPrefix,
   getUserByToken,
@@ -11,7 +11,9 @@ import { updatePost } from '@/components/auth/schema';
 import { redis } from '@/lib/redis';
 
 // @ts-ignore
-export async function GET(req: NextRequest, { params }: Promise<Params>) {
+export async function GET(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     let isOwner = false;
     const { id } = await params;
@@ -110,7 +112,9 @@ export async function GET(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
-export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
+export async function PATCH(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);
@@ -178,7 +182,9 @@ export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
-export async function PUT(req: NextRequest, { params }: Promise<Params>) {
+export async function PUT(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);
@@ -234,7 +240,9 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
-export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
+export async function DELETE(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);

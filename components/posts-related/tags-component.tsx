@@ -13,7 +13,7 @@ interface Props {
   isFileEmpty: boolean;
   setSelectedTagsByUser: (tags: TagsWithIsCreated[]) => void;
   isNotEnteredTags: boolean;
-  tagAndPosts: TagAndPost[];
+  tagAndPosts?: TagAndPost[];
 }
 
 export const TagsComponent = ({ isFileEmpty, tagAndPosts, setSelectedTagsByUser, isNotEnteredTags }: Props) => {

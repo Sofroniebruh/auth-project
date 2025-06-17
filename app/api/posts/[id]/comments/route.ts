@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
-import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 import { redis } from '@/lib/redis';
 
 // @ts-ignore
-export async function GET(req: NextRequest, { params }: Promise<Params>) {
+export async function GET(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const page = Number(req.nextUrl.searchParams.get('page'));

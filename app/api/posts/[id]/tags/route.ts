@@ -1,11 +1,12 @@
 // @ts-ignore
 import { NextRequest, NextResponse } from 'next/server';
-import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { isValidId } from '@/lib/helpers/helper-functions';
 import { prismaClient } from '@/prisma/prisma-client';
 
 // @ts-ignore
-export async function GET(req: NextRequest, { params }: Promise<Params>) {
+export async function GET(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
 

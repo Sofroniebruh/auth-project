@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Params } from '@/lib/helpers/helper-types-or-interfaces';
 import { prismaClient } from '@/prisma/prisma-client';
 import { deleteKeysWithPrefix, getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
 // @ts-ignore
-export async function PUT(req: NextRequest, { params }: Promise<Params>) {
+export async function PUT(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);
@@ -57,7 +58,9 @@ export async function PUT(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
-export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
+export async function DELETE(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);
@@ -102,7 +105,9 @@ export async function DELETE(req: NextRequest, { params }: Promise<Params>) {
 }
 
 // @ts-ignore
-export async function PATCH(req: NextRequest, { params }: Promise<Params>) {
+export async function PATCH(req: NextRequest, { params }: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     const { id } = await params;
     const user = await getUserByToken(req);

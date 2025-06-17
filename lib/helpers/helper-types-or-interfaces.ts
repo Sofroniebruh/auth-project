@@ -73,12 +73,6 @@ export interface EditCommentStructure {
   commentId: number;
 }
 
-export type Params = {
-  params: {
-    id: string;
-  };
-};
-
 export interface PlainPostsWithIsOwner extends Post {
   isOwner: boolean;
 }
