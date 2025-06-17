@@ -129,7 +129,19 @@ export async function GET(req: NextRequest) {
       }, { status: 200 });
     }
 
-    const postsWithLikedBySelectedUser = allPosts.map((post) => ({
+    const postsWithLikedBySelectedUser = allPosts.map((post: {
+      likes: {
+        userId: number
+      }[]
+    } & {
+      id: number
+      userId: number
+      postName: string
+      description: string | null
+      postImageUrl: string
+      createdAt: Date
+      updatedAt: Date | null
+    }) => ({
       ...post,
       isLikedByCurrentUser: post.likes.some((like: { userId: number }) => like.userId === user.id),
       isOwner: post.userId === user.id,
