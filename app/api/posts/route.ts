@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
 
     const postsWithLikedBySelectedUser = allPosts.map((post) => ({
       ...post,
-      isLikedByCurrentUser: post.likes.some((like) => like.userId === user.id),
+      isLikedByCurrentUser: post.likes.some((like: { userId: number }) => like.userId === user.id),
       isOwner: post.userId === user.id,
     }));
 

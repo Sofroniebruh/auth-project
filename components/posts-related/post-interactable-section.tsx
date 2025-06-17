@@ -16,6 +16,7 @@ import { DeleteDialogComponent } from '@/components/common/delete-dialog-compone
 import { useStore } from 'zustand/react';
 import { dialogStore } from '@/lib/store';
 import { handleDownload } from '@/lib/helpers/edit-post-helper';
+import { Dialog } from '@/lib/store/dialog-store';
 
 export const PostInteractableSection = () => {
   const { isAuthenticated } = useAuth();
@@ -23,7 +24,7 @@ export const PostInteractableSection = () => {
   const { hasLiked, toggleLikes, totalLikes, isLoading } = useLikes(post.id);
   const router = useRouter();
   const dialogs = useStore(dialogStore, (state) => state.dialogs);
-  const isDeleteDialogOpen = dialogs.some(d => d.key.name === 'deletePost');
+  const isDeleteDialogOpen = dialogs.some((d: Dialog) => d.key.name === 'deletePost');
   const setIsOpen = useStore(dialogStore, (state) => state.setIsOpen);
 
   const handleDelete = async (id: number) => {

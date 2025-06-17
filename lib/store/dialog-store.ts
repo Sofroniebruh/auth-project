@@ -23,10 +23,10 @@ export const dialogStore = createStore<DialogStore>((set, get) => ({
     let updatedDialogs;
 
     if (open) {
-      const exists = currentDialogs.some((d) => d.key.name === dialog.key.name);
+      const exists = currentDialogs.some((d: Dialog) => d.key.name === dialog.key.name);
       updatedDialogs = exists ? currentDialogs : [...currentDialogs, dialog];
     } else {
-      updatedDialogs = currentDialogs.filter((d) => d.key.name !== dialog.key.name);
+      updatedDialogs = currentDialogs.filter((d : Dialog) => d.key.name !== dialog.key.name);
     }
 
     set({
@@ -34,7 +34,7 @@ export const dialogStore = createStore<DialogStore>((set, get) => ({
     });
   },
   isDialogOpen: (name: DialogType['name']) => {
-    return get().dialogs.some((dialog) => dialog.key.name === name);
+    return get().dialogs.some((dialog : Dialog) => dialog.key.name === name);
   },
   setAllClosed: () => {
     set({ dialogs: [] });

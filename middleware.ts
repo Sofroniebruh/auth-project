@@ -1,28 +1,28 @@
-import {NextRequest, NextResponse} from 'next/server';
-import {verifyJWT} from "@/lib/auth/jwt-actions";
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyJWT } from '@/lib/auth/jwt-actions';
 
-const protectedPaths = ["/new-post"];
+const protectedPaths = ['/new-post'];
 
 export async function middleware(request: NextRequest) {
-    const {pathname} = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
-    if (protectedPaths.some(path => pathname.startsWith(path))) {
-        const token = request.cookies.get('jwt')?.value;
+  if (protectedPaths.some((path: string) => pathname.startsWith(path))) {
+    const token = request.cookies.get('jwt')?.value;
 
-        if (!token) {
-            return NextResponse.redirect(new URL("/sign-in", request.url));
-        }
-
-        const decoded = await verifyJWT(token);
-
-        if (!decoded) {
-            return NextResponse.redirect(new URL("/sign-in", request.url));
-        }
+    if (!token) {
+      return NextResponse.redirect(new URL('/sign-in', request.url));
     }
 
-    return NextResponse.next();
+    const decoded = await verifyJWT(token);
+
+    if (!decoded) {
+      return NextResponse.redirect(new URL('/sign-in', request.url));
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/new-post/:path*"],
+  matcher: ['/new-post/:path*'],
 };

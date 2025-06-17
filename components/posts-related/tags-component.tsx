@@ -82,8 +82,8 @@ export const TagsComponent = ({ isFileEmpty, tagAndPosts, setSelectedTagsByUser,
       return;
     }
 
-    const isAlreadyPresentByAPI = tags.find((tag) => tag.tagName === text);
-    const isAlreadyChosenByUser = selectedTags.some((tag) => tag.tagName === text);
+    const isAlreadyPresentByAPI = tags.find((tag: TagsWithIsCreated) => tag.tagName === text);
+    const isAlreadyChosenByUser = selectedTags.some((tag: TagsWithIsCreated) => tag.tagName === text);
 
     if (isAlreadyPresentByAPI && !isAlreadyChosenByUser) {
       setSelectedTagsByUser([...selectedTags, isAlreadyPresentByAPI]);

@@ -13,6 +13,7 @@ import React from 'react';
 import { useAuth } from '@/components/contexts/auth-context';
 import { useStore } from 'zustand/react';
 import { sheetStore } from '@/lib/store';
+import { Sheet } from '@/lib/store/sheet-store';
 
 export const HeaderComponent = () => {
   const pathname = usePathname();
@@ -20,7 +21,7 @@ export const HeaderComponent = () => {
   const isEditPostPage = pathname.includes('/edit-post');
   const { isAuthenticated, user } = useAuth();
   const sheets = useStore(sheetStore, (state) => state.sheets);
-  const isHeaderSheetOpen = sheets.some((s) => s.key.name === 'header sheet');
+  const isHeaderSheetOpen = sheets.some((s : Sheet) => s.key.name === 'header sheet');
   const setIsSheetOpen = useStore(sheetStore, (state) => state.setIsSheetOpen);
 
   return (

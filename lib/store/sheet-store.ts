@@ -23,10 +23,10 @@ export const sheetStore = createStore<SheetStore>((set, get) => ({
     let updatedSheets;
 
     if (open) {
-      const exists = currentSheets.some((s) => s.key.name === sheet.key.name);
+      const exists = currentSheets.some((s : Sheet) => s.key.name === sheet.key.name);
       updatedSheets = exists ? currentSheets : [...currentSheets, sheet];
     } else {
-      updatedSheets = currentSheets.filter((s) => s.key.name !== sheet.key.name);
+      updatedSheets = currentSheets.filter((s : Sheet) => s.key.name !== sheet.key.name);
     }
 
     set({
@@ -34,7 +34,7 @@ export const sheetStore = createStore<SheetStore>((set, get) => ({
     });
   },
   isSheetOpen: (name: SheetType['name']) => {
-    return get().sheets.some((sheet) => sheet.key.name === name);
+    return get().sheets.some((sheet : Sheet) => sheet.key.name === name);
   },
   setAllSheetsClosed: () => {
     set({ sheets: [] });

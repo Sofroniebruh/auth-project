@@ -95,7 +95,7 @@ export async function GET(req: NextRequest, { params }: {
 
     const postWithUserLikedOrNo = {
       ...post,
-      isLikedByUser: post.likes.some((like) => like.userId === user.id),
+      isLikedByUser: post.likes.some((like: { userId: number }) => like.userId === user.id),
     };
 
     return NextResponse.json({
