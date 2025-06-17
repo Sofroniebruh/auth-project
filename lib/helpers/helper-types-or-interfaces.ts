@@ -101,3 +101,18 @@ export interface PostWithTagsAndLiked {
   }[];
   tagAndPosts: {}[];
 }
+
+export interface PostComment {
+  id: number
+  likes: {
+    userId: number
+    commentId: number
+  }[]
+  commentContent: string
+  createdAt: Date
+  commentOwner: {
+    id: number
+    username: string | null
+    pfpUrl: string | null
+  }
+}

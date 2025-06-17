@@ -4,7 +4,6 @@ import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 import { redis } from '@/lib/redis';
 import { Post } from '@prisma/client';
 
-// @ts-ignore
 export async function GET(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {

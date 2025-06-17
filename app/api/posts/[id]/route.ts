@@ -10,7 +10,6 @@ import {
 import { updatePost } from '@/components/auth/schema';
 import { redis } from '@/lib/redis';
 
-// @ts-ignore
 export async function GET(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -111,7 +110,6 @@ export async function GET(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function PATCH(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -181,7 +179,6 @@ export async function PATCH(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function PUT(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -239,7 +236,6 @@ export async function PUT(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function DELETE(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {

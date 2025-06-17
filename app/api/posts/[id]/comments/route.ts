@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 import { redis } from '@/lib/redis';
+import { PostComment } from '@/lib/helpers/helper-types-or-interfaces';
 
-// @ts-ignore
 export async function GET(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: {
     const countCached = await redis.get(COUNT_CACHE_KEY);
     const cached = await redis.get(CACHE_KEY);
 
-    let comments: any[] = [];
+    let comments: PostComment[] = [];
     let count: number;
 
     if (countCached && cached) {

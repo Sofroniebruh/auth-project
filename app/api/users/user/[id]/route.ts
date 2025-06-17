@@ -3,7 +3,6 @@ import { prismaClient } from '@/prisma/prisma-client';
 import { updateProfileUsernameOrProfilePictureSchemaForAPI } from '@/components/auth/schema';
 import { deleteKeysWithPrefix, getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
-// @ts-ignore
 export async function GET(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -54,7 +53,6 @@ export async function GET(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function DELETE(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -105,7 +103,6 @@ export async function DELETE(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function PUT(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {

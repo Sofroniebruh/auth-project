@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prismaClient } from '@/prisma/prisma-client';
 import { deleteKeysWithPrefix, getUserByToken, isValidId } from '@/lib/helpers/helper-functions';
 
-// @ts-ignore
 export async function PUT(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -57,7 +56,6 @@ export async function PUT(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function DELETE(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
@@ -104,7 +102,6 @@ export async function DELETE(req: NextRequest, { params }: {
   }
 }
 
-// @ts-ignore
 export async function PATCH(req: NextRequest, { params }: {
   params: Promise<{ id: string }>;
 }) {
