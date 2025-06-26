@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
         url: post.postImageUrl,
       }),
     });
-
+    console.log("Id", post.id)
+    console.log(embedded);
     if (!embedded) {
       return NextResponse.json({ error: 'Failed to save embedded vector', post }, { status: 500 });
     }
