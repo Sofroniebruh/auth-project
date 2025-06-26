@@ -5,9 +5,9 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma
 COPY .env .env
+RUN npx prisma generate
 
 RUN npm install
-RUN npx prisma generate
 
 # Build the app
 FROM node:18-alpine AS builder
