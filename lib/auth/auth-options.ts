@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
       (await cookies()).set('jwt', customToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         path: '/',
         maxAge: 60 * 60 * 24,
       });
