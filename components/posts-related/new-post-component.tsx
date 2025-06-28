@@ -133,7 +133,7 @@ export const NewPostComponent = () => {
           </div>
 
           <Button disabled={isFileEmpty} size={'lg'} type="submit"
-                  className="mt-4 bg-blue-600 w-[200px]">Create</Button>
+                  className="mt-4 bg-blue-600 hover:bg-blue-700 w-[200px]">Create</Button>
         </form>
       </FormProvider>
     </div>
